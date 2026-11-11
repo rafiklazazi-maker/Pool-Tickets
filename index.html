@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Jackpot Friday - Degen Edition</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+
+        :root {
+            --bg: #070913;
+            --card: #121829;
+            --card-border: #1e294b;
+            --accent: #14f195;
+            --purple: #9945ff;
+            --pink: #ff2a85;
+            --text: #f8fafc;
+            --muted: #8b9bb4;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(153, 69, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(20, 241, 149, 0.1) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-title {
+            font-weight: 900;
+            font-size: 20px;
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(20, 241, 149, 0.3);
+            letter-spacing: -0.5px;
+        }
+
+        .user-badge {
+            background: var(--card);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 0 10px rgba(20, 241, 149, 0.15);
+        }
+
+        .ticker-bar {
+            background: linear-gradient(90deg, rgba(20, 241, 149, 0.08), rgba(153, 69, 255, 0.12));
+            border: 1px solid rgba(20, 241, 149, 0.3);
+            color: var(--accent);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: inset 0 0 10px rgba(20, 241, 149, 0.05);
+        }
+
+        .jackpot-card {
+            background: linear-gradient(135deg, #130f26 0%, #1f0f2b 100%);
+            border: 2px solid var(--purple);
+            border-radius: 20px;
+            padding: 24px 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(153, 69, 255, 0.3), inset 0 0 20px rgba(153, 69, 255, 0.1);
+        }
+
+        .jackpot-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .jackpot-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .jackpot-amount {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--accent);
+            margin: 8px 0;
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 25px rgba(20, 241, 149, 0.6);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); text-shadow: 0 0 15px rgba(20, 241, 149, 0.4); }
+            100% { transform: scale(1.02); text-shadow: 0 0 30px rgba(20, 241, 149, 0.8); }
+        }
+
+        .timer-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .prob-card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 14px 16px;
+            border: 1px solid var(--card-border);
+        }
+
+        .prob-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .prob-bar-bg {
+            background: #070913;
+            height: 10px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #1a233a;
+        }
+
+        .prob-bar-fill {
+            background: linear-gradient(90deg, var(--purple), var(--accent));
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple), var(--accent));
+            color: #070913;
+            box-shadow: 0 4px 20px rgba(20, 241, 149, 0.4);
+        }
+
+        .btn-channel {
+            background: linear-gradient(135deg, #0088cc, #00abff);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--card-border);
+        }
+
+        .section {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--card-border);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #cbd5e1;
+        }
+
+        .ticket-item {
+            background: #070913;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            border-left: 3px solid var(--accent);
+            border-top: 1px solid #131b2e;
+            border-right: 1px solid #131b2e;
+            border-bottom: 1px solid #131b2e;
+        }
+
+        .modal {
+            display: none;
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            padding: 18px;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .copy-box {
+            background: #070913;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            border: 1px dashed #2a3b5c;
+            color: #38bdf8;
+        }
+
+        #qrcode {
+            background: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            padding: 14px 0;
+            font-style: italic;
+        }
+
+        .fun-footer {
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-title">🎰 SOL FRIDAY</div>
+        <div class="user-badge" id="username">@player</div>
+    </div>
+
+    <!-- Live FOMO Ticker -->
+    <div class="ticker-bar" id="liveTicker">🔥 Round #1 is LIVE! Grab your ticket and join the degen party! 🚀</div>
+
+    <!-- Main Jackpot Display -->
+    <div class="jackpot-card">
+        <div class="jackpot-label">⚡ Current Prize Pool ⚡</div>
+        <div class="jackpot-amount" id="prizePool">$0.00</div>
+        <div class="timer-box">⏳ Draw in: <span id="countdown">--d --h --m --s</span></div>
+    </div>
+
+    <!-- Win Probability Gauge -->
+    <div class="prob-card">
+        <div class="prob-header">
+            <span>🎯 Your Win Probability</span>
+            <span id="probText" style="color: var(--accent);">0.0%</span>
+        </div>
+        <div class="prob-bar-bg">
+            <div class="prob-bar-fill" id="probBar"></div>
+        </div>
+        <div style="font-size: 11px; color: var(--muted); margin-top: 8px;">
+            💡 Pro-tip: More tickets = higher odds. 3 lucky losers also score a Free Second-Chance ticket every Friday!
+        </div>
+    </div>
+
+    <!-- Primary Action: Buy Ticket -->
+    <button class="btn btn-primary" onclick="openBuyModal()">🎟️ Buy Ticket (1 USDT / USDC / SOL)</button>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="buyModal">
+        <div style="font-weight: 800; font-size: 15px; color: var(--accent);">💸 Instant Ticket Activation</div>
+        <div style="font-size: 12px; color: var(--muted);">
+            Send exactly <b>1 USDT/USDC/SOL</b> to the address below. Make sure to include your personal **Memo Code** so the bot instantly fires your ticket!
+        </div>
+        <div style="font-size: 11px; font-weight: 700; color: #cbd5e1;">Phantom Wallet Address:</div>
+        <div class="copy-box" id="walletAddr">8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4</div>
+        <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyText('8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4', 'Wallet address copied! 📋')">📋 Copy Wallet Address</button>
+
+        <div style="font-size: 11px; font-weight: 700; color: var(--accent);">Your Unique Memo Code (Required):</div>
+        <div class="copy-box" id="memoCode" style="color: var(--accent); font-weight: bold; font-size: 14px;">SF-000000</div>
+        <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyMemo()">📋 Copy Memo Code</button>
+
+        <a id="phantomPayLink" href="#" style="text-decoration: none;">
+            <button class="btn btn-primary" style="margin-top: 6px; padding: 12px; font-size: 14px;">⚡ Pay via Phantom App</button>
+        </a>
+    </div>
+
+    <!-- Channel & Referral Buttons -->
+    <button class="btn btn-channel" id="channelBtn" onclick="handleChannelAction()">📢 Join Channel (+1 Free Ticket)</button>
+    <button class="btn btn-secondary" onclick="toggleReferral()">🤝 Refer Friends & QR Code (+1 Ticket)</button>
+
+    <!-- Referral Modal -->
+    <div class="modal" id="referralModal">
+        <div style="font-size: 12px; text-align: center; color: var(--muted);">
+            Share your QR code. Once your friend buys their first ticket, your bonus ticket unlocks automatically! 🚀
+        </div>
+        <div id="qrcode"></div>
+        <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
+    </div>
+
+    <!-- My Active Tickets Section -->
+    <div class="section">
+        <div class="section-title">
+            <span>🎫 My Active Tickets</span>
+            <span id="ticketCount" style="color: var(--accent);">0</span>
+        </div>
+        <div id="ticketsList">
+            <div class="empty-state">No tickets yet. Grab one and claim your destiny! 🎟️</div>
+        </div>
+    </div>
+
+    <!-- Previous Episodes History Section -->
+    <div class="section">
+        <div class="section-title">🏆 Hall of Fame (Previous Winners)</div>
+        <div id="winnersHistory">
+            <div class="empty-state">No past champions yet. Will you be the first legend this Friday? 👑</div>
+        </div>
+    </div>
+
+    <div class="fun-footer">
+        ⚡ Powered by Solana Speed • Zero Rugs • Pure Degen Thrills ⚡
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const API_BASE = "https://TON-SERVEUR-API.com";
+        const BOT_USERNAME = "SolFriday_bot";
+        const PHANTOM_WALLET = "8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4";
+        const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
+
+        const user = tg.initDataUnsafe?.user || { id: 123456, username: "degen_player" };
+        const username = user.username ? `@${user.username}` : `User_${user.id}`;
+        const memoString = `SF-${user.id}`;
+        const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
+
+        document.getElementById('username').innerText = username;
+        document.getElementById('memoCode').innerText = memoString;
+        document.getElementById('phantomPayLink').href = `solana:${PHANTOM_WALLET}?amount=1&spl-token=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB&memo=${memoString}&label=Solana%20Jackpot%20Friday`;
+
+        let hasPaidTicket = false;
+        let channelStepJoined = false;
+        let tickerMessages = [
+            "🔥 Round #1 is LIVE! Buy your 1 USDT/USDC ticket to enter!",
+            "💎 Diamond hands only! Friday at 21:00 someone takes the bag!",
+            "🚀 Invite your friends and stack up those free tickets!",
+            "🍀 1 USDT can change your weekend. LFG!"
+        ];
+        let tickerIdx = 0;
+
+        new QRCode(document.getElementById("qrcode"), {
+            text: refLink,
+            width: 130,
+            height: 130
+        });
+
+        function copyText(txt, msg) {
+            navigator.clipboard.writeText(txt);
+            tg.showAlert(msg);
+        }
+
+        function copyMemo() {
+            copyText(memoString, "Memo code copied! Paste it in Phantom memo field 📋");
+        }
+
+        function copyRefLink() {
+            copyText(refLink, "Referral link copied! Share the wealth 🚀");
+        }
+
+        function openBuyModal() {
+            const modal = document.getElementById('buyModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function toggleReferral() {
+            if (!hasPaidTicket) {
+                tg.showAlert("🔒 Locked: Buy at least 1 ticket first to unlock your referral network and start farming free entries!");
+                return;
+            }
+            const modal = document.getElementById('referralModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        async function handleChannelAction() {
+            if (!hasPaidTicket) {
+                tg.showAlert("🔒 Locked: You must buy your first ticket (1 USDT/USDC/SOL) before claiming channel rewards!");
+                return;
+            }
+
+            if (!channelStepJoined) {
+                tg.openTelegramLink(CHANNEL_LINK);
+                channelStepJoined = true;
+                document.getElementById('channelBtn').innerText = "✅ Click here after joining!";
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/claim-channel`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    tg.showAlert(`🎉 Verified! Free ticket ${data.ticket_code} delivered straight to your Telegram DM! 🎟️`);
+                    loadState();
+                } else {
+                    tg.showAlert(data.error || "Verification failed. Make sure you joined the channel!");
+                }
+            } catch (e) {
+                tg.showAlert("Server connection error. Try again in a second.");
+            }
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const nextFriday = new Date();
+            const diff = (5 - now.getDay() + 7) % 7;
+            nextFriday.setDate(now.getDate() + diff);
+            nextFriday.setHours(21, 0, 0, 0);
+            if (now >= nextFriday) nextFriday.setDate(nextFriday.getDate() + 7);
+
+            const sec = Math.floor((nextFriday - now) / 1000);
+            const d = Math.floor(sec / 86400);
+            const h = Math.floor((sec % 86400) / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            document.getElementById('countdown').innerText = `${d}d ${h}h ${m}m ${s}s`;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        setInterval(() => {
+            if (tickerMessages.length > 0) {
+                tickerIdx = (tickerIdx + 1) % tickerMessages.length;
+                document.getElementById('liveTicker').innerText = tickerMessages[tickerIdx];
+            }
+        }, 3500);
+
+        async function loadState() {
+            try {
+                const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
+                const data = await res.json();
+
+                document.getElementById('prizePool').innerText = `$${data.prize_pool.toFixed(2)}`;
+                hasPaidTicket = data.has_paid_ticket;
+
+                if (data.channel_claimed) {
+                    const btn = document.getElementById('channelBtn');
+                    btn.innerText = "✅ Channel Bonus Claimed";
+                    btn.disabled = true;
+                }
+
+                const myCount = data.my_tickets.length;
+                const total = data.total_tickets;
+                const prob = total > 0 ? ((myCount / total) * 100).toFixed(1) : "0.0";
+                document.getElementById('probText').innerText = `${prob}% (${myCount}/${total} tickets)`;
+                document.getElementById('probBar').style.width = `${Math.min(100, parseFloat(prob))}%`;
+
+                document.getElementById('ticketCount').innerText = myCount;
+                const list = document.getElementById('ticketsList');
+                if (myCount > 0) {
+                    list.innerHTML = data.my_tickets.map(t => `
+                        <div class="ticket-item">
+                            <span>${t.user} <small style="color:var(--muted)">(${t.source})</small></span>
+                            <b style="color:var(--accent);">${t.code}</b>
+                        </div>
+                    `).join('');
+                }
+
+                if (data.live_feed && data.live_feed.length > 0) {
+                    tickerMessages = data.live_feed;
+                }
+
+                const histDiv = document.getElementById('winnersHistory');
+                if (data.history && data.history.length > 0) {
+                    histDiv.innerHTML = data.history.map(h => `
+                        <div class="ticket-item">
+                            <span>Ep #${h.episode}: <b>${h.winner}</b> <br><small style="color:var(--muted)">${h.ticket}</small></span>
+                            <span style="color:var(--accent); font-weight:bold;">$${h.prize.toFixed(2)}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                console.log("Connecting to backend core...");
+            }
+        }
+
+        loadState();
+        setInterval(loadState, 8000);
+    </script>
+</body>
+</html>
