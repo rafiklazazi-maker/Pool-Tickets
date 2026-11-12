@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solana Jackpot Friday - Degen Edition</title>
+    <title>Pool Ticket - Degen Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -288,7 +288,7 @@
 <body>
 
     <div class="header">
-        <div class="logo-title">🎰 SOL FRIDAY</div>
+        <div class="logo-title">🎟️ POOL TICKET</div>
         <div class="user-badge" id="username">@player</div>
     </div>
 
@@ -325,7 +325,7 @@
         <div style="font-size: 12px; color: var(--muted);">
             Send exactly <b>1 USDT/USDC/SOL</b> to the address below. Make sure to include your personal <b>Memo Code</b> so the bot instantly fires your ticket!
         </div>
-        <div style="font-size: 11px; font-weight: 700; color: #cbd5e1;">Phantom Wallet Address:</div>
+        <div style="font-size: 11px; font-weight: 700; color: #cbd5e1;">Wallet Address:</div>
         <div class="copy-box" id="walletAddr">8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4</div>
         <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyText('8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4', 'Wallet address copied! 📋')">📋 Copy Wallet Address</button>
 
@@ -333,9 +333,7 @@
         <div class="copy-box" id="memoCode" style="color: var(--accent); font-weight: bold; font-size: 14px;">SF-000000</div>
         <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyMemo()">📋 Copy Memo Code</button>
 
-        <a id="phantomPayLink" href="#" style="text-decoration: none;">
-            <button class="btn btn-primary" style="margin-top: 6px; padding: 12px; font-size: 14px;">⚡ Pay via Phantom App</button>
-        </a>
+        <button id="nativePayBtn" class="btn btn-primary" style="margin-top: 6px; padding: 12px; font-size: 14px;">⚡ PAY 1 USDT (POOL TICKET)</button>
     </div>
 
     <!-- Channel & Referral Buttons -->
@@ -378,10 +376,9 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // URL officielle de ton backend sur Render
         const API_BASE = "https://jackpot-solana-backend-4.onrender.com";
         const BOT_USERNAME = "SolFriday_bot";
-        const PHANTOM_WALLET = "8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4";
+        const WALLET_ADDRESS = "8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
         const user = tg.initDataUnsafe?.user || { id: 123456, username: "degen_player" };
@@ -391,7 +388,26 @@
 
         document.getElementById('username').innerText = username;
         document.getElementById('memoCode').innerText = memoString;
-        document.getElementById('phantomPayLink').href = `solana:${PHANTOM_WALLET}?amount=1&spl-token=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB&memo=${memoString}&label=Solana%20Jackpot%20Friday`;
+        
+        const paymentUri = `solana:${WALLET_ADDRESS}?amount=1&spl-token=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB&memo=${memoString}&label=Pool%20Ticket`;
+
+        document.getElementById('nativePayBtn').addEventListener('click', async () => {
+            const paymentData = {
+                title: 'Pool Ticket Payment',
+                text: 'Pay 1 USDT to enter Pool Ticket draw.',
+                url: paymentUri
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(paymentData);
+                } catch (err) {
+                    console.log('Partage annulé ou non pris en charge', err);
+                }
+            } else {
+                window.location.href = paymentUri;
+            }
+        });
 
         let hasPaidTicket = false;
         let channelStepJoined = false;
@@ -415,7 +431,7 @@
         }
 
         function copyMemo() {
-            copyText(memoString, "Memo code copied! Paste it in Phantom memo field 📋");
+            copyText(memoString, "Memo code copied! Paste it in your app memo field 📋");
         }
 
         function copyRefLink() {
