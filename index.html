@@ -323,7 +323,7 @@
     <div class="modal" id="buyModal">
         <div style="font-weight: 800; font-size: 15px; color: var(--accent);">💸 Instant Ticket Activation</div>
         <div style="font-size: 12px; color: var(--muted);">
-            Send exactly <b>1 USDT/USDC/SOL</b> to the address below. Make sure to include your personal **Memo Code** so the bot instantly fires your ticket!
+            Send exactly <b>1 USDT/USDC/SOL</b> to the address below. Make sure to include your personal <b>Memo Code</b> so the bot instantly fires your ticket!
         </div>
         <div style="font-size: 11px; font-weight: 700; color: #cbd5e1;">Phantom Wallet Address:</div>
         <div class="copy-box" id="walletAddr">8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4</div>
@@ -378,7 +378,8 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const API_BASE = "https://TON-SERVEUR-API.com";
+        // URL officielle de ton backend sur Render
+        const API_BASE = "https://jackpot-solana-backend-4.onrender.com";
         const BOT_USERNAME = "SolFriday_bot";
         const PHANTOM_WALLET = "8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
