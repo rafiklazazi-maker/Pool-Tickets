@@ -3,36 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pool Ticket - Degen Edition</title>
+    <title>Pool Tickets — Luxury Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
         :root {
-            --bg: #070913;
-            --card: #121829;
-            --card-border: #1e294b;
-            --accent: #14f195;
-            --purple: #9945ff;
-            --pink: #ff2a85;
-            --text: #f8fafc;
-            --muted: #8b9bb4;
+            --bg: #08090c;
+            --card: #111319;
+            --card-elevated: #171a23;
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --border-silver: rgba(192, 199, 210, 0.2);
+            --gold: #d4af37;
+            --gold-bright: #f5d76e;
+            --silver: #c0c7d2;
+            --text: #f4f6f9;
+            --muted: #8a94a6;
+            --success: #2ecc71;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 14px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 14px;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(153, 69, 255, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(20, 241, 149, 0.1) 0%, transparent 40%);
+            background-image:
+                radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.09) 0%, transparent 45%),
+                radial-gradient(circle at 85% 90%, rgba(192, 199, 210, 0.07) 0%, transparent 45%);
             background-attachment: fixed;
         }
 
@@ -43,180 +46,223 @@
         }
 
         .logo-title {
+            font-family: 'Cinzel', serif;
             font-weight: 900;
             font-size: 20px;
-            background: linear-gradient(90deg, var(--accent), var(--purple));
+            background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--silver));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(20, 241, 149, 0.3);
-            letter-spacing: -0.5px;
+            letter-spacing: 1px;
         }
 
         .user-badge {
             background: var(--card);
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--accent);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 0 10px rgba(20, 241, 149, 0.15);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gold-bright);
+            border: 1px solid var(--border-gold);
         }
 
         .ticker-bar {
-            background: linear-gradient(90deg, rgba(20, 241, 149, 0.08), rgba(153, 69, 255, 0.12));
-            border: 1px solid rgba(20, 241, 149, 0.3);
-            color: var(--accent);
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.08), rgba(192, 199, 210, 0.08));
+            border: 1px solid var(--border-silver);
+            color: var(--silver);
             padding: 10px 14px;
             border-radius: 12px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            box-shadow: inset 0 0 10px rgba(20, 241, 149, 0.05);
         }
 
         .jackpot-card {
-            background: linear-gradient(135deg, #130f26 0%, #1f0f2b 100%);
-            border: 2px solid var(--purple);
+            background: linear-gradient(145deg, #13151d 0%, #0b0c10 100%);
+            border: 1.5px solid var(--gold);
             border-radius: 20px;
-            padding: 24px 16px;
+            padding: 22px 16px;
             text-align: center;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 35px rgba(153, 69, 255, 0.3), inset 0 0 20px rgba(153, 69, 255, 0.1);
+            box-shadow: 0 10px 35px rgba(212, 175, 55, 0.15), inset 0 0 25px rgba(212, 175, 55, 0.05);
         }
 
-        .jackpot-card::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-            transform: rotate(30deg);
-            pointer-events: none;
+        .season-pill {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-bright);
+            border: 1px solid var(--border-gold);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
         }
 
         .jackpot-label {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: var(--muted);
+            color: var(--silver);
             font-weight: 700;
         }
 
         .jackpot-amount {
-            font-size: 48px;
-            font-weight: 900;
-            color: var(--accent);
-            margin: 8px 0;
+            font-size: 44px;
+            font-weight: 800;
+            background: linear-gradient(180deg, #ffffff 0%, var(--gold-bright) 55%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 6px 0;
             font-family: 'JetBrains Mono', monospace;
-            text-shadow: 0 0 25px rgba(20, 241, 149, 0.6);
-            animation: pulseGlow 2s infinite alternate;
         }
 
-        @keyframes pulseGlow {
-            0% { transform: scale(1); text-shadow: 0 0 15px rgba(20, 241, 149, 0.4); }
-            100% { transform: scale(1.02); text-shadow: 0 0 30px rgba(20, 241, 149, 0.8); }
-        }
-
-        .timer-box {
-            background: rgba(0, 0, 0, 0.5);
+        .status-box {
+            background: rgba(0, 0, 0, 0.45);
             padding: 8px 14px;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-silver);
+            color: var(--gold-bright);
             font-family: 'JetBrains Mono', monospace;
+            margin-top: 4px;
         }
 
-        .prob-card {
+        .milestone-card {
             background: var(--card);
-            border-radius: 14px;
-            padding: 14px 16px;
-            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 15px 16px;
+            border: 1px solid var(--border-silver);
         }
 
-        .prob-header {
+        .milestone-header {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             margin-bottom: 8px;
+            color: var(--silver);
         }
 
-        .prob-bar-bg {
-            background: #070913;
+        .bar-bg {
+            background: #07080b;
             height: 10px;
             border-radius: 6px;
             overflow: hidden;
-            border: 1px solid #1a233a;
+            border: 1px solid #1e222d;
         }
 
-        .prob-bar-fill {
-            background: linear-gradient(90deg, var(--purple), var(--accent));
+        .bar-fill {
+            background: linear-gradient(90deg, var(--silver), var(--gold), var(--gold-bright));
             height: 100%;
             width: 0%;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px var(--accent);
+            transition: width 0.5s ease;
         }
 
         .btn {
             width: 100%;
-            padding: 16px;
+            padding: 15px;
             border: none;
             border-radius: 14px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s ease;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
 
-        .btn:active { transform: scale(0.97); }
+        .btn:active { transform: scale(0.98); }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--purple), var(--accent));
-            color: #070913;
-            box-shadow: 0 4px 20px rgba(20, 241, 149, 0.4);
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+            color: #08090c;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
         }
 
-        .btn-channel {
-            background: linear-gradient(135deg, #0088cc, #00abff);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        .btn-silver {
+            background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+            color: #08090c;
         }
 
-        .btn-secondary {
+        .btn-outline {
             background: var(--card);
             color: var(--text);
-            border: 1px solid var(--card-border);
+            border: 1px solid var(--border-gold);
         }
 
         .section {
             background: var(--card);
             border-radius: 16px;
             padding: 16px;
-            border: 1px solid var(--card-border);
+            border: 1px solid var(--border-silver);
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #cbd5e1;
+            letter-spacing: 0.8px;
+            color: var(--gold-bright);
+        }
+
+        .modal {
+            display: none;
+            background: var(--card-elevated);
+            border: 1px solid var(--gold);
+            border-radius: 16px;
+            padding: 18px;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .copy-box {
+            background: #08090c;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            border: 1px dashed var(--border-gold);
+            color: var(--gold-bright);
+        }
+
+        .input-field {
+            width: 100%;
+            box-sizing: border-box;
+            background: #08090c;
+            border: 1px solid var(--border-silver);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--gold);
         }
 
         .ticket-item {
-            background: #070913;
+            background: #08090c;
             padding: 12px 14px;
             border-radius: 10px;
             margin-bottom: 8px;
@@ -224,39 +270,11 @@
             justify-content: space-between;
             align-items: center;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            border-left: 3px solid var(--accent);
-            border-top: 1px solid #131b2e;
-            border-right: 1px solid #131b2e;
-            border-bottom: 1px solid #131b2e;
-        }
-
-        .modal {
-            display: none;
-            background: var(--card);
-            border: 1px solid var(--accent);
-            border-radius: 16px;
-            padding: 18px;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .copy-box {
-            background: #070913;
-            padding: 12px;
-            border-radius: 10px;
-            font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
-            word-break: break-all;
-            border: 1px dashed #2a3b5c;
-            color: #38bdf8;
+            border-left: 3px solid var(--gold);
+            border-top: 1px solid #181b24;
+            border-right: 1px solid #181b24;
+            border-bottom: 1px solid #181b24;
         }
 
         #qrcode {
@@ -264,158 +282,156 @@
             padding: 12px;
             border-radius: 12px;
             margin: 0 auto;
-            box-shadow: 0 0 15px rgba(255,255,255,0.1);
         }
 
         .empty-state {
             text-align: center;
             color: var(--muted);
-            font-size: 13px;
-            padding: 14px 0;
-            font-style: italic;
+            font-size: 12px;
+            padding: 12px 0;
         }
 
-        .fun-footer {
+        .footer {
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
             color: var(--muted);
-            margin-top: 4px;
+            margin-top: 6px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="logo-title">🎟️ POOL TICKET</div>
+        <div class="logo-title">👑 POOL TICKETS</div>
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <!-- Live FOMO Ticker -->
-    <div class="ticker-bar" id="liveTicker">🔥 Round #1 is LIVE! Grab your ticket and join the degen party! 🚀</div>
+    <!-- Live Community Feed -->
+    <div class="ticker-bar" id="liveTicker">🪙 Season #1 is LIVE! Enter for 1 USDT (BEP20)</div>
 
     <!-- Main Jackpot Display -->
     <div class="jackpot-card">
-        <div class="jackpot-label">⚡ Current Prize Pool ⚡</div>
-        <div class="jackpot-amount" id="prizePool">$0.00</div>
-        <div class="timer-box">⏳ Draw in: <span id="countdown">--d --h --m --s</span></div>
+        <div class="season-pill" id="seasonBadge">SEASON #1</div>
+        <div class="jackpot-label">Winner's Prize Pool (70%)</div>
+        <div class="jackpot-amount" id="prizePool">$371.00</div>
+        <div class="status-box" id="drawStatus">🎯 Goal: $530 / $2,000 USDT</div>
     </div>
 
-    <!-- Win Probability Gauge -->
-    <div class="prob-card">
-        <div class="prob-header">
-            <span>🎯 Your Win Probability</span>
-            <span id="probText" style="color: var(--accent);">0.0%</span>
+    <!-- Season Milestone Progress Bar -->
+    <div class="milestone-card">
+        <div class="milestone-header">
+            <span>🏆 Season Target Progress</span>
+            <span id="milestonePct" style="color: var(--gold-bright);">26.5%</span>
         </div>
-        <div class="prob-bar-bg">
-            <div class="prob-bar-fill" id="probBar"></div>
+        <div class="bar-bg">
+            <div class="bar-fill" id="milestoneBar" style="width: 26.5%;"></div>
         </div>
-        <div style="font-size: 11px; color: var(--muted); margin-top: 8px;">
-            💡 Pro-tip: More tickets = higher odds. 3 lucky losers also score a Free Second-Chance ticket every Friday!
+        <div style="font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.4;">
+            Once the Season Goal is reached, a <b>7-Day Final Countdown</b> triggers automatically! 3 non-winning players also win a free Second-Chance ticket.
         </div>
     </div>
 
     <!-- Primary Action: Buy Ticket -->
-    <button class="btn btn-primary" onclick="openBuyModal()">🎟️ Buy Ticket (1 USDT / USDC / SOL)</button>
+    <button class="btn btn-gold" onclick="toggleModal('buyModal')">🎟️ Buy Ticket (1 USDT • BEP20)</button>
 
-    <!-- Payment Modal -->
+    <!-- Deposit Modal (Copy Address + Optional TXID Verification) -->
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 15px; color: var(--accent);">💸 Instant Ticket Activation</div>
-        <div style="font-size: 12px; color: var(--muted);">
-            Send exactly <b>1 USDT/USDC/SOL</b> to the address below. Make sure to include your personal <b>Memo Code</b> so the bot instantly fires your ticket!
+        <div style="font-weight: 800; font-size: 15px; color: var(--gold-bright);">🪙 Deposit 1 USDT (BNB Smart Chain / BEP20)</div>
+        <div style="font-size: 12px; color: var(--silver); line-height: 1.4;">
+            Send exactly <b>1 USDT (BEP20)</b> to the official pool address below. Include your Memo ID if your wallet supports notes, or paste your Transaction Hash (TXID) below for instant ticket activation.
         </div>
-        <div style="font-size: 11px; font-weight: 700; color: #cbd5e1;">Wallet Address:</div>
-        <div class="copy-box" id="walletAddr">8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4</div>
-        <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyText('8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4', 'Wallet address copied! 📋')">📋 Copy Wallet Address</button>
 
-        <div style="font-size: 11px; font-weight: 700; color: var(--accent);">Your Unique Memo Code (Required):</div>
-        <div class="copy-box" id="memoCode" style="color: var(--accent); font-weight: bold; font-size: 14px;">SF-000000</div>
-        <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyMemo()">📋 Copy Memo Code</button>
+        <div style="font-size: 11px; font-weight: 700; color: var(--muted);">Official Deposit Address (BEP20):</div>
+        <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
+        <button class="btn btn-silver" style="padding: 11px; font-size: 12px;" onclick="copyWallet()">📋 Copy BEP20 Wallet Address</button>
 
-        <button id="nativePayBtn" class="btn btn-primary" style="margin-top: 6px; padding: 12px; font-size: 14px;">⚡ PAY 1 USDT (POOL TICKET)</button>
+        <div style="font-size: 11px; font-weight: 700; color: var(--gold-bright);">Your Reference Memo (Optional):</div>
+        <div class="copy-box" id="memoCode" style="font-weight: bold;">PT-000000</div>
+        <button class="btn btn-outline" style="padding: 10px; font-size: 12px;" onclick="copyMemo()">📋 Copy Reference Memo</button>
+
+        <div style="border-top: 1px solid var(--border-silver); margin: 4px 0;"></div>
+        <div style="font-size: 11px; font-weight: 700; color: var(--silver);">Sent from Binance or Trust Wallet? Paste TXID to claim instantly:</div>
+        <input type="text" id="txHashInput" class="input-field" placeholder="0x... (Paste BEP20 Transaction Hash)">
+        <button class="btn btn-gold" style="padding: 12px; font-size: 12px;" onclick="submitTxHash()">✅ Verify TXID & Activate Ticket</button>
     </div>
 
-    <!-- Channel & Referral Buttons -->
-    <button class="btn btn-channel" id="channelBtn" onclick="handleChannelAction()">📢 Join Channel (+1 Free Ticket)</button>
-    <button class="btn btn-secondary" onclick="toggleReferral()">🤝 Refer Friends & QR Code (+1 Ticket)</button>
+    <!-- VIP Channel & Referral Actions -->
+    <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Channel (+1 Free Ticket)</button>
+    <button class="btn btn-outline" onclick="toggleReferral()">🤝 Referral Program (<span id="shardCounter">0/4</span> Shards = +1 Ticket)</button>
 
     <!-- Referral Modal -->
     <div class="modal" id="referralModal">
-        <div style="font-size: 12px; text-align: center; color: var(--muted);">
-            Share your QR code. Once your friend buys their first ticket, your bonus ticket unlocks automatically! 🚀
+        <div style="font-size: 12px; text-align: center; color: var(--silver); line-height: 1.4;">
+            Invite friends using your personal link or QR code. Every time <b>4 invited friends</b> purchase their first ticket, you unlock <b>1 Free Ticket</b>!
         </div>
         <div id="qrcode"></div>
-        <button class="btn btn-secondary" style="padding: 10px; font-size: 12px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
+        <button class="btn btn-gold" style="padding: 11px; font-size: 12px;" onclick="copyRefLink()">📋 Copy Personal Referral Link</button>
     </div>
 
-    <!-- My Active Tickets Section -->
+    <!-- Personal Payout Wallet Section -->
     <div class="section">
         <div class="section-title">
-            <span>🎫 My Active Tickets</span>
-            <span id="ticketCount" style="color: var(--accent);">0</span>
+            <span>💳 Your Winning Payout Wallet (BEP20)</span>
+        </div>
+        <div style="font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.4;">
+            Enter your personal <b>USDT (BEP20)</b> wallet address where your prize will be sent automatically if you win. (Do not use an exchange deposit memo-only address).
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Your Personal BEP20 Address">
+            <button class="btn btn-gold" style="width: auto; padding: 0 16px; font-size: 12px;" onclick="savePayoutWallet()">Save</button>
+        </div>
+    </div>
+
+    <!-- My Active Tickets -->
+    <div class="section">
+        <div class="section-title">
+            <span>🎟️ My Active Tickets</span>
+            <span id="ticketCount" style="color: var(--gold-bright);">0</span>
         </div>
         <div id="ticketsList">
-            <div class="empty-state">No tickets yet. Grab one and claim your destiny! 🎟️</div>
+            <div class="empty-state">No active tickets yet. Enter the pool to claim your spot!</div>
         </div>
     </div>
 
-    <!-- Previous Episodes History Section -->
+    <!-- Hall of Fame -->
     <div class="section">
-        <div class="section-title">🏆 Hall of Fame (Previous Winners)</div>
+        <div class="section-title">🏆 Past Season Champions</div>
         <div id="winnersHistory">
-            <div class="empty-state">No past champions yet. Will you be the first legend this Friday? 👑</div>
+            <div class="empty-state">Season #1 is underway. Will your name be engraved here first?</div>
         </div>
     </div>
 
-    <div class="fun-footer">
-        ⚡ Powered by Solana Speed • Zero Rugs • Pure Degen Thrills ⚡
+    <div class="footer">
+        Pool Tickets • Transparent BEP20 Prize Pool • 70% Winner Payout
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const API_BASE = "https://jackpot-solana-backend-4.onrender.com";
-        const BOT_USERNAME = "SolFriday_bot";
-        const WALLET_ADDRESS = "8fcp5yHLcxgExWc8ddeM6znVTA3jFXNbdVcpRTcr7TY4";
+        // Remplacer par l'URL de ton backend Render
+        const API_BASE = "https://YOUR_RENDER_BACKEND_URL.onrender.com";
+        const BOT_USERNAME = "PoolTickets_bot";
+        const RECEIVE_WALLET = "0x93872BdE7652373c87Afd53b6659054cCAb060D2";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
-        const user = tg.initDataUnsafe?.user || { id: 123456, username: "degen_player" };
-        const username = user.username ? `@${user.username}` : `User_${user.id}`;
-        const memoString = `SF-${user.id}`;
+        const user = tg.initDataUnsafe?.user || { id: 100001, username: "vip_player" };
+        const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
+        const memoString = `PT-${user.id}`;
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
 
         document.getElementById('username').innerText = username;
         document.getElementById('memoCode').innerText = memoString;
-        
-        const paymentUri = `solana:${WALLET_ADDRESS}?amount=1&spl-token=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB&memo=${memoString}&label=Pool%20Ticket`;
-
-        document.getElementById('nativePayBtn').addEventListener('click', async () => {
-            const paymentData = {
-                title: 'Pool Ticket Payment',
-                text: 'Pay 1 USDT to enter Pool Ticket draw.',
-                url: paymentUri
-            };
-
-            if (navigator.share) {
-                try {
-                    await navigator.share(paymentData);
-                } catch (err) {
-                    console.log('Partage annulé ou non pris en charge', err);
-                }
-            } else {
-                window.location.href = paymentUri;
-            }
-        });
 
         let hasPaidTicket = false;
         let channelStepJoined = false;
+        let countdownEndTimestamp = 0;
         let tickerMessages = [
-            "🔥 Round #1 is LIVE! Buy your 1 USDT/USDC ticket to enter!",
-            "💎 Diamond hands only! Friday at 21:00 someone takes the bag!",
-            "🚀 Invite your friends and stack up those free tickets!",
-            "🍀 1 USDT can change your weekend. LFG!"
+            "🪙 Season #1 is LIVE! Enter for 1 USDT (BEP20)",
+            "👑 70% of the total prize pool goes directly to the winner!",
+            "🧩 Invite 4 friends to unlock a free bonus ticket!"
         ];
         let tickerIdx = 0;
 
@@ -430,41 +446,90 @@
             tg.showAlert(msg);
         }
 
+        function copyWallet() {
+            copyText(RECEIVE_WALLET, "BEP20 Deposit Address copied! Send exactly 1 USDT on BNB Smart Chain.");
+        }
+
         function copyMemo() {
-            copyText(memoString, "Memo code copied! Paste it in your app memo field 📋");
+            copyText(memoString, "Reference Memo copied!");
         }
 
         function copyRefLink() {
-            copyText(refLink, "Referral link copied! Share the wealth 🚀");
+            copyText(refLink, "Referral link copied! Share it to collect shards.");
         }
 
-        function openBuyModal() {
-            const modal = document.getElementById('buyModal');
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
 
         function toggleReferral() {
             if (!hasPaidTicket) {
-                tg.showAlert("🔒 Locked: Buy at least 1 ticket first to unlock your referral network and start farming free entries!");
+                tg.showAlert("🔒 Locked: Purchase at least 1 ticket first to unlock your referral link and earn free tickets!");
                 return;
             }
-            const modal = document.getElementById('referralModal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            toggleModal('referralModal');
+        }
+
+        async function savePayoutWallet() {
+            const addr = document.getElementById('payoutWalletInput').value.trim();
+            if (!addr.startsWith("0x") || addr.length !== 42) {
+                tg.showAlert("Please enter a valid 42-character BEP20 wallet address starting with 0x.");
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/save-wallet`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, address: addr })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    tg.showAlert("✅ Personal BEP20 payout wallet saved!");
+                } else {
+                    tg.showAlert(data.error || "Error saving wallet.");
+                }
+            } catch (e) {
+                tg.showAlert("Server connection error. Please try again.");
+            }
+        }
+
+        async function submitTxHash() {
+            const txHash = document.getElementById('txHashInput').value.trim();
+            if (!txHash.startsWith("0x") || txHash.length !== 66) {
+                tg.showAlert("Please paste a valid 66-character BEP20 Transaction Hash (0x...).");
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, tx_hash: txHash })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    document.getElementById('txHashInput').value = "";
+                    tg.showAlert(`🎉 Verified! Ticket ${data.ticket_code} is now active!`);
+                    loadState();
+                } else {
+                    tg.showAlert(data.error || "Could not verify transaction.");
+                }
+            } catch (e) {
+                tg.showAlert("Connection error while verifying TXID.");
+            }
         }
 
         async function handleChannelAction() {
             if (!hasPaidTicket) {
-                tg.showAlert("🔒 Locked: You must buy your first ticket (1 USDT/USDC/SOL) before claiming channel rewards!");
+                tg.showAlert("🔒 Locked: Buy at least 1 ticket first to unlock the VIP Channel bonus!");
                 return;
             }
-
             if (!channelStepJoined) {
                 tg.openTelegramLink(CHANNEL_LINK);
                 channelStepJoined = true;
-                document.getElementById('channelBtn').innerText = "✅ Click here after joining!";
+                document.getElementById('channelBtn').innerText = "✅ Tap Here to Claim Free Ticket";
                 return;
             }
-
             try {
                 const res = await fetch(`${API_BASE}/api/claim-channel`, {
                     method: "POST",
@@ -473,68 +538,76 @@
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    tg.showAlert(`🎉 Verified! Free ticket ${data.ticket_code} delivered straight to your Telegram DM! 🎟️`);
+                    tg.showAlert(`🎉 VIP Bonus Claimed! Ticket ${data.ticket_code} added to your account!`);
                     loadState();
                 } else {
-                    tg.showAlert(data.error || "Verification failed. Make sure you joined the channel!");
+                    tg.showAlert(data.error || "Please make sure you joined the VIP Channel first.");
                 }
             } catch (e) {
-                tg.showAlert("Server connection error. Try again in a second.");
+                tg.showAlert("Server connection error.");
             }
         }
 
-        function updateCountdown() {
-            const now = new Date();
-            const nextFriday = new Date();
-            const diff = (5 - now.getDay() + 7) % 7;
-            nextFriday.setDate(now.getDate() + diff);
-            nextFriday.setHours(21, 0, 0, 0);
-            if (now >= nextFriday) nextFriday.setDate(nextFriday.getDate() + 7);
-
-            const sec = Math.floor((nextFriday - now) / 1000);
-            const d = Math.floor(sec / 86400);
-            const h = Math.floor((sec % 86400) / 3600);
-            const m = Math.floor((sec % 3600) / 60);
-            const s = sec % 60;
-            document.getElementById('countdown').innerText = `${d}d ${h}h ${m}m ${s}s`;
+        function updateTimerDisplay() {
+            if (countdownEndTimestamp > 0) {
+                const nowSec = Math.floor(Date.now() / 1000);
+                const diff = Math.max(0, countdownEndTimestamp - nowSec);
+                const d = Math.floor(diff / 86400);
+                const h = Math.floor((diff % 86400) / 3600);
+                const m = Math.floor((diff % 3600) / 60);
+                const s = diff % 60;
+                document.getElementById('drawStatus').innerText = `⏳ FINAL DRAW IN: ${d}d ${h}h ${m}m ${s}s`;
+            }
         }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+        setInterval(updateTimerDisplay, 1000);
 
         setInterval(() => {
             if (tickerMessages.length > 0) {
                 tickerIdx = (tickerIdx + 1) % tickerMessages.length;
                 document.getElementById('liveTicker').innerText = tickerMessages[tickerIdx];
             }
-        }, 3500);
+        }, 3800);
 
         async function loadState() {
             try {
                 const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
                 const data = await res.json();
 
-                document.getElementById('prizePool').innerText = `$${data.prize_pool.toFixed(2)}`;
+                document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
+                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                 hasPaidTicket = data.has_paid_ticket;
+                countdownEndTimestamp = data.countdown_end;
+
+                const pct = Math.min(100, (data.total_collected / data.target_goal) * 100).toFixed(1);
+                document.getElementById('milestonePct').innerText = `${pct}% ($${data.total_collected.toLocaleString()} / $${data.target_goal.toLocaleString()})`;
+                document.getElementById('milestoneBar').style.width = `${pct}%`;
+
+                if (countdownEndTimestamp === 0) {
+                    document.getElementById('drawStatus').innerText = `🎯 Milestone: $${data.total_collected.toLocaleString()} / $${data.target_goal.toLocaleString()} USDT`;
+                } else {
+                    updateTimerDisplay();
+                }
+
+                if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
+                    document.getElementById('payoutWalletInput').value = data.payout_address;
+                }
+
+                document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
 
                 if (data.channel_claimed) {
                     const btn = document.getElementById('channelBtn');
-                    btn.innerText = "✅ Channel Bonus Claimed";
+                    btn.innerText = "✅ VIP Channel Bonus Claimed";
                     btn.disabled = true;
                 }
 
                 const myCount = data.my_tickets.length;
-                const total = data.total_tickets;
-                const prob = total > 0 ? ((myCount / total) * 100).toFixed(1) : "0.0";
-                document.getElementById('probText').innerText = `${prob}% (${myCount}/${total} tickets)`;
-                document.getElementById('probBar').style.width = `${Math.min(100, parseFloat(prob))}%`;
-
                 document.getElementById('ticketCount').innerText = myCount;
                 const list = document.getElementById('ticketsList');
                 if (myCount > 0) {
                     list.innerHTML = data.my_tickets.map(t => `
                         <div class="ticket-item">
-                            <span>${t.user} <small style="color:var(--muted)">(${t.source})</small></span>
-                            <b style="color:var(--accent);">${t.code}</b>
+                            <span>${t.source}</span>
+                            <b style="color: var(--gold-bright);">${t.code}</b>
                         </div>
                     `).join('');
                 }
@@ -547,13 +620,13 @@
                 if (data.history && data.history.length > 0) {
                     histDiv.innerHTML = data.history.map(h => `
                         <div class="ticket-item">
-                            <span>Ep #${h.episode}: <b>${h.winner}</b> <br><small style="color:var(--muted)">${h.ticket}</small></span>
-                            <span style="color:var(--accent); font-weight:bold;">$${h.prize.toFixed(2)}</span>
+                            <span>Season #${h.season}: <b>${h.winner}</b><br><small style="color:var(--muted)">${h.ticket}</small></span>
+                            <span style="color:var(--gold-bright); font-weight:bold;">$${h.prize.toFixed(2)}</span>
                         </div>
                     `).join('');
                 }
             } catch (e) {
-                console.log("Connecting to backend core...");
+                console.log("Syncing with Pool Tickets server...");
             }
         }
 
