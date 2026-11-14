@@ -671,11 +671,19 @@
                     `).join('');
                 }
 
+                // Filtrage propre pour empêcher l'API de casser le affichage des faux noms floutés
                 if (data.live_feed && data.live_feed.length > 0) {
-                    const realDeposits = data.live_feed.map(item =>
-                        `<span style="color: var(--gold-bright); font-weight: 700;">✅ ${item}</span>`
-                    );
-                    depositFeedList = [...realDeposits, ...seededDepositors];
+                    const realDeposits = data.live_feed
+                        .filter(item => !item.includes("entered Season"))
+                        .map(item => `<span style="color: var(--gold-bright); font-weight: 700;">✅ ${item}</span>`);
+                    
+                    if (realDeposits.length > 0) {
+                        depositFeedList = [...realDeposits, ...seededDepositors];
+                    } else {
+                        depositFeedList = [...seededDepositors];
+                    }
+                } else {
+                    depositFeedList = [...seededDepositors];
                 }
 
                 const histDiv = document.getElementById('winnersHistory');
