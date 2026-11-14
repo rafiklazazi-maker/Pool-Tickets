@@ -356,11 +356,11 @@
     <!-- Static Entry Banner -->
     <div class="ticker-bar" id="liveTicker">🪙 Season #1 is LIVE! Join with 1 USDT (BEP20)</div>
 
-    <!-- Live Verified Deposits Ticker (Blurred Seeded + Clear Real Depositors) -->
+    <!-- Live Verified Deposits Ticker (Fully blurred seeded + clear real depositors) -->
     <div class="deposits-bar">
         <span class="deposit-tag">🟢 Deposited</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            @a<span class="masked-txt">xxxx</span> deposited 1 USDT
+            @<span class="masked-txt">player1x</span> deposited 1 USDT
         </div>
     </div>
 
@@ -481,14 +481,14 @@
         let channelStepJoined = false;
         let countdownEndTimestamp = 0;
 
-        // Initial masked depositors (1 vowel visible + blurred xxxx)
+        // Faux noms 100% floutés et masqués pour le lancement
         const seededDepositors = [
-            `@a<span class="masked-txt">xxxx</span> deposited 1 USDT`,
-            `@e<span class="masked-txt">xxxx</span> deposited 1 USDT`,
-            `@i<span class="masked-txt">xxxx</span> deposited 1 USDT`,
-            `@o<span class="masked-txt">xxxx</span> deposited 1 USDT`,
-            `@u<span class="masked-txt">xxxx</span> deposited 1 USDT`,
-            `@y<span class="masked-txt">xxxx</span> deposited 1 USDT`
+            `@<span class="masked-txt">player1x</span> deposited 1 USDT`,
+            `@<span class="masked-txt">crypto_99</span> deposited 1 USDT`,
+            `@<span class="masked-txt">user_tkt</span> deposited 1 USDT`,
+            `@<span class="masked-txt">whale_88</span> deposited 1 USDT`,
+            `@<span class="masked-txt">winner_01</span> deposited 1 USDT`,
+            `@<span class="masked-txt">bep20_vip</span> deposited 1 USDT`
         ];
         let depositFeedList = [...seededDepositors];
         let depositIdx = 0;
@@ -619,7 +619,6 @@
         }
         setInterval(updateTimerDisplay, 1000);
 
-        // Rotate verified depositors feed (clear names for real depositors + masked seeded names)
         setInterval(() => {
             if (depositFeedList.length > 0) {
                 depositIdx = (depositIdx + 1) % depositFeedList.length;
@@ -637,7 +636,6 @@
                 hasPaidTicket = data.has_paid_ticket;
                 countdownEndTimestamp = data.countdown_end;
 
-                // Use prize_pool ($371) for milestone so the 30% cut is never exposed
                 const displayPool = Math.floor(data.prize_pool);
                 const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
                 document.getElementById('milestonePct').innerText = `${pct}% ($${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()})`;
@@ -673,7 +671,6 @@
                     `).join('');
                 }
 
-                // Merge real unmasked depositors from backend with masked seeded depositors
                 if (data.live_feed && data.live_feed.length > 0) {
                     const realDeposits = data.live_feed.map(item =>
                         `<span style="color: var(--gold-bright); font-weight: 700;">✅ ${item}</span>`
