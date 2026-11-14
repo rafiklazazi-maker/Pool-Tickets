@@ -31,7 +31,7 @@
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             overflow-x: hidden;
             background-image:
                 radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.09) 0%, transparent 45%),
@@ -77,6 +77,51 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        .deposits-bar {
+            background: rgba(17, 19, 25, 0.92);
+            border: 1px solid var(--border-gold);
+            padding: 9px 12px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+        }
+
+        .deposit-tag {
+            background: rgba(46, 204, 113, 0.14);
+            color: var(--success);
+            border: 1px solid rgba(46, 204, 113, 0.35);
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 9.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .deposit-feed-text {
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .masked-txt {
+            filter: blur(2.2px);
+            opacity: 0.7;
+            user-select: none;
+            color: var(--muted);
         }
 
         .jackpot-card {
@@ -308,25 +353,33 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <!-- Live Community Feed -->
-    <div class="ticker-bar" id="liveTicker">🪙 Season #1 is LIVE! Enter for 1 USDT (BEP20)</div>
+    <!-- Static Entry Banner -->
+    <div class="ticker-bar" id="liveTicker">🪙 Season #1 is LIVE! Join with 1 USDT (BEP20)</div>
+
+    <!-- Live Verified Deposits Ticker (Blurred Seeded + Clear Real Depositors) -->
+    <div class="deposits-bar">
+        <span class="deposit-tag">🟢 Deposited</span>
+        <div class="deposit-feed-text" id="depositFeedText">
+            @a<span class="masked-txt">xxxx</span> deposited 1 USDT
+        </div>
+    </div>
 
     <!-- Main Jackpot Display -->
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
         <div class="jackpot-label">Grand Prize Pool</div>
         <div class="jackpot-amount" id="prizePool">$371.00</div>
-        <div class="status-box" id="drawStatus">🎯 Goal: $530 / $2,000 USDT</div>
+        <div class="status-box" id="drawStatus">🎯 Goal: $371 / $2,000 USDT</div>
     </div>
 
     <!-- Season Milestone Progress Bar -->
     <div class="milestone-card">
         <div class="milestone-header">
             <span>🏆 Season Target Progress</span>
-            <span id="milestonePct" style="color: var(--gold-bright);">26.5%</span>
+            <span id="milestonePct" style="color: var(--gold-bright);">18.6% ($371 / $2,000)</span>
         </div>
         <div class="bar-bg">
-            <div class="bar-fill" id="milestoneBar" style="width: 26.5%;"></div>
+            <div class="bar-fill" id="milestoneBar" style="width: 18.6%;"></div>
         </div>
         <div style="font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.4;">
             Once the Season Goal is reached, a <b>7-Day Final Countdown</b> triggers automatically! 3 non-winning players also win a free Second-Chance ticket.
@@ -427,12 +480,18 @@
         let hasPaidTicket = false;
         let channelStepJoined = false;
         let countdownEndTimestamp = 0;
-        let tickerMessages = [
-            "🪙 Season #1 is LIVE! Enter for 1 USDT (BEP20)",
-            "👑 The grand prize pool grows with every ticket entered!",
-            "🧩 Invite 4 friends to unlock a free bonus ticket!"
+
+        // Initial masked depositors (1 vowel visible + blurred xxxx)
+        const seededDepositors = [
+            `@a<span class="masked-txt">xxxx</span> deposited 1 USDT`,
+            `@e<span class="masked-txt">xxxx</span> deposited 1 USDT`,
+            `@i<span class="masked-txt">xxxx</span> deposited 1 USDT`,
+            `@o<span class="masked-txt">xxxx</span> deposited 1 USDT`,
+            `@u<span class="masked-txt">xxxx</span> deposited 1 USDT`,
+            `@y<span class="masked-txt">xxxx</span> deposited 1 USDT`
         ];
-        let tickerIdx = 0;
+        let depositFeedList = [...seededDepositors];
+        let depositIdx = 0;
 
         new QRCode(document.getElementById("qrcode"), {
             text: refLink,
@@ -560,12 +619,13 @@
         }
         setInterval(updateTimerDisplay, 1000);
 
+        // Rotate verified depositors feed (clear names for real depositors + masked seeded names)
         setInterval(() => {
-            if (tickerMessages.length > 0) {
-                tickerIdx = (tickerIdx + 1) % tickerMessages.length;
-                document.getElementById('liveTicker').innerText = tickerMessages[tickerIdx];
+            if (depositFeedList.length > 0) {
+                depositIdx = (depositIdx + 1) % depositFeedList.length;
+                document.getElementById('depositFeedText').innerHTML = depositFeedList[depositIdx];
             }
-        }, 3800);
+        }, 3200);
 
         async function loadState() {
             try {
@@ -577,12 +637,14 @@
                 hasPaidTicket = data.has_paid_ticket;
                 countdownEndTimestamp = data.countdown_end;
 
-                const pct = Math.min(100, (data.total_collected / data.target_goal) * 100).toFixed(1);
-                document.getElementById('milestonePct').innerText = `${pct}% ($${data.total_collected.toLocaleString()} / $${data.target_goal.toLocaleString()})`;
+                // Use prize_pool ($371) for milestone so the 30% cut is never exposed
+                const displayPool = Math.floor(data.prize_pool);
+                const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
+                document.getElementById('milestonePct').innerText = `${pct}% ($${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()})`;
                 document.getElementById('milestoneBar').style.width = `${pct}%`;
 
                 if (countdownEndTimestamp === 0) {
-                    document.getElementById('drawStatus').innerText = `🎯 Milestone: $${data.total_collected.toLocaleString()} / $${data.target_goal.toLocaleString()} USDT`;
+                    document.getElementById('drawStatus').innerText = `🎯 Goal: $${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()} USDT`;
                 } else {
                     updateTimerDisplay();
                 }
@@ -611,8 +673,12 @@
                     `).join('');
                 }
 
+                // Merge real unmasked depositors from backend with masked seeded depositors
                 if (data.live_feed && data.live_feed.length > 0) {
-                    tickerMessages = data.live_feed;
+                    const realDeposits = data.live_feed.map(item =>
+                        `<span style="color: var(--gold-bright); font-weight: 700;">✅ ${item}</span>`
+                    );
+                    depositFeedList = [...realDeposits, ...seededDepositors];
                 }
 
                 const histDiv = document.getElementById('winnersHistory');
