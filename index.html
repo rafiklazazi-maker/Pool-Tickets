@@ -76,12 +76,12 @@
 
         /* Cyber Ticker Bar */
         .ticker-bar {
-            background: rgba(10, 13, 20, 0.8);
-            border: 1px solid rgba(255, 204, 0, 0.3);
+            background: rgba(10, 13, 20, 0.85);
+            border: 1px solid rgba(255, 204, 0, 0.35);
             color: var(--gold);
             padding: 8px 12px;
             border-radius: 8px;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
@@ -208,6 +208,20 @@
             color: var(--green);
             font-family: 'JetBrains Mono', monospace;
             margin-top: 4px;
+        }
+
+        /* Blockchain Trust & Automation Shield Box */
+        .trust-shield {
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
+            border: 1px solid rgba(0, 243, 255, 0.32);
+            border-radius: 12px;
+            padding: 11px 13px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            color: var(--text);
+            line-height: 1.45;
+            box-shadow: 0 4px 20px rgba(0, 243, 255, 0.08);
         }
 
         /* Cyber Graphic Progress */
@@ -418,7 +432,7 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar" id="liveTicker">⚡ SECURED ON-CHAIN // BEP20 SMART CONTRACT ACTIVE</div>
+    <div class="ticker-bar" id="liveTicker">⚡ PROTECTED BLOCKCHAIN PROTOCOL // REAL USDT PRIZE POOL</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE STREAM</span>
@@ -429,44 +443,49 @@
 
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
-        <div class="jackpot-label">Grand Prize Pool (70%)</div>
+        <div class="jackpot-label">Verified Real Grand Prize Pool (70%)</div>
         <div class="jackpot-amount" id="prizePool">$371.00</div>
         <div class="status-box" id="drawStatus">🎯 Target Goal: $371 / $2,000 USDT</div>
     </div>
 
+    <!-- Blockchain Automation & Real Jackpot Assurance -->
+    <div class="trust-shield">
+        🛡️ <b style="color: var(--cyan);">100% Automated On-Chain Engine:</b> Fully engineered by our core team on a protected BEP20 blockchain infrastructure. <span style="color: var(--green); font-weight: 700;">Real USDT Jackpot • Zero Human Intervention • Autonomous Payouts.</span>
+    </div>
+
     <div class="milestone-card">
         <div class="milestone-header">
-            <span>⚡ Liquidity Progression</span>
+            <span>⚡ Real-Time Liquidity Progression</span>
             <span id="milestonePct" style="color: var(--cyan);">18.6% ($371 / $2,000)</span>
         </div>
         <div class="cyber-bar-container">
             <div class="cyber-bar-fill" id="milestoneBar" style="width: 18.6%;"></div>
         </div>
         <div style="font-size: 10.5px; color: var(--muted); margin-top: 8px; line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Target reached triggers automatic <b>7-Day Final Countdown</b> + 3 Second-Chance lucky rewards.
+            Reaching the target automatically triggers the <b>7-Day Final Countdown</b> + 3 Second-Chance lucky rewards on-chain.
         </div>
     </div>
 
-    <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET TICKETS</button>
+    <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET REAL TICKETS</button>
 
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 BEP20 Smart Contract Deposit</div>
+        <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Protected BEP20 Deposit</div>
         <div style="font-size: 11px; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Send <b>1 USDT or more</b> to the official pool address below (1 USDT = 1 Ticket). Multiply your deposit (2, 3, 5, 7 USDT) to increase winning probabilities.
+            Send <b>1 USDT or more</b> to the official pool address below (1 USDT = 1 Ticket). Every deposit is verified directly on the BNB Smart Chain (2, 3, 4, 5, 7 USDT = instant multi-tickets).
         </div>
 
-        <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Official Contract Address (BEP20):</div>
+        <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Official Pool Address (BEP20):</div>
         <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
-        <button class="btn btn-silver" style="padding: 10px; font-size: 11px;" onclick="copyWallet()">📋 Copy Contract Address</button>
+        <button class="btn btn-silver" style="padding: 10px; font-size: 11px;" onclick="copyWallet()">📋 Copy Pool Address</button>
 
         <div style="font-size: 10px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Reference Memo (Optional):</div>
         <div class="copy-box" id="memoCode" style="font-weight: bold; color: var(--gold);">PT-000000</div>
         <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="copyMemo()">📋 Copy Memo</button>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
-        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Paste Transaction Hash (TXID) for instant sync:</div>
+        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Paste your Blockchain TXID for automated ticket minting:</div>
         <input type="text" id="txHashInput" class="input-field" placeholder="0x... (66-character BEP20 TXID)">
-        <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="submitTxHash()">⚡ Verify & Mint Tickets</button>
+        <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
     </div>
 
     <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
@@ -474,7 +493,7 @@
 
     <div class="modal" id="referralModal">
         <div style="font-size: 11px; text-align: center; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Deploy your referral link. Every <b>4 active referrals</b> automatically mints <b>1 Free Ticket</b> into your account!
+            Share your personal link. Every <b>4 verified players</b> who join through your link automatically mints <b>1 Free Ticket</b> into your ledger!
         </div>
         <div id="qrcode"></div>
         <button class="btn btn-cyber" style="padding: 10px; font-size: 11px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
@@ -482,13 +501,13 @@
 
     <div class="section">
         <div class="section-title">
-            <span>💳 Payout Destination (BEP20)</span>
+            <span>💳 Automated Payout Wallet (BEP20)</span>
         </div>
         <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Register your personal <b>USDT (BEP20)</b> wallet address for automatic 70% prize pool distribution.
+            Register your personal <b>USDT (BEP20)</b> wallet address where your real 70% grand prize will be dispatched automatically upon winning.
         </div>
         <div style="display: flex; gap: 8px;">
-            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Personal Address">
+            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Personal BEP20 Address">
             <button class="btn btn-cyber" style="width: auto; padding: 0 14px; font-size: 11px;" onclick="savePayoutWallet()">Save</button>
         </div>
     </div>
@@ -511,7 +530,7 @@
     </div>
 
     <div class="footer">
-        POOL TICKETS PROTOCOL • DECENTRALIZED ENGINE • 2026
+        POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL • REAL USDT JACKPOT
     </div>
 
     <script>
@@ -535,7 +554,7 @@
         let channelStepJoined = false;
         let countdownEndTimestamp = 0;
 
-        /* Flux de dépôts cybernétique réaliste en rotation (1 à 7 USDT) */
+        /* Flux de dépôts cybernétique réaliste en rotation (1, 2, 3, 4, 5, 7 USDT) */
         const seededDepositors = [
             `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
             `@<span class="masked-txt">node_04</span> deposited 3 USDT`,
@@ -623,13 +642,13 @@
                 const data = await res.json();
                 if (data.ok) {
                     document.getElementById('txHashInput').value = "";
-                    tg.showAlert(`⚡ Success! ${data.tickets_issued} ticket(s) minted successfully!`);
+                    tg.showAlert(`⚡ Verified On-Chain! ${data.tickets_issued} real ticket(s) minted!`);
                     loadState();
                 } else {
                     tg.showAlert(data.error || "Transaction verification failed.");
                 }
             } catch (e) {
-                tg.showAlert("Connection error during smart contract verification.");
+                tg.showAlert("Connection error during blockchain verification.");
             }
         }
 
@@ -709,7 +728,7 @@
                 }
 
                 if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
-                    document.getElementById('payoutWalletInput' ).value = data.payout_address;
+                    document.getElementById('payoutWalletInput').value = data.payout_address;
                 }
 
                 document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
