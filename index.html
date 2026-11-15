@@ -1,259 +1,729 @@
-import os
-import random
-import asyncio
-import aiohttp
-from aiohttp import web
-from aiogram import Bot, Dispatcher
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.filters import CommandStart
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POOL TICKETS // CYBER_CORE</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
-# Configuration des tokens et variables d'environnement
-BOT_TOKEN = os.getenv("BOT_TOKEN", "63114:AAGCOIED8xpfCtVPhjL9FruCkwbtSHUtAiu")
-RECEIVE_WALLET = os.getenv("RECEIVE_WALLET", "0x93872Bde7652373c87Afd53b6659054cCAb060D2")
-BSCSCAN_API_KEY = os.getenv("BSCSCAN_API_KEY", "")
+        :root {
+            --bg: #030407;
+            --card: #0a0d14;
+            --cyan: #00f3ff;
+            --green: #00ff66;
+            --gold: #ffcc00;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --border-cyan: rgba(0, 243, 255, 0.3);
+            --border-green: rgba(0, 255, 102, 0.3);
+        }
 
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://lazazirafik.github.io/pool-tickets/")
-CHANNEL_ID = os.getenv("CHANNEL_ID", "@NFyi_gZV3zM5ODZk")
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-# Contrat officiel du token USDT sur le réseau BSC (BEP20)
-USDT_CONTRACT_BEP20 = "0x55d398326f99059ff775485246999027b3197955".lower()
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 100vh;
+            background-image: 
+                linear-gradient(rgba(3, 4, 7, 0.94), rgba(3, 4, 7, 0.94)),
+                radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.12) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
 
-# Fonction pour flouter les pseudos (ex: @cyber_vip -> @cyb***ip)
-def mask_username(username):
-    if not username:
-        return "@player***"
-    clean_name = username.replace("@", "")
-    if len(clean_name) <= 4:
-        return f"@{clean_name[:1]}***"
-    return f"@{clean_name[:2]}***{clean_name[-2:]}"
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-# Stockage en mémoire
-app_state = {
-    "season": 1,
-    "prize_pool": 180.0,
-    "total_collected": 180.0,
-    "target_goal": 2000.0,
-    "users": {},
-    "live_feed": [
-        "⚡ @cyb***ip a minté 5 tickets pour 5 USDT !",
-        "💎 Nouvelle contribution de @cry***ng (10 USDT - 10 tickets)",
-        "🚀 @wh***07 a minté 3 tickets pour 3 USDT !",
-        "⚡ @sat***99 a minté 8 tickets pour 8 USDT !"
-    ],
-    "history": [],
-    "processed_txs": set() # Pour éviter la double utilisation d'un même hash de transaction
-}
+        .logo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+            letter-spacing: 1px;
+        }
 
-# --- Texte d'accueil ---
-WELCOME_TEXT = (
-    "🏆 **WELCOME TO POOL TICKETS — THE ULTIMATE DECENTRALIZED PRIZE POOL!** 🪙\n\n"
-    "Experience the most thrilling and rewarding community-driven prize pool on Telegram. Here is how you can jump in, play, and win big!\n\n"
-    "📌 **How It Works & Dynamic Growth**\n"
-    "1️⃣ **Enter the Pool:** Purchase a ticket for just 1 USDT (BEP20) to enter the active season.\n"
-    "2️⃣ **Growing Jackpots & Odds:** With each new season, the initial prize pool and target goals scale up, maximizing rewards and boosting your winning potential.\n"
-    "3️⃣ **Second-Chance Bonus:** At the end of every season, 3 lucky losing players are randomly drawn to receive a FREE ticket for the next season!\n"
-    "4️⃣ **7-Day Final Countdown:** As soon as the season's target goal is reached, an intense 7-day final sprint kicks off before the grand draw.\n\n"
-    "🧩 **Earn More with Referrals & Perks**\n"
-    "• **Referral Rewards:** Invite your friends to join the pool! Every time your invitees enter, you collect shards. Complete 4/4 referral shards to unlock a free bonus ticket instantly.\n"
-    "• **VIP Channel Bonus:** Once you've secured your first paid ticket, head over to the app to claim your exclusive VIP Channel reward!\n\n"
-    "You don't just win 1 USDT — you **pay 1 USDT** and you can win **1000 USDT or more**! The more tickets you have, the more chances you get when the roll happens. One of your tickets might just be selected!\n\n"
-    "Win the jackpot and become rich — well, not totally, but it is okay for a weekend, or I don't know, win 1 USDT, you can win 1000! It is okay, bye! 👋"
-)
+        .logo-title span { color: var(--cyan); }
 
-# --- Middleware CORS ---
-@web.middleware
-async def cors_middleware(request, handler):
-    if request.method == "OPTIONS":
-        return web.Response(headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type"
-        })
-    try:
-        response = await handler(request)
-    except Exception as e:
-        response = web.json_response({"ok": False, "error": str(e)}, status=500)
-    
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    return response
+        .user-badge {
+            background: rgba(10, 13, 20, 0.9);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--cyan);
+            border: 1px solid var(--border-cyan);
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-# --- Configuration du Bot Telegram ---
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
+        .ticker-bar {
+            background: rgba(10, 13, 20, 0.85);
+            border: 1px solid rgba(255, 204, 0, 0.35);
+            color: var(--gold);
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+        }
 
-# Routes API Web
-async def handle_root(request):
-    return web.Response(text="Pool Tickets Backend Running (Direct Web3 BscScan)!")
+        .deposits-bar {
+            background: rgba(8, 11, 17, 0.95);
+            border: 1px solid var(--border-green);
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 10.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
 
-async def handle_state(request):
-    user_id = request.query.get("user_id", "100001")
-    if user_id not in app_state["users"]:
-        app_state["users"][user_id] = {"tickets": [], "payout_address": "", "fragments": 0}
-    u_data = app_state["users"][user_id]
-    has_paid = len(u_data["tickets"]) > 0
+        .deposit-tag {
+            background: rgba(0, 255, 102, 0.15);
+            color: var(--green);
+            border: 1px solid rgba(0, 255, 102, 0.4);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 8.5px;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+        }
 
-    return web.json_response({
-        "season": app_state["season"],
-        "prize_pool": app_state["prize_pool"],
-        "total_collected": app_state["total_collected"],
-        "target_goal": app_state["target_goal"],
-        "has_paid_ticket": has_paid,
-        "payout_address": u_data["payout_address"],
-        "fragments": u_data["fragments"],
-        "my_tickets": u_data["tickets"],
-        "history": app_state["history"],
-        "live_feed": app_state["live_feed"],
-        "receive_wallet": RECEIVE_WALLET
-    })
+        .deposit-feed-text {
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+        }
 
-# --- Route de Vérification Directe BscScan (Web3 Direct Pay) ---
-async def handle_verify_tx(request):
-    try:
-        body = await request.json()
-        user_id = str(body.get("user_id", "100001"))
-        tx_hash = body.get("tx_hash", "").strip().lower()
+        .blurred-username {
+            filter: blur(4px);
+            user-select: none;
+            opacity: 0.8;
+            transition: filter 0.3s ease;
+        }
 
-        if not tx_hash:
-            return web.json_response({"ok": False, "error": "Hash de transaction manquant."}, status=400)
+        .jackpot-card {
+            background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
+            border: 1.5px solid var(--cyan);
+            border-radius: 14px;
+            padding: 18px 12px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
+        }
 
-        if tx_hash in app_state["processed_txs"]:
-            return web.json_response({"ok": False, "error": "Cette transaction a déjà été utilisée."}, status=400)
+        .season-pill {
+            display: inline-block;
+            background: rgba(0, 243, 255, 0.12);
+            color: var(--cyan);
+            border: 1px solid var(--border-cyan);
+            padding: 2px 10px;
+            border-radius: 5px;
+            font-size: 9.5px;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
 
-        # Appel à l'API BscScan pour vérifier le transfert BEP20 (USDT)
-        bscscan_url = (
-            f"https://api.bscscan.org/api?module=account&action=tokentx"
-            f"&contractaddress={USDT_CONTRACT_BEP20}"
-            f"&address={RECEIVE_WALLET}"
-            f"&page=1&offset=5&sort=desc"
-            f"&apikey={BSCSCAN_API_KEY}"
-        )
+        .jackpot-label {
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            font-weight: 700;
+        }
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(bscscan_url) as resp:
-                data = await resp.json()
+        .jackpot-amount {
+            font-size: 36px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+            margin: 4px 0;
+            font-family: 'Orbitron', sans-serif;
+        }
 
-                if data.get("status") != "1":
-                    return web.json_response({"ok": False, "error": "Erreur lors de la vérification sur la blockchain BSC."}, status=400)
+        .status-box {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 10.5px;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--green);
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-                transactions = data.get("result", [])
-                matched_tx = None
+        .blockchain-info-card {
+            background: rgba(0, 243, 255, 0.04);
+            border: 1px dashed var(--border-cyan);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 9.5px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #94a3b8;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .blockchain-info-card b {
+            color: var(--cyan);
+        }
 
-                for tx in transactions:
-                    if tx.get("hash", "").lower() == tx_hash:
-                        matched_tx = tx
-                        break
+        .milestone-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
 
-                if not matched_tx:
-                    return web.json_response({"ok": False, "error": "Transaction introuvable ou en attente sur la blockchain."}, status=400)
+        .milestone-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--muted);
+        }
 
-                # Vérification que le destinataire est bien ton wallet
-                to_addr = matched_tx.get("to", "").lower()
-                if to_addr != RECEIVE_WALLET.lower():
-                    return web.json_response({"ok": False, "error": "Le destinataire de la transaction ne correspond pas."}, status=400)
+        .cyber-bar-container {
+            position: relative;
+            background: #020305;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 1px;
+        }
 
-                # Calcul du montant (l'USDT a 18 décimales sur BSC)
-                value_wei = int(matched_tx.get("value", "0"))
-                amount_usdt = value_wei / (10 ** 18)
+        .cyber-bar-fill {
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+            height: 100%;
+            width: 9.0%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
 
-                if amount_usdt < 1.0:
-                    return web.json_response({"ok": False, "error": "Montant insuffisant (Minimum 1 USDT requis)."}, status=400)
+        .btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Orbitron', sans-serif;
+        }
 
-                # Marquer le hash comme traité
-                app_state["processed_txs"].add(tx_hash)
+        .btn:active { transform: scale(0.98); }
 
-                # Attribution des tickets
-                tickets_count = int(amount_usdt)
-                app_state["total_collected"] += tickets_count
-                app_state["prize_pool"] += tickets_count
+        .btn-cyber {
+            background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%);
+            color: #030407;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
 
-                if user_id not in app_state["users"]:
-                    app_state["users"][user_id] = {"tickets": [], "payout_address": "", "fragments": 0}
+        .btn-outline {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border-cyan);
+            font-size: 9.5px;
+        }
 
-                for _ in range(tickets_count):
-                    ticket_code = f"TICK-{user_id[-4:]}-{os.urandom(2).hex().upper()}"
-                    app_state["users"][user_id]["tickets"].append({"source": f"{tickets_count} USDT Direct Web3", "code": ticket_code})
+        .gateway-box {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
+            border: 1.5px solid var(--cyan);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
 
-                masked_user = mask_username(f"player_{user_id[-4:]}")
-                feed_msg = f"⚡ {masked_user} a minté {tickets_count} ticket(s) pour {tickets_count} USDT (Web3 Direct) !"
-                
-                app_state["live_feed"].insert(0, feed_msg)
-                if len(app_state["live_feed"]) > 10: 
-                    app_state["live_feed"].pop()
+        .custom-amount-row {
+            display: flex;
+            align-items: center;
+            background: #030407;
+            border: 1px solid var(--cyan);
+            border-radius: 8px;
+            padding: 4px 10px;
+            margin: 10px 0;
+        }
 
-                kb = InlineKeyboardMarkup(inline_keyboard=[
-                    [InlineKeyboardButton(text="📢 Rejoindre le Canal", url="https://t.me/+NFyi_gZV3zM5ODZk")]
-                ])
-                try:
-                    await bot.send_message(
-                        chat_id=CHANNEL_ID, 
-                        text=f"💎 **NOUVEAU MINT DE TICKETS !**\n\n{feed_msg}\n🎯 Cagnotte actuelle : **${int(app_state['prize_pool'])} USDT**", 
-                        reply_markup=kb, 
-                        parse_mode="Markdown"
-                    )
-                except Exception as e:
-                    print(f"Erreur d'envoi canal: {e}")
+        .custom-amount-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            outline: none;
+            width: 100%;
+        }
 
-                return web.json_response({
-                    "ok": True,
-                    "tickets_added": tickets_count,
-                    "message": f"{tickets_count} ticket(s) généré(s) avec succès !"
-                })
+        .section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
 
-    except Exception as e:
-        return web.json_response({"ok": False, "error": str(e)}, status=400)
+        .section-title {
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--cyan);
+            font-family: 'Orbitron', sans-serif;
+        }
 
-async def handle_save_wallet(request):
-    body = await request.json()
-    user_id = str(body.get("user_id"))
-    address = body.get("address")
-    if user_id in app_state["users"]:
-        app_state["users"][user_id]["payout_address"] = address
-    return web.json_response({"ok": True})
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
 
-async def handle_claim_channel(request):
-    body = await request.json()
-    user_id = str(body.get("user_id"))
-    if user_id in app_state["users"]:
-        ticket_code = f"VIP-BONUS-{os.urandom(2).hex().upper()}"
-        app_state["users"][user_id]["tickets"].append({"source": "VIP Channel Bonus", "code": ticket_code})
-        app_state["total_collected"] += 1
-        app_state["prize_pool"] += 1
-    return web.json_response({"ok": True})
+        .modal {
+            width: 100%;
+            max-width: 340px;
+            background: #080b12;
+            border: 1.5px solid var(--cyan);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 10px 40px rgba(0, 243, 255, 0.25);
+        }
 
-# --- Gestionnaires Telegram ---
-@dp.message(CommandStart())
-async def cmd_start(message: Message):
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📢 Rejoindre le Canal", url="https://t.me/+NFyi_gZV3zM5ODZk")]
-    ])
-    await message.answer(WELCOME_TEXT, reply_markup=kb, parse_mode="Markdown")
+        .input-field {
+            width: 100%;
+            background: #030407;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 9px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            outline: none;
+        }
 
-@dp.message()
-async def handle_text_messages(message: Message):
-    if not message.text:
-        return
-    text = message.text.lower().strip()
-    if text in ["hi", "hello", "salut", "bonjour"]:
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="📢 Rejoindre le Canal", url="https://t.me/+NFyi_gZV3zM5ODZk")]
-        ])
-        await message.answer(WELCOME_TEXT, reply_markup=kb, parse_mode="Markdown")
+        .ticket-item {
+            background: #030407;
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            border-left: 3px solid var(--cyan);
+        }
 
-async def on_startup(app):
-    asyncio.create_task(dp.start_polling(bot))
+        #qrcode {
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 0 auto;
+            width: fit-content;
+        }
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app = web.Application(middlewares=[cors_middleware])
-    
-    app.router.add_get("/", handle_root)
-    app.router.add_get("/api/state", handle_state)
-    app.router.add_post("/api/verify-tx", handle_verify_tx)
-    app.router.add_post("/api/save-wallet", handle_save_wallet)
-    app.router.add_post("/api/claim-channel", handle_claim_channel)
-    
-    app.on_startup.append(on_startup)
-    
-    web.run_app(app, host="0.0.0.0", port=port)
+        .empty-state {
+            text-align: center;
+            color: var(--muted);
+            font-size: 10.5px;
+            padding: 10px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 8.5px;
+            color: var(--muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-title">POOL<span>_TICKETS</span></div>
+        <div class="user-badge" id="username">@player</div>
+    </div>
+
+    <div class="ticker-bar">⚡ 1-CLICK WEB3 DIRECT CHECKOUT // NO KYC</div>
+
+    <div class="deposits-bar">
+        <span class="deposit-tag">LIVE</span>
+        <div class="deposit-feed-text" id="depositFeedText">
+            Loading live feed...
+        </div>
+    </div>
+
+    <div class="jackpot-card">
+        <div class="season-pill" id="seasonBadge">SEASON #1</div>
+        <div class="jackpot-label">Verified Real Grand Prize Pool</div>
+        <div class="jackpot-amount" id="prizePool">$180</div>
+        <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
+    </div>
+
+    <div class="blockchain-info-card">
+        🛡️ <b>WEB3 DIRECT PROTOCOL:</b> Pay securely in 1 click using MetaMask or Trust Wallet. Funds go directly to the administrator's non-custodial wallet with <b>zero KYC and absolute anonymity</b>!
+    </div>
+
+    <div class="milestone-card">
+        <div class="milestone-header">
+            <span>⚡ Real-Time Liquidity Progression</span>
+            <span id="milestonePct" style="color: var(--cyan);">9.0%</span>
+        </div>
+        <div class="cyber-bar-container">
+            <div class="cyber-bar-fill" id="milestoneBar"></div>
+        </div>
+    </div>
+
+    <div class="gateway-box">
+        <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
+            💎 1-CLICK DIRECT MINT (1 USDT = 1 TICKET)
+        </div>
+
+        <div class="custom-amount-row">
+            <input type="number" id="usdtAmountInput" value="1" min="1" step="1" oninput="syncAmount()">
+            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;">USDT</span>
+        </div>
+
+        <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="payDirectWeb3()">
+            🚀 PAY <span id="btnAmountLabel">1</span> USDT (1-CLICK)
+        </button>
+
+        <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;"></div>
+    </div>
+
+    <button class="btn btn-outline" type="button" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
+    <button class="btn btn-outline" type="button" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards)</button>
+
+    <div class="modal-backdrop" id="referralBackdrop">
+        <div class="modal">
+            <div style="font-size: 10px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
+                Share your link. Every 4 verified players mints 1 Free Ticket!
+            </div>
+            <div id="qrcode"></div>
+            <button class="btn btn-cyber" type="button" onclick="copyRefLink()">📋 Copy Referral Link</button>
+            <button class="btn btn-outline" type="button" onclick="document.getElementById('referralBackdrop').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title"><span>💳 Payout Wallet (BEP20)</span></div>
+        <div style="display: flex; gap: 6px;">
+            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... BEP20 Address">
+            <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span>🎟️ Active Tickets Ledger</span>
+            <span id="ticketCount" style="color: var(--cyan);">0</span>
+        </div>
+        <div id="ticketsList">
+            <div class="empty-state">NO ACTIVE TICKETS FOUND</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🏆 Hall of Fame</div>
+        <div id="winnersHistory">
+            <div class="empty-state">SEASON #1 IN PROGRESS</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        POOL TICKETS • PROTECTED PROTOCOL
+    </div>
+
+    <script>
+        const tg = window.Telegram?.WebApp || {};
+        try {
+            if (typeof tg.expand === 'function') tg.expand();
+            if (typeof tg.ready === 'function') tg.ready();
+        } catch(e) {}
+
+        const API_BASE = "https://pool-tickets-backend.onrender.com";
+        const BOT_USERNAME = "PoolTickets_bot";
+        const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
+
+        const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
+        const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
+        const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
+
+        document.getElementById('username').innerText = username;
+
+        let selectedAmount = 1;
+        let hasPaidTicket = false;
+        let channelStepJoined = false;
+        let cachedReceiveWallet = "";
+
+        try {
+            new QRCode(document.getElementById("qrcode"), { text: refLink, width: 110, height: 110 });
+        } catch(e) {}
+
+        function notify(msg) {
+            if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg);
+            else alert(msg);
+        }
+
+        function syncAmount() {
+            let val = parseFloat(document.getElementById('usdtAmountInput').value);
+            if (isNaN(val) || val < 1) val = 1;
+            selectedAmount = val;
+            document.getElementById('btnAmountLabel').innerText = val;
+        }
+
+        async function payDirectWeb3() {
+            syncAmount();
+            const statusEl = document.getElementById('payStatus');
+            const btnEl = document.getElementById('payActionBtn');
+
+            if (!cachedReceiveWallet) {
+                notify("⚠️ Wallet de réception non chargé. Veuillez patienter...");
+                return;
+            }
+
+            btnEl.disabled = true;
+            statusEl.style.color = "var(--cyan)";
+            statusEl.innerText = "⏳ Connexion au portefeuille Web3...";
+
+            try {
+                if (!window.ethereum) {
+                    throw new Error("Aucun portefeuille Web3 détecté (Ouvrez depuis MetaMask ou Trust Wallet).");
+                }
+
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+
+                const network = await provider.getNetwork();
+                if (network.chainId !== 56) {
+                    statusEl.innerText = "⚠️ Basculement sur le réseau BSC requis...";
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x38' }],
+                        });
+                    } catch (switchError) {
+                        throw new Error("Veuillez basculer manuellement votre portefeuille sur le réseau Binance Smart Chain (BSC).");
+                    }
+                }
+
+                statusEl.innerText = "⏳ Préparation du transfert USDT (BEP20)...";
+
+                const usdtContractAddress = "0x55d398326f99059ff775485246999027b3197955";
+                const erc20Abi = [
+                    "function transfer(address to, uint256 amount) public returns (bool)"
+                ];
+
+                const usdtContract = new ethers.Contract(usdtContractAddress, erc20Abi, signer);
+                const parsedAmount = ethers.utils.parseUnits(selectedAmount.toString(), 18);
+
+                statusEl.innerText = "✍️ Veuillez signer la transaction dans votre wallet...";
+
+                const tx = await usdtContract.transfer(cachedReceiveWallet, parsedAmount);
+
+                statusEl.innerText = "🔄 Transaction envoyée ! Validation en cours...";
+                const receipt = await tx.wait();
+
+                statusEl.style.color = "var(--green)";
+                statusEl.innerText = "✅ Transaction validée ! Vérification serveur...";
+
+                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        user_id: user.id, 
+                        tx_hash: receipt.transactionHash 
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.ok) {
+                    statusEl.style.color = "var(--green)";
+                    statusEl.innerText = `🎉 Succès ! ${data.tickets_added} ticket(s) minté(s) !`;
+                    loadState();
+                } else {
+                    statusEl.style.color = "var(--gold)";
+                    statusEl.innerText = `❌ Erreur serveur : ${data.error || "Validation échouée"}`;
+                }
+
+            } catch (err) {
+                console.error(err);
+                statusEl.style.color = "var(--gold)";
+                statusEl.innerText = `⚠️ ${err.reason || err.message || "Erreur de paiement"}`;
+            } finally {
+                btnEl.disabled = false;
+            }
+        }
+
+        function copyRefLink() {
+            navigator.clipboard.writeText(refLink);
+            notify("Referral link copied.");
+        }
+
+        function toggleReferral() {
+            if (!hasPaidTicket) {
+                notify("🔒 PROTOCOL LOCKED: Mint at least 1 ticket first.");
+                return;
+            }
+            document.getElementById('referralBackdrop').style.display = 'flex';
+        }
+
+        async function savePayoutWallet() {
+            const addr = document.getElementById('payoutWalletInput').value.trim();
+            if (!addr.startsWith("0x") || addr.length !== 42) {
+                notify("Invalid BEP20 address.");
+                return;
+            }
+            try {
+                await fetch(`${API_BASE}/api/save-wallet`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, address: addr })
+                });
+                notify("✅ Saved!");
+            } catch (e) {}
+        }
+
+        async function handleChannelAction() {
+            if (!hasPaidTicket) {
+                notify("🔒 Mint 1 ticket first.");
+                return;
+            }
+            if (!channelStepJoined) {
+                if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(CHANNEL_LINK);
+                else window.open(CHANNEL_LINK, '_blank');
+                channelStepJoined = true;
+                document.getElementById('channelBtn').innerText = "✅ Click Again to Claim";
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/claim-channel`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    notify("🎉 Bonus Claimed!");
+                    loadState();
+                }
+            } catch (e) {}
+        }
+
+        let feedIndex = 0;
+        let cachedFeed = [];
+
+        function formatLiveFeedItem(itemText) {
+            return itemText.replace(/(@[a-zA-Z0-9_]+)/g, '<span class="blurred-username">$1</span>');
+        }
+
+        setInterval(() => {
+            if (cachedFeed.length > 0) {
+                feedIndex = (feedIndex + 1) % cachedFeed.length;
+                const feedEl = document.getElementById('depositFeedText');
+                if (feedEl) feedEl.innerHTML = formatLiveFeedItem(cachedFeed[feedIndex]);
+            }
+        }, 4000);
+
+        async function loadState() {
+            try {
+                const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
+                const data = await res.json();
+
+                if (data.receive_wallet) {
+                    cachedReceiveWallet = data.receive_wallet;
+                }
+
+                document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
+                hasPaidTicket = data.has_paid_ticket;
+
+                document.getElementById('prizePool').innerText = `$${Math.round(data.prize_pool)}`;
+                document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${data.total_collected} / $${data.target_goal} USDT`;
+
+                const pct = Math.min(100, (data.total_collected / data.target_goal) * 100).toFixed(1);
+                document.getElementById('milestonePct').innerText = `${pct}%`;
+                document.getElementById('milestoneBar').style.width = `${pct}%`;
+
+                if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
+                    document.getElementById('payoutWalletInput').value = data.payout_address;
+                }
+                document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
+
+                const myCount = data.my_tickets.length;
+                document.getElementById('ticketCount').innerText = myCount;
+                if (myCount > 0) {
+                    document.getElementById('ticketsList').innerHTML = data.my_tickets.map(t => `
+                        <div class="ticket-item">
+                            <span>${t.source}</span>
+                            <b style="color: var(--cyan);">${t.code}</b>
+                        </div>
+                    `).join('');
+                }
+
+                if (data.history && data.history.length > 0) {
+                    document.getElementById('winnersHistory').innerHTML = data.history.map(h => `
+                        <div class="ticket-item">
+                            <span>Season #${h.season} (${h.winner})</span>
+                            <b style="color: var(--gold);">$${h.prize}</b>
+                        </div>
+                    `).join('');
+                }
+
+                if (data.live_feed && data.live_feed.length > 0) {
+                    cachedFeed = data.live_feed;
+                    document.getElementById('depositFeedText').innerHTML = formatLiveFeedItem(cachedFeed[0]);
+                }
+            } catch (e) {}
+        }
+
+        loadState();
+        setInterval(loadState, 8000);
+    </script>
+</body>
+</html>
