@@ -206,6 +206,7 @@
             height: 100%;
             width: 9.0%;
             border-radius: 3px;
+            transition: width 0.5s ease;
         }
 
         .btn {
@@ -245,30 +246,6 @@
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
         }
 
-        .amount-selector {
-            display: flex;
-            gap: 6px;
-            margin: 10px 0;
-        }
-
-        .amt-chip {
-            flex: 1;
-            background: #030407;
-            border: 1px solid var(--border-cyan);
-            color: var(--cyan);
-            padding: 8px 4px;
-            border-radius: 6px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .amt-chip.active {
-            background: var(--cyan);
-            color: #030407;
-        }
-
         .custom-amount-row {
             display: flex;
             align-items: center;
@@ -276,7 +253,7 @@
             border: 1px solid var(--cyan);
             border-radius: 8px;
             padding: 4px 10px;
-            margin-bottom: 10px;
+            margin: 10px 0;
         }
 
         .custom-amount-row input {
@@ -406,7 +383,7 @@
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
         <div class="jackpot-label">Verified Real Grand Prize Pool</div>
-        <div class="jackpot-amount" id="prizePool">$180.00</div>
+        <div class="jackpot-amount" id="prizePool">$126.00</div>
         <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
     </div>
 
@@ -422,14 +399,7 @@
 
     <div class="gateway-box">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
-            💎 PAIEMENT OFFICIEL INSTANTANÉ (1 USDT = 1 TICKET)
-        </div>
-
-        <div class="amount-selector">
-            <button type="button" class="amt-chip active" onclick="setAmount(1, this)">1 USDT</button>
-            <button type="button" class="amt-chip" onclick="setAmount(5, this)">5 USDT</button>
-            <button type="button" class="amt-chip" onclick="setAmount(20, this)">20 USDT</button>
-            <button type="button" class="amt-chip" onclick="setAmount(100, this)">100 USDT</button>
+            💎 PAIEMENT INSTANTANÉ (1 USDT = 1 TICKET)
         </div>
 
         <div class="custom-amount-row">
@@ -498,6 +468,7 @@
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
+        const initData = tg.initData || "";
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
         const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
@@ -517,20 +488,11 @@
             else alert(msg);
         }
 
-        function setAmount(val, btnEl) {
-            selectedAmount = val;
-            document.getElementById('usdtAmountInput').value = val;
-            document.getElementById('btnAmountLabel').innerText = val;
-            document.querySelectorAll('.amt-chip').forEach(c => c.classList.remove('active'));
-            if (btnEl) btnEl.classList.add('active');
-        }
-
         function syncAmount() {
             let val = parseFloat(document.getElementById('usdtAmountInput').value);
             if (isNaN(val) || val < 1) val = 1;
             selectedAmount = val;
             document.getElementById('btnAmountLabel').innerText = val;
-            document.querySelectorAll('.amt-chip').forEach(c => c.classList.remove('active'));
         }
 
         async function createMerchantInvoice() {
@@ -546,7 +508,7 @@
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, amount: selectedAmount })
+                    body: JSON.stringify({ init_data: initData, user_id: user.id, amount: selectedAmount })
                 });
                 const data = await res.json();
 
@@ -596,7 +558,7 @@
                 await fetch(`${API_BASE}/api/save-wallet`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, address: addr })
+                    body: JSON.stringify({ init_data: initData, user_id: user.id, address: addr })
                 });
                 notify("✅ Saved!");
             } catch (e) {}
@@ -618,7 +580,7 @@
                 const res = await fetch(`${API_BASE}/api/claim-channel`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id })
+                    body: JSON.stringify({ init_data: initData, user_id: user.id })
                 });
                 const data = await res.json();
                 if (data.ok) {
