@@ -446,14 +446,14 @@
         <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('buyModal')">Fermer</button>
     </div>
 
-    <!-- Modale dédiée aux Portefeuilles pour éviter les blocages (Fix Bug) -->
+    <!-- Modale anti-blocage pour les portefeuilles -->
     <div class="modal" id="walletModal">
         <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;" id="walletModalTitle">🔌 Connexion...</div>
         <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;" id="walletModalDesc">
-            Établissement d'une liaison sécurisée avec le portefeuille...
+            Établissement d'une liaison sécurisée...
         </div>
         <div id="walletModalStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
-        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" id="walletActionBtn" onclick="createSecureInvoice()">Lancer la facture sécurisée</button>
+        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" id="walletActionBtn" onclick="createSecureInvoice()">🚀 Lancer la Smart Invoice Sécurisée</button>
         <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('walletModal')">Fermer</button>
     </div>
 
@@ -593,21 +593,27 @@
             }
         }
 
-        // Gestion propre de la modale de portefeuille sans bloquer l'interface
+        // Gestion propre et sans bug de TOUS les portefeuilles (Tonkeeper, MetaMask, etc.)
         function payWithWallet(walletName) {
-            document.getElementById('walletModalTitle').innerText = `🔌 Connexion : ${walletName}`;
-            document.getElementById('walletModalDesc').innerText = `Connexion en cours via ${walletName}. Si l'application externe ne s'ouvre pas automatiquement, utilisez la facture intelligente sécurisée.`;
-            document.getElementById('walletModalStatus').innerHTML = "";
+            const modalTitle = document.getElementById('walletModalTitle');
+            const modalDesc = document.getElementById('walletModalDesc');
+            const walletStatus = document.getElementById('walletModalStatus');
+
+            if (!modalTitle) return;
+
+            modalTitle.innerText = `🔌 Connexion : ${walletName}`;
+            modalDesc.innerText = `Tentative de liaison avec ${walletName}... Si l'application externe ne répond pas instantanément, basculez sur la facture sécurisée.`;
+            walletStatus.innerHTML = "⏳ Connexion en cours...";
+            
             toggleModal('walletModal');
 
-            // Timeout anti-blocage (sécurité UX)
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            // Timeout de sécurité anti-blocage (évite le freeze de l'interface)
             setTimeout(() => {
                 const statusEl = document.getElementById('walletModalStatus');
-                if (statusEl && statusEl.innerHTML === "") {
-                    statusEl.innerHTML = isMobile ? "⚠️ Application externe non détectée. Cliquez ci-dessous." : "💡 Mode test PC : utilisez la passerelle directe.";
+                if (statusEl) {
+                    statusEl.innerHTML = "💡 Prêt via la passerelle universelle Smart Invoice.";
                 }
-            }, 2500);
+            }, 1500);
         }
 
         async function savePayoutWallet() {
