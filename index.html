@@ -334,6 +334,36 @@
             text-transform: uppercase;
         }
 
+        .wallets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .wallet-btn {
+            background: rgba(3, 4, 7, 0.85);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            color: var(--text);
+            font-size: 10.5px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .wallet-btn:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 243, 255, 0.08);
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.2);
+        }
+
         .section {
             background: var(--card);
             border-radius: 14px;
@@ -488,9 +518,16 @@
     <div class="smart-invoice-cta">
         <div class="smart-badge">⚡ SMART INVOICE PROTOCOL ACTIVE</div>
         <div style="font-size: 11.5px; color: var(--text); font-weight: 700; margin-bottom: 10px; font-family: 'Plus Jakarta Sans', sans-serif;">
-            Achat instantané et sécurisé en 1 clic. Vos tickets sont mintés automatiquement dès confirmation sur la blockchain !
+            Achat instantané et sécurisé en 1 clic. Choisissez votre passerelle ou portefeuille préféré :
         </div>
-        <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Générer la Smart Invoice)</button>
+        <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
+
+        <div class="wallets-grid">
+            <button class="wallet-btn" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
+            <button class="wallet-btn" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
+            <button class="wallet-btn" onclick="payWithWallet('Binance Pay')">🟡 Binance Pay</button>
+            <button class="wallet-btn" onclick="payWithWallet('WalletConnect')">🔗 WalletConnect</button>
+        </div>
     </div>
 
     <div class="modal" id="buyModal">
@@ -643,6 +680,16 @@
                 console.error(err);
                 statusDiv.innerHTML = `❌ Erreur de connexion au serveur de paiement.`;
             }
+        }
+
+        function payWithWallet(walletName) {
+            const msg = `🔌 Connexion à ${walletName} en cours...\nLancement de la passerelle de paiement sécurisée pour 1 USDT (BEP20).`;
+            if (tg && typeof tg.showAlert === 'function') {
+                tg.showAlert(msg);
+            } else {
+                alert(msg);
+            }
+            createSecureInvoice();
         }
 
         async function savePayoutWallet() {
