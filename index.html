@@ -468,7 +468,7 @@
                     💡 PAID FROM ANOTHER DEVICE? (E.G. SISTER'S PHONE)
                 </div>
                 <div style="font-size: 8.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; line-height: 1.3; margin-bottom: 6px;">
-                    If you scanned the QR code or sent funds from another phone, your Telegram account isn't linked to the wallet automatically. <b>You can safely claim your tickets instantly</b> by pasting your transaction hash (Tx Hash / Rx Hash) below:
+                    If you scanned the QR code or sent funds from another phone, your Telegram account isn't linked to the wallet automatically. <b>You can safely claim your tickets instantly</b> by pasting your transaction hash (Tx Hash / TxID) below:
                 </div>
                 <div style="display: flex; gap: 4px;">
                     <input type="text" id="externalTxInput" class="input-field" placeholder="0x... Transaction Hash (Tx Hash)">
@@ -480,7 +480,7 @@
         </div>
     </div>
 
-    <!-- SECTION JACKPOT RECEIVE WALLET (CORRIGÉ : ADRESSE DE RÉCEPTION DU CLIENT POUR LE JACKPOT) -->
+    <!-- SECTION JACKPOT RECEIVE WALLET -->
     <div class="section" style="border: 1px solid var(--gold);">
         <div class="section-title"><span style="color: var(--gold);">💳 JACKPOT RECEIVE WALLET (BEP20) - REQUIRED</span></div>
         <div style="font-size: 9px; color: var(--muted); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">
@@ -562,7 +562,6 @@
             if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
                 notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before paying so we know where to send your winnings!");
                 
-                // SCROLL AUTOMATIQUE : Empêche le clavier de cacher le champ
                 document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('payoutWalletInput').focus();
                 return;
@@ -650,7 +649,6 @@
             if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
                 notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before viewing deposit details!");
                 
-                // SCROLL AUTOMATIQUE ICI AUSSI
                 document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('payoutWalletInput').focus();
                 return;
