@@ -393,7 +393,7 @@
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            Waiting for live feed...
+            Loading live feed...
         </div>
     </div>
 
@@ -404,7 +404,6 @@
         <div class="status-box" id="drawStatus">🎯 Target Goal: 183.7 / 2,000 USDT</div>
     </div>
 
-    <!-- Texte marketing complet conservé : Blockchain non centralisée, paiement 100% autonome sans accord de l'admin, zéro KYC, anonymat total, montants personnalisables -->
     <div class="blockchain-info-card">
         🛡️ <b>WEB3 DIRECT PROTOCOL:</b> 100% autonomous decentralized blockchain system. Funds transfer directly and automatically to the non-custodial wallet with <b>zero KYC, absolute anonymity, and zero admin approval required</b>! Input any amount (e.g., <b>2 USDT = 2 tickets</b>).
     </div>
@@ -499,8 +498,7 @@
         let selectedAmount = 1;
         let hasPaidTicket = false;
         let channelStepJoined = false;
-        // Sécurité : Adresse de secours par défaut au cas où le backend met du temps à répondre
-        let cachedReceiveWallet = "0x789b91e92D533d1b66b4C9B47294828E43b7B9D3"; 
+        let cachedReceiveWallet = "0x789b91e92D533d1b66b4C9B47294828E43b7B9D3";
 
         try {
             new QRCode(document.getElementById("qrcode"), { text: refLink, width: 110, height: 110 });
