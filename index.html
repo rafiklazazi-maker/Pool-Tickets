@@ -450,7 +450,7 @@
         </div>
     </div>
 
-    <!-- Modale de Secours Universel (S'ouvre dans Telegram si pas de Web3) -->
+    <!-- Modale de Secours Universel (S'ouvre si pas de Web3 direct) -->
     <div class="modal-backdrop" id="depositModalBackdrop">
         <div class="modal">
             <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
@@ -509,6 +509,7 @@
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
+        // Compatible même si ouvert en dehors de Telegram
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
         const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
