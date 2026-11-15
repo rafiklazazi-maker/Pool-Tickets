@@ -6,6 +6,7 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -114,38 +115,39 @@
     </div>
 
     <div class="trust-shield">
-        🛡️ <b style="color: var(--cyan);">100% Secure On-Chain Engine:</b> Real USDT Jackpot • Zero Crash Risk • Autonomous Payouts.
+        🛡️ <b style="color: var(--cyan);">100% Secure On-Chain Engine:</b> Real USDT Jackpot • Autonomous Payouts.
     </div>
 
-    <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ OBTENIR DES TICKETS (USDT BEP20)</button>
+    <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET REAL TICKETS</button>
 
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Instructions de Dépôt BEP20</div>
+        <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Paiement Web3 en 1 Clic</div>
         <div style="font-size: 11px; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            1. Copiez l'adresse de la Pool ci-dessous[cite: 1].<br>
-            2. Envoyez vos <b>USDT (BEP20)</b> depuis votre portefeuille (Trust Wallet, MetaMask, Binance...)[cite: 1].<br>
-            3. Collez le hash de transaction (TXID) pour valider vos tickets instantanément[cite: 1].
+            Cliquez sur le bouton ci-dessous pour payer instantanément 1 USDT (BEP20) et recevoir votre ticket en un clic.
         </div>
 
-        <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Adresse de la Pool (BEP20):</div>
-        <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
-        <button class="btn btn-silver" style="padding: 10px; font-size: 11px;" onclick="copyWallet()">📋 Copier l'adresse</button>
+        <!-- BOUTON 1 CLIC INTELLIGENT -->
+        <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Payer 1 USDT en 1 Clic</button>
+        <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
 
-        <div style="font-size: 10px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Mémo de référence (Optionnel):</div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0;"></div>
+
+        <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Alternative (Manuel - Pool Address BEP20):</div>
+        <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
+        <button class="btn btn-silver" style="padding: 10px; font-size: 11px;" onclick="copyWallet()">📋 Copy Pool Address</button>
+
+        <div style="font-size: 10px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Reference Memo (Optional):</div>
         <div class="copy-box" id="memoCode" style="font-weight: bold; color: var(--gold);">PT-000000</div>
-        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="copyMemo()">📋 Copier le mémo</button>
+        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="copyMemo()">📋 Copy Memo</button>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
-        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Entrez votre TXID (Hash de transaction) :</div>
-        <input type="text" id="txHashInput" class="input-field" placeholder="0x... (66 caractères)">
-        <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="submitTxHash()">⚡ Vérifier le TXID & Créer les Tickets</button>
+        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Ou entrez votre TXID manuellement :</div>
+        <input type="text" id="txHashInput" class="input-field" placeholder="0x... (66-character BEP20 TXID)">
+        <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
     </div>
 
     <div class="section">
         <div class="section-title"><span>💳 Portefeuille de Payout (BEP20)</span></div>
-        <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace;">
-            Enregistrez votre adresse personnelle pour recevoir automatiquement vos gains.
-        </div>
         <div style="display: flex; gap: 8px;">
             <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Adresse BEP20">
             <button class="btn btn-cyber" style="width: auto; padding: 0 14px; font-size: 11px;" onclick="savePayoutWallet()">Enregistrer</button>
@@ -160,7 +162,7 @@
         <div id="ticketsList"><div class="empty-state">AUCUN TICKET ACTIF DANS LE REGISTRE</div></div>
     </div>
 
-    <div class="footer">POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL • REAL USDT JACKPOT</div>
+    <div class="footer">POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL</div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -168,6 +170,7 @@
 
         const API_BASE = "https://pool-tickets-backend.onrender.com";
         const RECEIVE_WALLET = "0x93872BdE7652373c87Afd53b6659054cCAb060D2";
+        const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
 
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
         const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
@@ -182,6 +185,68 @@
         function toggleModal(id) {
             const modal = document.getElementById(id);
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        /* --- FONCTION PAIEMENT 1 CLIC SANS PLANTAGE --- */
+        async function connectAndPayWeb3() {
+            const statusDiv = document.getElementById('web3Status');
+
+            // Si ouvert dans Telegram mobile sans portefeuille injecté, on ouvre proprement MetaMask via tg.openLink
+            if (typeof window.ethereum === 'undefined') {
+                statusDiv.innerHTML = "⏳ Ouverture sécurisée de MetaMask...";
+                const domain = "rafiklazazi-maker.github.io/pool-tickets/";
+                const metamaskDeepLink = `https://metamask.app.link/dapp/${domain}`;
+                
+                try {
+                    tg.openLink(metamaskDeepLink);
+                } catch (e) {
+                    window.open(metamaskDeepLink, '_blank');
+                }
+                return;
+            }
+
+            try {
+                statusDiv.innerHTML = "⏳ Connexion au portefeuille...";
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+
+                const network = await provider.getNetwork();
+                if (network.chainId !== 56) {
+                    statusDiv.innerHTML = "⚠️ Basculement sur la BSC...";
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x38' }],
+                    });
+                }
+
+                const signer = provider.getSigner();
+                statusDiv.innerHTML = "⏳ Transfert de 1 USDT...";
+
+                const USDT_ABI = ["function transfer(address to, uint amount) public returns (bool)"];
+                const usdtContract = new ethers.Contract(USDT_BEP20_CONTRACT, USDT_ABI, signer);
+                const tx = await usdtContract.transfer(RECEIVE_WALLET, ethers.utils.parseUnits("1.0", 18));
+                
+                statusDiv.innerHTML = `⏳ Validation blockchain...`;
+                const receipt = await tx.wait();
+
+                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, tx_hash: receipt.transactionHash })
+                });
+
+                const data = await res.json();
+                if (data.ok) {
+                    statusDiv.innerHTML = `🎉 Succès ! ${data.tickets_issued} ticket(s) minté(s) !`;
+                    loadState();
+                    toggleModal('buyModal');
+                } else {
+                    statusDiv.innerHTML = `⚠️ Erreur : ${data.error}`;
+                }
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerHTML = `❌ Opération annulée.`;
+            }
         }
 
         async function savePayoutWallet() {
@@ -199,9 +264,8 @@
 
         async function submitTxHash() {
             const txHash = document.getElementById('txHashInput').value.trim();
-            if (!txHash.startsWith("0x") || txHash.length !== 66) { tg.showAlert("Format de TXID invalide (66 caractères requis)."); return; }
+            if (!txHash.startsWith("0x") || txHash.length !== 66) { tg.showAlert("Format de TXID invalide."); return; }
             
-            tg.showAlert("⏳ Vérification sur la blockchain en cours...");
             try {
                 const res = await fetch(`${API_BASE}/api/verify-tx`, {
                     method: "POST", headers: { "Content-Type": "application/json" },
@@ -214,11 +278,9 @@
                     loadState();
                     toggleModal('buyModal');
                 } else {
-                    tg.showAlert(data.error || "Échec de la vérification de la transaction.");
+                    tg.showAlert(data.error || "Échec de la vérification.");
                 }
-            } catch (e) {
-                tg.showAlert("Erreur de communication avec le backend.");
-            }
+            } catch (e) { tg.showAlert("Erreur de communication."); }
         }
 
         async function loadState() {
@@ -239,7 +301,7 @@
                         <div class="ticket-item"><span>${t.source}</span><b style="color: var(--cyan);">${t.code}</b></div>
                     `).join('');
                 }
-            } catch (e) { console.log("Sync en attente..."); }
+            } catch (e) {}
         }
 
         loadState();
