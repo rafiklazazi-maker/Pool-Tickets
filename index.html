@@ -117,12 +117,6 @@
             font-size: 10.5px;
         }
 
-        .masked-txt {
-            filter: blur(2px);
-            opacity: 0.6;
-            color: var(--muted);
-        }
-
         .jackpot-card {
             background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
             border: 1.5px solid var(--cyan);
@@ -376,14 +370,14 @@
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            @<span class="masked-txt">net_runner</span> deposited 1 USDT
+            Chargement du flux en direct...
         </div>
     </div>
 
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
         <div class="jackpot-label">Verified Real Grand Prize Pool</div>
-        <div class="jackpot-amount" id="prizePool">$180.00</div>
+        <div class="jackpot-amount" id="prizePool">$180</div>
         <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
     </div>
 
@@ -513,7 +507,7 @@
 
                 if (data.ok && data.invoice_url) {
                     statusEl.style.color = "var(--green)";
-                    statusEl.innerText = "✅ Facture prête ! Ouverture de la passerelle...";
+                    statusEl.innerText = "✅ Facture prête ! Ouverture...";
 
                     if (data.invoice_url.includes("t.me/") && tg && typeof tg.openTelegramLink === 'function') {
                         tg.openTelegramLink(data.invoice_url);
@@ -524,11 +518,11 @@
                     }
                 } else {
                     statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ ${data.error || "Erreur lors de la création de la facture."}`;
+                    statusEl.innerText = `❌ ${data.error || "Erreur de génération"}`;
                 }
             } catch (err) {
                 statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "⚠️ Serveur inaccessible. Réessayez dans quelques secondes.";
+                statusEl.innerText = "⚠️ Erreur de connexion au serveur.";
             } finally {
                 btnEl.disabled = false;
             }
@@ -589,18 +583,16 @@
             } catch (e) {}
         }
 
-        const seededDepositors = [
-            `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
-            `@<span class="masked-txt">node_04</span> deposited 5 USDT`,
-            `@<span class="masked-txt">cyber_ghost</span> deposited 20 USDT`,
-            `@<span class="masked-txt">bep_whale</span> deposited 100 USDT`
-        ];
-        let depositIdx = 0;
+        let feedIndex = 0;
+        let cachedFeed = [];
+
         setInterval(() => {
-            depositIdx = (depositIdx + 1) % seededDepositors.length;
-            const feedEl = document.getElementById('depositFeedText');
-            if (feedEl) feedEl.innerHTML = seededDepositors[depositIdx];
-        }, 3500);
+            if (cachedFeed.length > 0) {
+                feedIndex = (feedIndex + 1) % cachedFeed.length;
+                const feedEl = document.getElementById('depositFeedText');
+                if (feedEl) feedEl.innerText = cachedFeed[feedIndex];
+            }
+        }, 4000);
 
         async function loadState() {
             try {
@@ -610,7 +602,8 @@
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 hasPaidTicket = data.has_paid_ticket;
 
-                document.getElementById('prizePool').innerText = `$${data.prize_pool.toFixed(2)}`;
+                // Affichage brut de la cagnotte
+                document.getElementById('prizePool').innerText = `$${Math.round(data.prize_pool)}`;
                 document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${data.total_collected} / $${data.target_goal} USDT`;
 
                 const pct = Math.min(100, (data.total_collected / data.target_goal) * 100).toFixed(1);
@@ -643,8 +636,8 @@
                 }
 
                 if (data.live_feed && data.live_feed.length > 0) {
-                    seededDepositors.length = 0;
-                    seededDepositors.push(...data.live_feed);
+                    cachedFeed = data.live_feed;
+                    document.getElementById('depositFeedText').innerText = cachedFeed[0];
                 }
             } catch (e) {}
         }
