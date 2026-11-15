@@ -7,6 +7,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <!-- SDK TON Connect UI -->
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -228,7 +230,6 @@
             transition: width 0.5s ease, background 0.5s ease;
         }
 
-        /* Style rouge et pulsé lorsque l'objectif est atteint */
         .cyber-bar-container.goal-reached {
             border: 1px solid var(--border-red);
             box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
@@ -239,7 +240,6 @@
             box-shadow: 0 0 10px var(--red);
         }
 
-        /* Boîte du compteur de sprint (cachée par défaut, s'affiche si objectif atteint) */
         .countdown-box {
             display: none;
             background: rgba(255, 0, 85, 0.08);
@@ -290,6 +290,30 @@
             padding: 14px;
             text-align: center;
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        /* Styles des onglets de paiement multi-devises */
+        .payment-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 9.5px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .tab-btn.active {
+            background: rgba(0, 243, 255, 0.15);
+            border-color: var(--cyan);
+            color: var(--cyan);
         }
 
         .custom-amount-row {
@@ -417,7 +441,7 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar">⚡ 1-CLICK WEB3 DIRECT CHECKOUT // NO KYC</div>
+    <div class="ticker-bar">⚡ MULTI-CHAIN // WEB3 & TON CONNECT ACTIVE</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
@@ -434,7 +458,7 @@
     </div>
 
     <div class="blockchain-info-card">
-        🛡️ <b>WEB3 DIRECT PROTOCOL:</b> 100% autonomous decentralized blockchain system. Funds transfer directly and automatically to the non-custodial wallet with <b>zero KYC, absolute anonymity, and zero admin approval required</b>! Input any amount (e.g., <b>2 USDT = 2 tickets</b>).
+        🛡️ <b>MULTI-CHAIN PROTOCOL:</b> Pay securely via BSC (USDT) or via Telegram / TON Connect ecosystem with absolute anonymity and zero KYC!
     </div>
 
     <div class="milestone-card">
@@ -445,24 +469,34 @@
         <div class="cyber-bar-container" id="barContainer">
             <div class="cyber-bar-fill" id="milestoneBar"></div>
         </div>
-        <!-- Compteur du sprint final (7 jours) -->
         <div class="countdown-box" id="sprintCountdownBox">
             🔥 Final Sprint Active! Draw in: <span id="countdownTimer">7d 00h 00m 00s</span>
         </div>
     </div>
 
+    <!-- GATEWAY DE PAIEMENT MULTI-DEVISE -->
     <div class="gateway-box">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
-            💎 1-CLICK DIRECT MINT (1 USDT = 1 TICKET)
+            💎 BALANCE REPLENISHMENT
         </div>
+
+        <!-- Onglets de choix de paiement -->
+        <div class="payment-tabs">
+            <button class="tab-btn active" onclick="switchTab('crypto')">💲 BSC Crypto</button>
+            <button class="tab-btn" onclick="switchTab('stars')">⭐ Stars</button>
+            <button class="tab-btn" onclick="switchTab('ton')">💎 TON / GRAM</button>
+        </div>
+
+        <!-- Bouton TON Connect officiel (s'affiche si onglet TON sélectionné) -->
+        <div id="ton-connect-button" style="margin: 10px 0; display: none; justify-content: center;"></div>
 
         <div class="custom-amount-row">
             <input type="number" id="usdtAmountInput" value="1" min="1" step="1" oninput="syncAmount()">
-            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;">USDT</span>
+            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">USDT</span>
         </div>
 
-        <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="payDirectWeb3()">
-            🚀 PAY <span id="btnAmountLabel">1</span> USDT (<span id="btnTicketLabel">1</span> TICKET)
+        <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
+            🚀 PAY <span id="btnAmountLabel">1</span> <span id="btnCurrencyText">USDT</span> (<span id="btnTicketLabel">1</span> TICKET)
         </button>
 
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
@@ -483,7 +517,7 @@
         </div>
     </div>
 
-    <!-- Modale de Secours Universel avec Bloc Explicatif Tx Hash -->
+    <!-- Modale de Secours Universel -->
     <div class="modal-backdrop" id="depositModalBackdrop">
         <div class="modal">
             <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
@@ -515,12 +549,12 @@
 
     <!-- SECTION JACKPOT RECEIVE WALLET -->
     <div class="section" style="border: 1px solid var(--gold);">
-        <div class="section-title"><span style="color: var(--gold);">💳 JACKPOT RECEIVE WALLET (BEP20) - REQUIRED</span></div>
+        <div class="section-title"><span style="color: var(--gold);">💳 JACKPOT RECEIVE WALLET (BEP20 / TON) - REQUIRED</span></div>
         <div style="font-size: 9px; color: var(--muted); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">
             ⚠️ Save your personal wallet address below so we know where to send your winnings when you win the jackpot!
         </div>
         <div style="display: flex; gap: 6px;">
-            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Your Personal BEP20 Address">
+            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... or UQ... Address">
             <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
         </div>
     </div>
@@ -567,8 +601,16 @@
         let hasPaidTicket = false;
         let channelStepJoined = false;
         let cachedReceiveWallet = "0x789b91e92D533d1b66b4C9B47294828E43b7B9D3";
+        let tonReceiveWallet = "UQBbFq7b0azrUdZEqIJFJBKKUXIAVBzhEZQNJvUWKu5_KEjQ";
         let depositQrInitialized = false;
-        let sprintEndTime = null; // Stocke la fin du sprint de 7 jours
+        let sprintEndTime = null;
+        let currentMethod = 'crypto';
+
+        // Initialisation de TON Connect UI
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://lazazirafik.github.io/pool-tickets/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
 
         try {
             new QRCode(document.getElementById("qrcode"), { text: refLink, width: 110, height: 110 });
@@ -587,15 +629,123 @@
             document.getElementById('btnTicketLabel').innerText = val;
         }
 
-        async function payDirectWeb3() {
+        function switchTab(method) {
+            currentMethod = method;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const tonBtnContainer = document.getElementById('ton-connect-button');
+            const currencyLabel = document.getElementById('currencyLabel');
+            const btnCurrencyText = document.getElementById('btnCurrencyText');
+            const payStatus = document.getElementById('payStatus');
+
+            if (method === 'stars') {
+                tonBtnContainer.style.display = 'none';
+                currencyLabel.innerText = "STARS";
+                btnCurrencyText.innerText = "STARS";
+                payStatus.innerText = "⭐ Telegram Stars payment selected";
+            } else if (method === 'ton') {
+                tonBtnContainer.style.display = 'flex';
+                currencyLabel.innerText = "TON / GRAM";
+                btnCurrencyText.innerText = "TON";
+                payStatus.innerText = "💎 Connect TON wallet to pay";
+            } else {
+                tonBtnContainer.style.display = 'none';
+                currencyLabel.innerText = "USDT";
+                btnCurrencyText.innerText = "USDT";
+                payStatus.innerText = "Ready for BSC crypto payment";
+            }
+        }
+
+        async function processPayment() {
             syncAmount();
+            if (currentMethod === 'stars') {
+                payWithTelegramStars();
+            } else if (currentMethod === 'ton') {
+                payWithTonConnect();
+            } else {
+                payDirectWeb3();
+            }
+        }
+
+        async function payWithTelegramStars() {
+            const statusEl = document.getElementById('payStatus');
+            statusEl.style.color = "var(--cyan)";
+            statusEl.innerText = "⭐ Processing Telegram Stars payment...";
+
+            try {
+                const res = await fetch(`${API_BASE}/api/verify-stars`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, stars_amount: selectedAmount })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    statusEl.style.color = "var(--green)";
+                    statusEl.innerText = `🎉 Success! ${data.tickets_added} ticket(s) minted with Stars!`;
+                    loadState();
+                } else {
+                    statusEl.style.color = "var(--gold)";
+                    statusEl.innerText = `❌ Error: ${data.error}`;
+                }
+            } catch (e) {
+                statusEl.style.color = "var(--gold)";
+                statusEl.innerText = "⚠️ Stars payment error.";
+            }
+        }
+
+        async function payWithTonConnect() {
+            const statusEl = document.getElementById('payStatus');
+            if (!tonConnectUI.connected) {
+                await tonConnectUI.openModal();
+                return;
+            }
+
+            statusEl.style.color = "var(--cyan)";
+            statusEl.innerText = "💎 Sending TON transaction...";
+
+            try {
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 600,
+                    messages: [
+                        {
+                            address: tonReceiveWallet,
+                            amount: (selectedAmount * 1000000000).toString()
+                        }
+                    ]
+                };
+
+                const result = await tonConnectUI.sendTransaction(transaction);
+                
+                const res = await fetch(`${API_BASE}/api/verify-ton-tx`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, tx_hash: result.boc, tickets_count: selectedAmount })
+                });
+
+                const data = await res.json();
+                if (data.ok) {
+                    statusEl.style.color = "var(--green)";
+                    statusEl.innerText = `🎉 Success! ${data.tickets_added} ticket(s) minted via TON!`;
+                    loadState();
+                } else {
+                    statusEl.style.color = "var(--gold)";
+                    statusEl.innerText = `❌ Server error: ${data.error}`;
+                }
+            } catch (err) {
+                console.error(err);
+                statusEl.style.color = "var(--gold)";
+                statusEl.innerText = "⚠️ TON Transaction cancelled or failed.";
+            }
+        }
+
+        async function payDirectWeb3() {
             const statusEl = document.getElementById('payStatus');
             const btnEl = document.getElementById('payActionBtn');
 
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
             if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
                 notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before paying so we know where to send your winnings!");
-                
                 document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('payoutWalletInput').focus();
                 return;
@@ -682,7 +832,6 @@
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
             if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
                 notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before viewing deposit details!");
-                
                 document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('payoutWalletInput').focus();
                 return;
@@ -755,8 +904,8 @@
 
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
-            if (!addr.startsWith("0x") || addr.length !== 42) {
-                notify("Invalid BEP20 address.");
+            if (!addr.startsWith("0x") && !addr.startsWith("UQ")) {
+                notify("Invalid wallet address format.");
                 return;
             }
             try {
@@ -812,7 +961,6 @@
             }
         }, 4000);
 
-        // Gestion du compteur de 7 jours (Sprint Final)
         setInterval(() => {
             if (!sprintEndTime) return;
             const now = new Date().getTime();
@@ -827,9 +975,7 @@
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById('countdownTimer').innerText = 
-                `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+            document.getElementById('countdownTimer').innerText = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
         }, 1000);
 
         async function loadState() {
@@ -837,16 +983,9 @@
                 const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
                 const data = await res.json();
 
-                if (data.receive_wallet) {
-                    cachedReceiveWallet = data.receive_wallet;
-                }
-
-                if (data.season) {
-                    document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
-                }
+                if (data.season) document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 hasPaidTicket = data.has_paid_ticket;
 
-                // Mise à jour dynamique de la progression de la cagnotte
                 const collected = data.total_collected || 0;
                 const target = data.target_goal || 2000;
                 let pct = (collected / target) * 100;
@@ -857,7 +996,6 @@
                 document.getElementById('prizePool').innerText = `$${collected.toFixed(1)}`;
                 document.getElementById('drawStatus').innerText = `🎯 Target Goal: ${collected.toFixed(1)} / ${target} USDT`;
 
-                // Logique intelligente : Barre rouge et affichage du compteur de sprint si l'objectif est atteint
                 const barContainer = document.getElementById('barContainer');
                 const milestoneBar = document.getElementById('milestoneBar');
                 const countdownBox = document.getElementById('sprintCountdownBox');
@@ -868,14 +1006,9 @@
                     milestoneBar.classList.add('goal-reached-fill');
                     milestoneTitle.innerHTML = "🚨 TARGET REACHED // FINAL SPRINT!";
                     milestoneTitle.style.color = "var(--red)";
-                    
                     countdownBox.style.display = 'block';
                     if (!sprintEndTime) {
-                        if (data.target_reached_timestamp) {
-                            sprintEndTime = (data.target_reached_timestamp * 1000) + (7 * 24 * 60 * 60 * 1000);
-                        } else {
-                            sprintEndTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
-                        }
+                        sprintEndTime = data.target_reached_timestamp ? (data.target_reached_timestamp * 1000) + (7 * 24 * 3600 * 1000) : new Date().getTime() + (7 * 24 * 3600 * 1000);
                     }
                 } else {
                     barContainer.classList.remove('goal-reached');
@@ -913,12 +1046,9 @@
                 if (data.live_feed && data.live_feed.length > 0) {
                     cachedFeed = data.live_feed;
                     document.getElementById('depositFeedText').innerHTML = formatLiveFeedItem(cachedFeed[0]);
-                } else {
-                    document.getElementById('depositFeedText').innerHTML = "No recent deposits yet.";
                 }
             } catch (e) {
                 console.error("State sync error:", e);
-                document.getElementById('depositFeedText').innerHTML = "Protocol online (Offline sync)";
             }
         }
 
