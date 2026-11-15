@@ -422,6 +422,7 @@
         </div>
         <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
 
+        <!-- GRILLE COMPLÈTE DES 8 OPTIONS WALLETS -->
         <div class="wallets-grid">
             <button class="wallet-btn" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
             <button class="wallet-btn" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
@@ -484,7 +485,6 @@
     </div>
 
     <script>
-        // Sécurité anti-plantage Telegram mobile
         const tg = window.Telegram?.WebApp || {};
         try {
             if (typeof tg.expand === 'function') { tg.expand(); }
