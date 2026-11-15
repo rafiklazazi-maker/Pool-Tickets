@@ -295,12 +295,6 @@
             font-weight: 900;
         }
 
-        .btn-silver {
-            background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
-            color: #030407;
-            font-family: 'Orbitron', sans-serif;
-        }
-
         .btn-outline {
             background: var(--card);
             color: var(--text);
@@ -337,7 +331,7 @@
             border-radius: 16px;
             padding: 18px;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(0, 243, 255, 0.2);
             animation: fadeIn 0.25s ease;
         }
@@ -345,17 +339,6 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        .copy-box {
-            background: #030407;
-            padding: 9px;
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            word-break: break-all;
-            border: 1px dashed var(--border-cyan);
-            color: var(--cyan);
         }
 
         .input-field {
@@ -419,16 +402,16 @@
             font-family: 'Orbitron', sans-serif;
         }
 
-        .manual-alert {
-            background: rgba(255, 204, 0, 0.08);
-            border: 1px solid rgba(255, 204, 0, 0.3);
+        .secure-notice {
+            background: rgba(0, 255, 102, 0.06);
+            border: 1px solid rgba(0, 255, 102, 0.25);
             border-radius: 8px;
-            padding: 8px;
-            font-size: 10px;
-            color: var(--gold);
+            padding: 10px;
+            font-size: 10.5px;
+            color: var(--green);
             font-family: 'JetBrains Mono', monospace;
             text-align: center;
-            margin-top: 4px;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -439,7 +422,7 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar" id="liveTicker">⚡ PROTECTED BLOCKCHAIN PROTOCOL // REAL USDT PRIZE POOL</div>
+    <div class="ticker-bar" id="liveTicker">⚡ SECURE ON-CHAIN PROTOCOL // AUTOMATED VERIFICATION</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE STREAM</span>
@@ -456,7 +439,7 @@
     </div>
 
     <div class="trust-shield">
-        🛡️ <b style="color: var(--cyan);">100% Automated On-Chain Engine:</b> Fully engineered by our core team on a protected BEP20 blockchain infrastructure. <span style="color: var(--green); font-weight: 700;">Real USDT Jackpot • Zero Human Intervention • Autonomous Payouts.</span>
+        🛡️ <b style="color: var(--cyan);">100% Secured Smart Checkout:</b> Zero manual inputs. Direct Web3 automated verification ensures instant ticket minting with 0% risk of loss.
     </div>
 
     <div class="milestone-card">
@@ -472,42 +455,27 @@
         </div>
     </div>
 
-    <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET REAL TICKETS</button>
+    <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE SECURED DEPOSIT // GET TICKETS</button>
 
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 12.5px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Centre BEP20 (Multi-Wallets)</div>
+        <div style="font-weight: 800; font-size: 12.5px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Smart Checkout BEP20</div>
         <div style="font-size: 10px; color: var(--text); line-height: 1.3; font-family: 'JetBrains Mono', monospace;">
-            Sélectionnez votre portefeuille :
+            Sélectionnez votre portefeuille pour un paiement instantané et sécurisé sans risque d'erreur :
         </div>
 
-        <!-- 6 PORTEFEUILLES INTÉGRÉS -->
-        <button class="btn btn-cyber" style="padding: 9.5px; font-size: 10px;" onclick="connectAndPayWeb3()">🦊 MetaMask / Web3 Extension</button>
-        <button class="btn btn-outline" style="padding: 9px; font-size: 9.5px;" onclick="payWithTrustWallet()">🛡️ Trust Wallet</button>
-        <button class="btn btn-outline" style="padding: 9px; font-size: 9.5px;" onclick="payWithBinanceWallet()">🟡 Binance Web3 Wallet</button>
-        <button class="btn btn-outline" style="padding: 9px; font-size: 9.5px;" onclick="payWithOKXWallet()">🟢 OKX Wallet</button>
-        <button class="btn btn-outline" style="padding: 9px; font-size: 9.5px;" onclick="payWithBitgetWallet()">🟣 Bitget Wallet</button>
-        <button class="btn btn-outline" style="padding: 9px; font-size: 9.5px;" onclick="payWithSafePal()">🔒 SafePal Wallet</button>
+        <!-- PORTEFEUILLES WEB3 AUTOMATISÉS -->
+        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" onclick="connectAndPayWeb3()">🦊 MetaMask / Web3 Extension</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithTrustWallet()">🛡️ Trust Wallet (Auto-Verify)</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithBinanceWallet()">🟡 Binance Web3 Wallet</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithOKXWallet()">🟢 OKX Wallet</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithBitgetWallet()">🟣 Bitget Wallet</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithSafePal()">🔒 SafePal Wallet</button>
         
-        <div id="web3Status" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
+        <div id="web3Status" style="font-size: 10px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 6px;"></div>
 
-        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
-
-        <div style="font-size: 9px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Official Pool Address (BEP20):</div>
-        <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
-        <button class="btn btn-silver" style="padding: 7px; font-size: 9.5px;" onclick="copyWallet()">📋 Copy Pool Address</button>
-
-        <div style="font-size: 9px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Reference Memo (Optional):</div>
-        <div class="copy-box" id="memoCode" style="font-weight: bold; color: var(--gold);">PT-000000</div>
-        <button class="btn btn-outline" style="padding: 7px; font-size: 9.5px;" onclick="copyMemo()">📋 Copy Memo</button>
-
-        <div class="manual-alert">
-            ⚠️ <b>Copier-Coller détecté ?</b> Si vous transférez manuellement, collez impérativement votre ID de transaction (TXID) ci-dessous pour recevoir vos tickets instantanément !
+        <div class="secure-notice">
+            🔒 <b>Protection Totale :</b> Les transferts manuels et les codes TXID sont désactivés pour garantir que chaque utilisateur reçoive ses tickets instantanément et sans faille.
         </div>
-
-        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
-        <div style="font-size: 9.5px; font-weight: 700; color: var(--text);">Paste TXID from ANY wallet/exchange:</div>
-        <input type="text" id="txHashInput" class="input-field" placeholder="0x... (66-character BEP20 TXID)">
-        <button class="btn btn-cyber" style="padding: 9px; font-size: 10px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
     </div>
 
     <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
@@ -567,11 +535,9 @@
 
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
         const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
-        const memoString = `PT-${user.id}`;
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
 
         document.getElementById('username').innerText = username;
-        document.getElementById('memoCode').innerText = memoString;
 
         let hasPaidTicket = false;
         let channelStepJoined = false;
@@ -596,27 +562,13 @@
             height: 120
         });
 
-        function copyText(txt, msg) {
-            navigator.clipboard.writeText(txt);
-            if (tg && typeof tg.showAlert === 'function') {
-                tg.showAlert(msg);
-            } else {
-                alert(msg);
-            }
-        }
-
-        function copyWallet() {
-            copyText(RECEIVE_WALLET, "📋 Adresse BEP20 copiée !\n\n💡 N'oubliez pas de coller le TXID ci-dessous après votre virement manuel.");
-            // Met en évidence l'input TXID pour guider l'utilisateur suite au copier-coller
-            document.getElementById('txHashInput').focus();
-        }
-
-        function copyMemo() {
-            copyText(memoString, "📋 Mémo copié !");
-        }
-
         function copyRefLink() {
-            copyText(refLink, "Referral link copied to clipboard.");
+            navigator.clipboard.writeText(refLink);
+            if (tg && typeof tg.showAlert === 'function') {
+                tg.showAlert("Referral link copied to clipboard.");
+            } else {
+                alert("Referral link copied to clipboard.");
+            }
         }
 
         function toggleModal(id) {
@@ -641,7 +593,7 @@
             }
         }
 
-        // --- PROTOCOLES DE REDIRECTION ÉTENDUS (6 PORTEFEUILLES) ---
+        // --- PAIEMENTS WEB3 DIRECTS & AUTOMATISÉS (6 PORTEFEUILLES) ---
         function payWithTrustWallet() {
             const statusDiv = document.getElementById('web3Status');
             statusDiv.innerHTML = "⏳ Ouverture de Trust Wallet...";
@@ -755,35 +707,6 @@
                 }
             } catch (e) {
                 const msg = "Network error connecting to backend protocol.";
-                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-            }
-        }
-
-        async function submitTxHash() {
-            const txHash = document.getElementById('txHashInput').value.trim();
-            if (!txHash.startsWith("0x") || txHash.length !== 66) {
-                const msg = "Invalid TXID hash. Must be 66 characters starting with 0x.";
-                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-                return;
-            }
-            try {
-                const res = await fetch(`${API_BASE}/api/verify-tx`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, tx_hash: txHash })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    document.getElementById('txHashInput').value = "";
-                    const msg = `⚡ Verified On-Chain! ${data.tickets_issued} real ticket(s) minted!`;
-                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-                    loadState();
-                } else {
-                    const msg = data.error || "Transaction verification failed.";
-                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-                }
-            } catch (e) {
-                const msg = "Connection error during blockchain verification.";
                 if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
             }
         }
