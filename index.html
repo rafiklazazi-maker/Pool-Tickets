@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -123,9 +123,6 @@
             user-select: none;
             opacity: 0.8;
             transition: filter 0.3s ease;
-        }
-        .blurred-username:hover {
-            filter: blur(0px); /* Optionnel : défloute au survol si besoin */
         }
 
         .jackpot-card {
@@ -395,9 +392,8 @@
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
-        <!-- Utilisation d'un conteneur pour appliquer le vrai filtre de floutage CSS -->
         <div class="deposit-feed-text" id="depositFeedText">
-            Chargement du flux en direct...
+            Loading live feed...
         </div>
     </div>
 
@@ -408,8 +404,9 @@
         <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
     </div>
 
+    <!-- Encadré explicatif en ANGLAIS -->
     <div class="blockchain-info-card">
-        🛡️ <b>PROTOCOLE BLOCKCHAIN RÉEL :</b> Cette application fonctionne sur une infrastructure décentralisée et sécurisée via CryptoBot. Chaque ticket acheté est enregistré sur la blockchain, et <b>le jackpot est versé automatiquement</b> sur votre wallet BEP20 enregistré à la fin de la saison !
+        🛡️ <b>REAL BLOCKCHAIN PROTOCOL:</b> This application runs on a decentralized and secure infrastructure via CryptoBot. Every purchased ticket is recorded on the blockchain, and <b>the jackpot is automatically paid out</b> to your registered BEP20 wallet at the end of the season!
     </div>
 
     <div class="milestone-card">
@@ -424,7 +421,7 @@
 
     <div class="gateway-box">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
-            💎 PAIEMENT INSTANTANÉ (1 USDT = 1 TICKET)
+            💎 INSTANT PAYMENT (1 USDT = 1 TICKET)
         </div>
 
         <div class="custom-amount-row">
@@ -433,7 +430,7 @@
         </div>
 
         <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="createMerchantInvoice()">
-            🚀 PAYER <span id="btnAmountLabel">1</span> USDT
+            🚀 PAY <span id="btnAmountLabel">1</span> USDT
         </button>
 
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;"></div>
@@ -449,7 +446,7 @@
             </div>
             <div id="qrcode"></div>
             <button class="btn btn-cyber" type="button" onclick="copyRefLink()">📋 Copy Referral Link</button>
-            <button class="btn btn-outline" type="button" onclick="document.getElementById('referralBackdrop').style.display='none'">Fermer</button>
+            <button class="btn btn-outline" type="button" onclick="document.getElementById('referralBackdrop').style.display='none'">Close</button>
         </div>
     </div>
 
@@ -526,7 +523,7 @@
 
             btnEl.disabled = true;
             statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = `⏳ Génération de la facture de ${selectedAmount} USDT...`;
+            statusEl.innerText = `⏳ Generating invoice for ${selectedAmount} USDT...`;
 
             try {
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
@@ -538,7 +535,7 @@
 
                 if (data.ok && data.invoice_url) {
                     statusEl.style.color = "var(--green)";
-                    statusEl.innerText = "✅ Facture prête ! Ouverture...";
+                    statusEl.innerText = "✅ Invoice ready! Opening...";
 
                     if (data.invoice_url.includes("t.me/") && tg && typeof tg.openTelegramLink === 'function') {
                         tg.openTelegramLink(data.invoice_url);
@@ -549,11 +546,11 @@
                     }
                 } else {
                     statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ ${data.error || "Erreur de génération"}`;
+                    statusEl.innerText = `❌ ${data.error || "Generation error"}`;
                 }
             } catch (err) {
                 statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "⚠️ Erreur de connexion au serveur.";
+                statusEl.innerText = "⚠️ Server connection error.";
             } finally {
                 btnEl.disabled = false;
             }
@@ -617,9 +614,7 @@
         let feedIndex = 0;
         let cachedFeed = [];
 
-        // Fonction pour formater le texte du flux live en appliquant le flou CSS sur le pseudo
         function formatLiveFeedItem(itemText) {
-            // Regex pour détecter les pseudos commençant par @ dans le texte du backend
             return itemText.replace(/(@[a-zA-Z0-9_]+)/g, '<span class="blurred-username">$1</span>');
         }
 
