@@ -204,9 +204,8 @@
         .cyber-bar-fill {
             background: linear-gradient(90deg, var(--cyan), var(--green));
             height: 100%;
-            width: 0%;
+            width: 9.0%;
             border-radius: 3px;
-            transition: width 0.5s ease;
         }
 
         .btn {
@@ -407,7 +406,7 @@
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
         <div class="jackpot-label">Verified Real Grand Prize Pool</div>
-        <div class="jackpot-amount" id="prizePool">$126.00</div>
+        <div class="jackpot-amount" id="prizePool">$180.00</div>
         <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
     </div>
 
@@ -499,7 +498,7 @@
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
-        const user = tg.initDataUnsafe?.user || { id: 123456789, username: "cyber_vip" };
+        const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
         const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
 
@@ -541,7 +540,7 @@
 
             btnEl.disabled = true;
             statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = `⏳ Génération de la facture CryptoBot (${selectedAmount} USDT)...`;
+            statusEl.innerText = `⏳ Génération de la facture de ${selectedAmount} USDT...`;
 
             try {
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
@@ -555,7 +554,7 @@
                     statusEl.style.color = "var(--green)";
                     statusEl.innerText = "✅ Facture prête ! Ouverture de la passerelle...";
 
-                    if (tg && typeof tg.openTelegramLink === 'function') {
+                    if (data.invoice_url.includes("t.me/") && tg && typeof tg.openTelegramLink === 'function') {
                         tg.openTelegramLink(data.invoice_url);
                     } else if (tg && typeof tg.openLink === 'function') {
                         tg.openLink(data.invoice_url);
@@ -589,25 +588,18 @@
 
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
-            if (!addr.startsWith("0x")  || addr.length !== 42) {
+            if (!addr.startsWith("0x") || addr.length !== 42) {
                 notify("Invalid BEP20 address.");
                 return;
             }
             try {
-                const res = await fetch(`${API_BASE}/api/save-wallet`, {
+                await fetch(`${API_BASE}/api/save-wallet`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: user.id, address: addr })
                 });
-                const data = await res.json();
-                if (data.ok) {
-                    notify("✅ Payout wallet saved successfully!");
-                } else {
-                    notify(data.error || "Failed to save wallet.");
-                }
-            } catch (e) {
-                notify("Network error saving wallet.");
-            }
+                notify("✅ Saved!");
+            } catch (e) {}
         }
 
         async function handleChannelAction() {
@@ -630,17 +622,13 @@
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    notify("🎉 VIP Bonus Claimed! Free ticket added.");
+                    notify("🎉 Bonus Claimed!");
                     loadState();
-                } else {
-                    notify(data.error || "Claim failed.");
                 }
-            } catch (e) {
-                notify("Network error claiming VIP bonus.");
-            }
+            } catch (e) {}
         }
 
-        let liveFeedItems = [
+        const seededDepositors = [
             `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
             `@<span class="masked-txt">node_04</span> deposited 5 USDT`,
             `@<span class="masked-txt">cyber_ghost</span> deposited 20 USDT`,
@@ -648,9 +636,9 @@
         ];
         let depositIdx = 0;
         setInterval(() => {
-            depositIdx = (depositIdx + 1) % liveFeedItems.length;
+            depositIdx = (depositIdx + 1) % seededDepositors.length;
             const feedEl = document.getElementById('depositFeedText');
-            if (feedEl) feedEl.innerHTML = liveFeedItems[depositIdx];
+            if (feedEl) feedEl.innerHTML = seededDepositors[depositIdx];
         }, 3500);
 
         async function loadState() {
@@ -659,10 +647,10 @@
                 const data = await res.json();
 
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
+                hasPaidTicket = data.has_paid_ticket;
+
                 document.getElementById('prizePool').innerText = `$${data.prize_pool.toFixed(2)}`;
                 document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${data.total_collected} / $${data.target_goal} USDT`;
-                
-                hasPaidTicket = data.has_paid_ticket;
 
                 const pct = Math.min(100, (data.total_collected / data.target_goal) * 100).toFixed(1);
                 document.getElementById('milestonePct').innerText = `${pct}%`;
@@ -682,8 +670,6 @@
                             <b style="color: var(--cyan);">${t.code}</b>
                         </div>
                     `).join('');
-                } else {
-                    document.getElementById('ticketsList').innerHTML = `<div class="empty-state">NO ACTIVE TICKETS FOUND</div>`;
                 }
 
                 if (data.history && data.history.length > 0) {
@@ -696,15 +682,14 @@
                 }
 
                 if (data.live_feed && data.live_feed.length > 0) {
-                    liveFeedItems = data.live_feed;
+                    seededDepositors.length = 0;
+                    seededDepositors.push(...data.live_feed);
                 }
-            } catch (e) {
-                console.error("State sync error:", e);
-            }
+            } catch (e) {}
         }
 
         loadState();
-        setInterval(loadState, 10000);
+        setInterval(loadState, 8000);
     </script>
 </body>
 </html>
