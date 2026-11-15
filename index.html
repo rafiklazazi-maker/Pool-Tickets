@@ -6,7 +6,6 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -304,6 +303,38 @@
             font-size: 10px;
         }
 
+        /* --- STYLE MARKETING SMART INVOICE --- */
+        .smart-invoice-cta {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.08) 0%, rgba(0, 255, 102, 0.08) 100%);
+            border: 1.5px solid var(--cyan);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
+            animation: pulseGlow 2.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); }
+            100% { border-color: rgba(0, 255, 102, 0.6); box-shadow: 0 0 30px rgba(0, 255, 102, 0.25); }
+        }
+
+        .smart-badge {
+            display: inline-block;
+            background: rgba(0, 255, 102, 0.15);
+            color: var(--green);
+            border: 1px solid rgba(0, 255, 102, 0.4);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 9.5px;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
         .section {
             background: var(--card);
             border-radius: 14px;
@@ -331,7 +362,7 @@
             border-radius: 16px;
             padding: 18px;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(0, 243, 255, 0.2);
             animation: fadeIn 0.25s ease;
         }
@@ -422,7 +453,7 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar" id="liveTicker">⚡ SECURE ON-CHAIN PROTOCOL // AUTOMATED VERIFICATION</div>
+    <div class="ticker-bar" id="liveTicker">⚡ SECURE ON-CHAIN PROTOCOL // SMART INVOICE ACTIVE</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE STREAM</span>
@@ -439,7 +470,7 @@
     </div>
 
     <div class="trust-shield">
-        🛡️ <b style="color: var(--cyan);">100% Secured Smart Checkout:</b> Zero manual inputs. Direct Web3 automated verification ensures instant ticket minting with 0% risk of loss.
+        🛡️ <b style="color: var(--cyan);">100% Zero-Loss Automated Gateway:</b> Secure instant checkout powered by Smart Invoice. No manual codes, no lost funds.
     </div>
 
     <div class="milestone-card">
@@ -455,26 +486,27 @@
         </div>
     </div>
 
-    <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE SECURED DEPOSIT // GET TICKETS</button>
+    <!-- ZONE MISE EN AVANT SMART INVOICE POUR ATTIRER LES CLIENTS -->
+    <div class="smart-invoice-cta">
+        <div class="smart-badge">⚡ SMART INVOICE PROTOCOL ACTIVE</div>
+        <div style="font-size: 11.5px; color: var(--text); font-weight: 700; margin-bottom: 10px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            Achat instantané et sécurisé en 1 clic. Vos tickets sont mintés automatiquement dès confirmation sur la blockchain !
+        </div>
+        <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Générer la Smart Invoice)</button>
+    </div>
 
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 12.5px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Smart Checkout BEP20</div>
+        <div style="font-weight: 800; font-size: 12.5px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Smart Invoice Checkout</div>
         <div style="font-size: 10px; color: var(--text); line-height: 1.3; font-family: 'JetBrains Mono', monospace;">
-            Sélectionnez votre portefeuille pour un paiement instantané et sécurisé sans risque d'erreur :
+            Cliquez ci-dessous pour lancer votre session de paiement sécurisée liée à votre profil Telegram :
         </div>
 
-        <!-- PORTEFEUILLES WEB3 AUTOMATISÉS -->
-        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" onclick="connectAndPayWeb3()">🦊 MetaMask / Web3 Extension</button>
-        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithTrustWallet()">🛡️ Trust Wallet (Auto-Verify)</button>
-        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithBinanceWallet()">🟡 Binance Web3 Wallet</button>
-        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithOKXWallet()">🟢 OKX Wallet</button>
-        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithBitgetWallet()">🟣 Bitget Wallet</button>
-        <button class="btn btn-outline" style="padding: 9.5px; font-size: 9.5px;" onclick="payWithSafePal()">🔒 SafePal Wallet</button>
+        <button class="btn btn-cyber" style="padding: 12px; font-size: 11px;" onclick="createSecureInvoice()">🚀 Ouvrir la Smart Invoice 1 USDT</button>
         
-        <div id="web3Status" style="font-size: 10px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 6px;"></div>
+        <div id="invoiceStatus" style="font-size: 10px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 4px;"></div>
 
         <div class="secure-notice">
-            🔒 <b>Protection Totale :</b> Les transferts manuels et les codes TXID sont désactivés pour garantir que chaque utilisateur reçoive ses tickets instantanément et sans faille.
+            🔒 <b>Protection Totale :</b> Chaque Smart Invoice génère un identifiant unique infalsifiable. Votre ticket arrive dans votre ledger dès la validation du réseau.
         </div>
     </div>
 
@@ -529,8 +561,6 @@
 
         const API_BASE = "https://pool-tickets-backend.onrender.com";
         const BOT_USERNAME = "PoolTickets_bot";
-        const RECEIVE_WALLET = "0x93872BdE7652373c87Afd53b6659054cCAb060D2";
-        const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
@@ -585,7 +615,7 @@
             toggleModal('referralModal');
         }
 
-        function openExternalWallet(url) {
+        function openExternalUrl(url) {
             if (tg && typeof tg.openLink === 'function') {
                 tg.openLink(url, { try_instant_view: false });
             } else {
@@ -593,94 +623,28 @@
             }
         }
 
-        // --- PAIEMENTS WEB3 DIRECTS & AUTOMATISÉS (6 PORTEFEUILLES) ---
-        function payWithTrustWallet() {
-            const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Ouverture de Trust Wallet...";
-            const url = `https://link.trustwallet.com/send?coin=20000714&address=${RECEIVE_WALLET}&amount=1&token_id=${USDT_BEP20_CONTRACT}`;
-            openExternalWallet(url);
-        }
-
-        function payWithBinanceWallet() {
-            const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Ouverture de Binance Web3 Wallet...";
-            const url = `https://app.binance.com/en/deeplink/crypto/send?address=${RECEIVE_WALLET}&amount=1&coin=USDT&network=BSC`;
-            openExternalWallet(url);
-        }
-
-        function payWithOKXWallet() {
-            const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Ouverture d'OKX Wallet...";
-            const url = `https://www.okx.com/download?deeplink=okx://wallet/send?address=${RECEIVE_WALLET}&amount=1&tokenAddress=${USDT_BEP20_CONTRACT}&chainId=56`;
-            openExternalWallet(url);
-        }
-
-        function payWithBitgetWallet() {
-            const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Ouverture de Bitget Wallet...";
-            const url = `https://bkcode.vip?action=transfer&address=${RECEIVE_WALLET}&amount=1&token=${USDT_BEP20_CONTRACT}&chain=bsc`;
-            openExternalWallet(url);
-        }
-
-        function payWithSafePal() {
-            const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Ouverture de SafePal Wallet...";
-            const url = `https://safepal.io/deeplink/send?address=${RECEIVE_WALLET}&amount=1&token=${USDT_BEP20_CONTRACT}&chain=BSC`;
-            openExternalWallet(url);
-        }
-
-        async function connectAndPayWeb3() {
-            const statusDiv = document.getElementById('web3Status');
-
-            if (typeof window.ethereum === 'undefined') {
-                statusDiv.innerHTML = "⏳ Extension Web3 absente. Redirection universelle...";
-                const eip681Url = `https://metamask.app.link/send/${USDT_BEP20_CONTRACT}@56/transfer?address=${RECEIVE_WALLET}&uint256=1000000000000000000`;
-                openExternalWallet(eip681Url);
-                return;
-            }
+        // --- GESTION DE LA FACTURATION SMART INVOICE ---
+        async function createSecureInvoice() {
+            const statusDiv = document.getElementById('invoiceStatus');
+            statusDiv.innerHTML = "⏳ Génération de la Smart Invoice...";
 
             try {
-                statusDiv.innerHTML = "⏳ Connexion au portefeuille Web3...";
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-
-                const network = await provider.getNetwork();
-                if (network.chainId !== 56) {
-                    statusDiv.innerHTML = "⚠️ Basculement requis sur la BNB Smart Chain...";
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0x38' }],
-                    });
-                }
-
-                const signer = provider.getSigner();
-                statusDiv.innerHTML = "⏳ Transfert de 1 USDT en cours...";
-
-                const USDT_ABI = ["function transfer(address to, uint amount) public returns (bool)"];
-                const usdtContract = new ethers.Contract(USDT_BEP20_CONTRACT, USDT_ABI, signer);
-                const tx = await usdtContract.transfer(RECEIVE_WALLET, ethers.utils.parseUnits("1.0", 18));
-                
-                statusDiv.innerHTML = `⏳ Validation sur la blockchain...`;
-                const receipt = await tx.wait();
-
-                statusDiv.innerHTML = `⏳ Synchronisation backend...`;
-                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, tx_hash: receipt.transactionHash })
+                    body: JSON.stringify({ user_id: user.id, amount: 1.0 })
                 });
 
                 const data = await res.json();
-                if (data.ok) {
-                    statusDiv.innerHTML = `🎉 Succès ! ${data.tickets_issued} ticket(s) minté(s) !`;
-                    loadState();
-                    setTimeout(() => toggleModal('buyModal'), 1500);
+                if (data.ok && data.invoice_url) {
+                    statusDiv.innerHTML = "✅ Smart Invoice prête ! Redirection...";
+                    openExternalUrl(data.invoice_url);
                 } else {
-                    statusDiv.innerHTML = `⚠️ Erreur : ${data.error}`;
+                    statusDiv.innerHTML = `⚠️ Erreur : ${data.error || "Impossible de générer la facture."}`;
                 }
             } catch (err) {
                 console.error(err);
-                statusDiv.innerHTML = `❌ Opération annulée ou échouée.`;
+                statusDiv.innerHTML = `❌ Erreur de connexion au serveur de paiement.`;
             }
         }
 
