@@ -337,7 +337,7 @@
             border-radius: 16px;
             padding: 18px;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(0, 243, 255, 0.2);
             animation: fadeIn 0.25s ease;
         }
@@ -463,29 +463,33 @@
     <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET REAL TICKETS</button>
 
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Protected BEP20 Deposit</div>
+        <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Centre de Paiement BEP20</div>
         <div style="font-size: 11px; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Payez instantanément en 1 clic via votre portefeuille Web3 ou utilisez l'alternative manuelle par TXID.
+            Sélectionnez votre portefeuille favori pour payer 1 USDT instantanément :
         </div>
 
-        <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Payer 1 USDT en 1 Clic</button>
-        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithTrustWallet()">🛡️ Autre Portefeuille Web3 (BEP20)</button>
-        <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
+        <!-- ACCÈS UNIVERSEL À TOUS LES PORTEFEUILLES -->
+        <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="connectAndPayWeb3()">🦊 MetaMask / Extension Web3 (PC & Mobile)</button>
+        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithTrustWallet()">🛡️ Trust Wallet (App Mobile)</button>
+        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithBinanceWallet()">🟡 Binance Web3 / Pay Wallet</button>
+        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithOKXWallet()">🟢 OKX Wallet (BEP20)</button>
+        
+        <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 2px;"></div>
 
-        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0;"></div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
 
         <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Official Pool Address (BEP20):</div>
         <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
-        <button class="btn btn-silver" style="padding: 10px; font-size: 11px;" onclick="copyWallet()">📋 Copy Pool Address</button>
+        <button class="btn btn-silver" style="padding: 9px; font-size: 10.5px;" onclick="copyWallet()">📋 Copy Pool Address</button>
 
         <div style="font-size: 10px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Reference Memo (Optional):</div>
         <div class="copy-box" id="memoCode" style="font-weight: bold; color: var(--gold);">PT-000000</div>
-        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="copyMemo()">📋 Copy Memo</button>
+        <button class="btn btn-outline" style="padding: 9px; font-size: 10.5px;" onclick="copyMemo()">📋 Copy Memo</button>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
-        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Paste your Blockchain TXID for automated ticket minting:</div>
+        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Paste TXID from ANY wallet (Binance, Ledger, Bybit, etc.):</div>
         <input type="text" id="txHashInput" class="input-field" placeholder="0x... (66-character BEP20 TXID)">
-        <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
+        <button class="btn btn-cyber" style="padding: 10px; font-size: 11px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
     </div>
 
     <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
@@ -617,31 +621,46 @@
             }
         }
 
+        // --- PROTOCOLES DE REDIRECTION MULTI-PORTEFEUILLES ---
         function payWithTrustWallet() {
             const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Redirection vers le portefeuille Web3...";
-            const trustUrl = `https://link.trustwallet.com/send?coin=20000714&address=${RECEIVE_WALLET}&amount=1&token_id=${USDT_BEP20_CONTRACT}`;
-            openExternalWallet(trustUrl);
+            statusDiv.innerHTML = "⏳ Ouverture de Trust Wallet...";
+            const url = `https://link.trustwallet.com/send?coin=20000714&address=${RECEIVE_WALLET}&amount=1&token_id=${USDT_BEP20_CONTRACT}`;
+            openExternalWallet(url);
+        }
+
+        function payWithBinanceWallet() {
+            const statusDiv = document.getElementById('web3Status');
+            statusDiv.innerHTML = "⏳ Ouverture de Binance Web3 Wallet...";
+            const url = `https://app.binance.com/en/deeplink/crypto/send?address=${RECEIVE_WALLET}&amount=1&coin=USDT&network=BSC`;
+            openExternalWallet(url);
+        }
+
+        function payWithOKXWallet() {
+            const statusDiv = document.getElementById('web3Status');
+            statusDiv.innerHTML = "⏳ Ouverture d'OKX Wallet...";
+            const url = `https://www.okx.com/download?deeplink=okx://wallet/send?address=${RECEIVE_WALLET}&amount=1&tokenAddress=${USDT_BEP20_CONTRACT}&chainId=56`;
+            openExternalWallet(url);
         }
 
         async function connectAndPayWeb3() {
             const statusDiv = document.getElementById('web3Status');
 
             if (typeof window.ethereum === 'undefined') {
-                statusDiv.innerHTML = "⏳ Ouverture du portefeuille (1 USDT BEP20)...";
+                statusDiv.innerHTML = "⏳ Extension Web3 absente. Redirection universelle (EIP-681)...";
                 const eip681Url = `https://metamask.app.link/send/${USDT_BEP20_CONTRACT}@56/transfer?address=${RECEIVE_WALLET}&uint256=1000000000000000000`;
                 openExternalWallet(eip681Url);
                 return;
             }
 
             try {
-                statusDiv.innerHTML = "⏳ Connexion au portefeuille...";
+                statusDiv.innerHTML = "⏳ Connexion au portefeuille Web3...";
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
 
                 const network = await provider.getNetwork();
                 if (network.chainId !== 56) {
-                    statusDiv.innerHTML = "⚠️ Basculement sur la BNB Smart Chain...";
+                    statusDiv.innerHTML = "⚠️ Basculement requis sur la BNB Smart Chain...";
                     await window.ethereum.request({
                         method: 'wallet_switchEthereumChain',
                         params: [{ chainId: '0x38' }],
