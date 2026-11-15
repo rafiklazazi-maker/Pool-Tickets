@@ -850,20 +850,20 @@
                 const collected = data.total_collected || 0;
                 const target = data.target_goal || 2000;
                 let pct = (collected / target) * 100;
-                if (pct > 100) pct = 100; // Plafonne à 100% pour la barre visuelle
+                if (pct > 100) pct = 100;
 
                 document.getElementById('milestonePct').innerText = `${pct.toFixed(1)}%`;
                 document.getElementById('milestoneBar').style.width = `${pct}%`;
                 document.getElementById('prizePool').innerText = `$${collected.toFixed(1)}`;
                 document.getElementById('drawStatus').innerText = `🎯 Target Goal: ${collected.toFixed(1)} / ${target} USDT`;
 
-                // Logique intelligente : Si l'objectif est atteint (ou dépassé) -> Barre Rouge & Compteur Sprint
+                // Logique intelligente : Barre rouge et affichage du compteur de sprint si l'objectif est atteint
                 const barContainer = document.getElementById('barContainer');
                 const milestoneBar = document.getElementById('milestoneBar');
                 const countdownBox = document.getElementById('sprintCountdownBox');
                 const milestoneTitle = document.getElementById('milestoneTitle');
 
-                if (collected >= target) {
+                if (collected >= target || data.target_reached_timestamp) {
                     barContainer.classList.add('goal-reached');
                     milestoneBar.classList.add('goal-reached-fill');
                     milestoneTitle.innerHTML = "🚨 TARGET REACHED // FINAL SPRINT!";
@@ -871,7 +871,11 @@
                     
                     countdownBox.style.display = 'block';
                     if (!sprintEndTime) {
-                        sprintEndTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
+                        if (data.target_reached_timestamp) {
+                            sprintEndTime = (data.target_reached_timestamp * 1000) + (7 * 24 * 60 * 60 * 1000);
+                        } else {
+                            sprintEndTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
+                        }
                     }
                 } else {
                     barContainer.classList.remove('goal-reached');
