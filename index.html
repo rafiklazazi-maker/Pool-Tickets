@@ -354,7 +354,7 @@
             border-left: 3px solid var(--cyan);
         }
 
-        #qrcode {
+        #qrcode, #depositQrcode {
             background: #fff;
             padding: 8px;
             border-radius: 8px;
@@ -438,6 +438,7 @@
     <button class="btn btn-outline" type="button" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
     <button class="btn btn-outline" type="button" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards)</button>
 
+    <!-- Modale de Parrainage -->
     <div class="modal-backdrop" id="referralBackdrop">
         <div class="modal">
             <div style="font-size: 10px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
@@ -446,6 +447,25 @@
             <div id="qrcode"></div>
             <button class="btn btn-cyber" type="button" onclick="copyRefLink()">📋 Copy Referral Link</button>
             <button class="btn btn-outline" type="button" onclick="document.getElementById('referralBackdrop').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <!-- Modale de Secours Universel (S'ouvre dans Telegram si pas de Web3) -->
+    <div class="modal-backdrop" id="depositModalBackdrop">
+        <div class="modal">
+            <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
+                🛡️ UNIVERSAL DEPOSIT GATEWAY
+            </div>
+            <div style="font-size: 9.5px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace;">
+                Send <b id="modalPayAmount" style="color: var(--green);">1</b> USDT (BEP20) to mint your ticket(s) automatically:
+            </div>
+            <div id="depositQrcode"></div>
+            <input type="text" id="modalWalletInput" class="input-field" readonly onclick="this.select()" style="text-align: center; font-size: 9.5px;">
+            <button class="btn btn-cyber" type="button" onclick="copyDepositAddress()">📋 Copy Deposit Address</button>
+            <div style="font-size: 8.5px; text-align: center; color: var(--gold); font-family: 'JetBrains Mono', monospace;">
+                ⚡ Tickets appear automatically after blockchain confirmation.
+            </div>
+            <button class="btn btn-outline" type="button" onclick="document.getElementById('depositModalBackdrop').style.display='none'">Close</button>
         </div>
     </div>
 
@@ -499,6 +519,7 @@
         let hasPaidTicket = false;
         let channelStepJoined = false;
         let cachedReceiveWallet = "0x789b91e92D533d1b66b4C9B47294828E43b7B9D3";
+        let depositQrInitialized = false;
 
         try {
             new QRCode(document.getElementById("qrcode"), { text: refLink, width: 110, height: 110 });
@@ -522,15 +543,18 @@
             const statusEl = document.getElementById('payStatus');
             const btnEl = document.getElementById('payActionBtn');
 
+            if (!window.ethereum) {
+                openUniversalDepositModal();
+                statusEl.style.color = "var(--gold)";
+                statusEl.innerText = "💡 Opened universal deposit modal.";
+                return;
+            }
+
             statusEl.style.color = "var(--cyan)";
             statusEl.innerText = "⚡ Connecting to Web3 wallet...";
             btnEl.disabled = true;
 
             try {
-                if (!window.ethereum) {
-                    throw new Error("No Web3 provider found. Please open inside MetaMask or Trust Wallet browser.");
-                }
-
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -588,6 +612,25 @@
             } finally {
                 btnEl.disabled = false;
             }
+        }
+
+        function openUniversalDepositModal() {
+            document.getElementById('modalPayAmount').innerText = selectedAmount;
+            document.getElementById('modalWalletInput').value = cachedReceiveWallet;
+            document.getElementById('depositModalBackdrop').style.display = 'flex';
+
+            if (!depositQrInitialized) {
+                try {
+                    document.getElementById("depositQrcode").innerHTML = "";
+                    new QRCode(document.getElementById("depositQrcode"), { text: cachedReceiveWallet, width: 110, height: 110 });
+                    depositQrInitialized = true;
+                } catch(e) {}
+            }
+        }
+
+        function copyDepositAddress() {
+            navigator.clipboard.writeText(cachedReceiveWallet);
+            notify("✅ Deposit address copied to clipboard!");
         }
 
         function copyRefLink() {
