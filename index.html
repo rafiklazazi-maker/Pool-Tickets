@@ -435,6 +435,7 @@
         </div>
     </div>
 
+    <!-- Modale Smart Invoice -->
     <div class="modal" id="buyModal">
         <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Smart Invoice Checkout</div>
         <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;">
@@ -442,6 +443,18 @@
         </div>
         <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" onclick="createSecureInvoice()">🚀 Ouvrir la Smart Invoice</button>
         <div id="invoiceStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
+        <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('buyModal')">Fermer</button>
+    </div>
+
+    <!-- Modale dédiée aux Portefeuilles pour éviter les blocages (Fix Bug) -->
+    <div class="modal" id="walletModal">
+        <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;" id="walletModalTitle">🔌 Connexion...</div>
+        <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;" id="walletModalDesc">
+            Établissement d'une liaison sécurisée avec le portefeuille...
+        </div>
+        <div id="walletModalStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
+        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" id="walletActionBtn" onclick="createSecureInvoice()">Lancer la facture sécurisée</button>
+        <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('walletModal')">Fermer</button>
     </div>
 
     <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
@@ -453,6 +466,7 @@
         </div>
         <div id="qrcode"></div>
         <button class="btn btn-cyber" style="padding: 9px; font-size: 10px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
+        <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('referralModal')">Fermer</button>
     </div>
 
     <div class="section">
@@ -529,7 +543,9 @@
 
         function toggleModal(id) {
             const modal = document.getElementById(id);
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            if (modal) {
+                modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            }
         }
 
         function toggleReferral() {
@@ -551,7 +567,10 @@
 
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
-            statusDiv.innerHTML = "⏳ Génération...";
+            if (statusDiv) statusDiv.innerHTML = "⏳ Génération...";
+
+            const walletStatus = document.getElementById('walletModalStatus');
+            if (walletStatus) walletStatus.innerHTML = "⏳ Génération de la facture...";
 
             try {
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
@@ -561,20 +580,34 @@
                 });
                 const data = await res.json();
                 if (data.ok && data.invoice_url) {
-                    statusDiv.innerHTML = "✅ Redirection...";
+                    if (statusDiv) statusDiv.innerHTML = "✅ Redirection...";
+                    if (walletStatus) walletStatus.innerHTML = "✅ Redirection en cours...";
                     openExternalUrl(data.invoice_url);
                 } else {
-                    statusDiv.innerHTML = `⚠️ Erreur serveur`;
+                    if (statusDiv) statusDiv.innerHTML = `⚠️ Erreur serveur`;
+                    if (walletStatus) walletStatus.innerHTML = `⚠️ Erreur serveur`;
                 }
             } catch (err) {
-                statusDiv.innerHTML = `❌ Erreur réseau`;
+                if (statusDiv) statusDiv.innerHTML = `❌ Erreur réseau`;
+                if (walletStatus) walletStatus.innerHTML = `❌ Erreur réseau`;
             }
         }
 
+        // Gestion propre de la modale de portefeuille sans bloquer l'interface
         function payWithWallet(walletName) {
-            const msg = `🔌 Connexion à ${walletName}...`;
-            if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-            createSecureInvoice();
+            document.getElementById('walletModalTitle').innerText = `🔌 Connexion : ${walletName}`;
+            document.getElementById('walletModalDesc').innerText = `Connexion en cours via ${walletName}. Si l'application externe ne s'ouvre pas automatiquement, utilisez la facture intelligente sécurisée.`;
+            document.getElementById('walletModalStatus').innerHTML = "";
+            toggleModal('walletModal');
+
+            // Timeout anti-blocage (sécurité UX)
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            setTimeout(() => {
+                const statusEl = document.getElementById('walletModalStatus');
+                if (statusEl && statusEl.innerHTML === "") {
+                    statusEl.innerHTML = isMobile ? "⚠️ Application externe non détectée. Cliquez ci-dessous." : "💡 Mode test PC : utilisez la passerelle directe.";
+                }
+            }, 2500);
         }
 
         async function savePayoutWallet() {
