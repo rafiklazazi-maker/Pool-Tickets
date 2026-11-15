@@ -6,7 +6,6 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Inclusion d'Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -413,7 +412,7 @@
             Payez instantanément en 1 clic (1 USDT = 1 Ticket). Pas de copier-coller requis !
         </div>
 
-        <!-- BOUTON WEB3 1 CLIC INTELLIGENT -->
+        <!-- BOUTON WEB3 1 CLIC INTELLIGENT (CORRIGÉ) -->
         <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Payer 1 USDT en 1 Clic (Web3)</button>
         <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
 
@@ -516,15 +515,14 @@
             toggleModal('referralModal');
         }
 
-        /* --- FONCTION PAIEMENT 1 CLIC UNIVERSELLE --- */
+        /* --- FONCTION PAIEMENT 1 CLIC (CORRIGÉE AVEC DOMAINE FIXE) --- */
         async function connectAndPayWeb3() {
             const statusDiv = document.getElementById('web3Status');
             
-            // Si window.ethereum n'est pas présent (ex: navigateur Telegram standard), on redirige vers le deep link MetaMask mobile
+            // Si aucun portefeuille injecté (navigateur Telegram standard), redirection propre vers MetaMask mobile
             if (typeof window.ethereum === 'undefined') {
-                const currentUrl = window.location.href;
-                // Rediriger vers le navigateur DApp de MetaMask proprement
-                const metamaskDeepLink = `https://metamask.app.link/dapp/${currentUrl.replace(/^https?:\/\//, '')}`;
+                const myAppDomain = "rafiklazazi-maker.github.io/pool-tickets/";
+                const metamaskDeepLink = `https://metamask.app.link/dapp/${myAppDomain}`;
                 statusDiv.innerHTML = "⏳ Ouverture de MetaMask...";
                 window.location.href = metamaskDeepLink;
                 return;
@@ -631,7 +629,7 @@
                 const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
                 const data = await res.json();
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
-                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('US', { minimumFractionDigits: 2 })}`;
+                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                 hasPaidTicket = data.has_paid_ticket;
                 
                 const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
