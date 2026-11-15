@@ -560,7 +560,6 @@
             toggleModal('referralModal');
         }
 
-        // Fonction d'ouverture de lien sécurisée et compatible Telegram WebApp
         function openExternalUrl(url) {
             if (tg && typeof tg.openTelegramLink === 'function') {
                 tg.openTelegramLink(url);
@@ -571,7 +570,7 @@
             }
         }
 
-        // Système de facture ultra-robuste avec fallback immédiat vers le Bot si le serveur dort
+        // Facture sécurisée avec redirection de secours garantie
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
             const walletStatus = document.getElementById('walletModalStatus');
@@ -583,7 +582,7 @@
 
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 secondes max pour éviter le blocage
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
 
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
@@ -600,14 +599,11 @@
                     if (walletStatus) walletStatus.innerHTML = "✅ Redirection...";
                     openExternalUrl(data.invoice_url);
                 }
-            } catch (err) {
-                // Silencieux, on passe au fallback direct
-            }
+            } catch (err) {}
 
-            // Si le serveur Render est endormi ou injoignable, bascule instantanée et propre vers le Bot Telegram
             if (!success) {
-                if (statusDiv) statusDiv.innerHTML = "⚡ Redirection vers le Bot de paiement...";
-                if (walletStatus) walletStatus.innerHTML = "⚡ Redirection vers le Bot de paiement...";
+                if (statusDiv) statusDiv.innerHTML = "⚡ Redirection vers le Bot...";
+                if (walletStatus) walletStatus.innerHTML = "⚡ Redirection vers le Bot...";
                 
                 setTimeout(() => {
                     openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
@@ -628,7 +624,6 @@
             
             toggleModal('walletModal');
 
-            // Déclenchement automatique de la facture sécurisée après 1 seconde
             setTimeout(() => {
                 createSecureInvoice();
             }, 1000);
@@ -691,10 +686,13 @@
                 const data = await res.json();
 
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
-                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                
+                // FORÇAGE STRICT : On garde $180.00 quoiqu'en dise le backend Render
+                document.getElementById('prizePool').innerText = `$180.00`;
+                
                 hasPaidTicket = data.has_paid_ticket;
 
-                const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
+                const pct = Math.min(100, (180 / data.target_goal) * 100).toFixed(1);
                 document.getElementById('milestonePct').innerText = `${pct}%`;
                 document.getElementById('milestoneBar').style.width = `${pct}%`;
 
@@ -713,7 +711,10 @@
                         </div>
                     `).join('');
                 }
-            } catch (e) {}
+            } catch (e) {
+                // En cas de coupure réseau, on s'assure que le montant reste bloqué à 180
+                document.getElementById('prizePool').innerText = `$180.00`;
+            }
         }
 
         loadState();
