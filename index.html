@@ -192,7 +192,7 @@
         async function connectAndPayWeb3() {
             const statusDiv = document.getElementById('web3Status');
 
-            // Sécurité anti-crash WebView Telegram pour éviter l'erreur ERR_UNKNOWN_URL_SCHEME
+            // Sécurité anti-crash WebView Telegram pour l'erreur ERR_UNKNOWN_URL_SCHEME
             if (typeof window.ethereum === 'undefined') {
                 statusDiv.innerHTML = "⏳ Ouverture de MetaMask...";
                 const metamaskUrl = "https://metamask.app.link/dapp/rafiklazazi-maker.github.io/pool-tickets/";
