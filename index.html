@@ -454,21 +454,21 @@
     <div class="modal" id="buyModal">
         <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Smart Invoice Checkout</div>
         <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;">
-            Cliquez pour lancer votre session de paiement sécurisée liée à Telegram :
+            Cliquez pour lancer votre session de paiement sécurisée :
         </div>
         <button class="btn btn-cyber" type="button" onclick="createSecureInvoice()">🚀 Ouvrir la Smart Invoice</button>
         <div id="invoiceStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
         <button class="btn btn-outline" type="button" onclick="toggleModal('buyModal')">Fermer</button>
     </div>
 
-    <!-- Modale anti-blocage pour les portefeuilles -->
+    <!-- Modale native pour les portefeuilles -->
     <div class="modal" id="walletModal">
         <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;" id="walletModalTitle">🔌 Connexion...</div>
         <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;" id="walletModalDesc">
-            Établissement d'une liaison sécurisée...
+            Ouverture de l'application de portefeuille...
         </div>
         <div id="walletModalStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
-        <button class="btn btn-cyber" type="button" id="walletActionBtn" onclick="createSecureInvoice()">🚀 Lancer la Smart Invoice Sécurisée</button>
+        <button class="btn btn-cyber" type="button" id="walletActionBtn" onclick="createSecureInvoice()">💳 Utiliser la Smart Invoice de secours</button>
         <button class="btn btn-outline" type="button" onclick="toggleModal('walletModal')">Fermer</button>
     </div>
 
@@ -581,7 +581,7 @@
             }
         }
 
-        // Facture sécurisée instantanée avec redirection propre vers le bot Telegram
+        // Smart Invoice principale
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
             const walletStatus = document.getElementById('walletModalStatus');
@@ -589,37 +589,24 @@
             if (statusDiv) statusDiv.innerHTML = "⏳ Génération de la facture...";
             if (walletStatus) walletStatus.innerHTML = "⏳ Génération de la facture...";
 
-            let targetUrl = `https://t.me/${BOT_USERNAME}?start=pay_${user.id}`;
-
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sec max pour ne pas bloquer
-
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, amount: 1.0 }),
-                    signal: controller.signal
+                    body: JSON.stringify({ user_id: user.id, amount: 1.0 })
                 });
-                clearTimeout(timeoutId);
-
                 const data = await res.json();
                 if (data.ok && data.invoice_url) {
-                    targetUrl = data.invoice_url;
+                    openExternalUrl(data.invoice_url);
+                    return;
                 }
-            } catch (err) {
-                // Utilise le lien direct du bot en cas de mise en veille de Render
-            }
+            } catch (err) {}
 
-            if (statusDiv) statusDiv.innerHTML = "✅ Redirection...";
-            if (walletStatus) walletStatus.innerHTML = "✅ Redirection...";
-            
-            setTimeout(() => {
-                openExternalUrl(targetUrl);
-            }, 600);
+            // Fallback si Render dort : ouvre la page web directe ou le bot de secours
+            openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
         }
 
-        // Gestion propre des wallets sans bloquer l'interface
+        // REDIRECTION NATIVE VERS LES APPLICATIONS DE WALLETS (Deep Links)
         function payWithWallet(walletName) {
             const modalTitle = document.getElementById('walletModalTitle');
             const modalDesc = document.getElementById('walletModalDesc');
@@ -627,15 +614,71 @@
 
             if (!modalTitle) return;
 
-            modalTitle.innerText = `🔌 ${walletName}`;
-            modalDesc.innerText = `Liaison sécurisée initialisée. Redirection vers le paiement...`;
-            walletStatus.innerHTML = "⏳ Prêt...";
+            modalTitle.innerText = `🔌 Connexion : ${walletName}`;
+            modalDesc.innerText = `Tentative d'ouverture de l'application ${walletName}...`;
+            walletStatus.innerHTML = "⏳ Lancement...";
             
             toggleModal('walletModal');
 
-            setTimeout(() => {
-                createSecureInvoice();
-            }, 800);
+            // Définition des protocoles natifs (Deep Links) pour chaque portefeuille
+            let deepLink = "";
+            let storeFallback = "";
+
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            switch(walletName) {
+                case 'MetaMask':
+                    deepLink = "https://metamask.app.link/dapp/";
+                    storeFallback = "https://metamask.io/download/";
+                    break;
+                case 'Trust Wallet':
+                    deepLink = "https://link.trustwallet.com/open_url?coin_id=60&url=";
+                    storeFallback = "https://trustwallet.com/download";
+                    break;
+                case 'Tonkeeper':
+                    deepLink = "tonkeeper://";
+                    storeFallback = "https://tonkeeper.com/";
+                    break;
+                case 'Binance Pay':
+                    deepLink = "binance://";
+                    storeFallback = "https://www.binance.com";
+                    break;
+                case 'OKX Pay':
+                    deepLink = "okx://";
+                    storeFallback = "https://www.okx.com";
+                    break;
+                case 'Bybit Pay':
+                    deepLink = "bybit://";
+                    storeFallback = "https://www.bybit.com";
+                    break;
+                case 'SafePal':
+                    deepLink = "safepalwallet://";
+                    storeFallback = "https://safepal.com/";
+                    break;
+                case 'WalletConnect':
+                default:
+                    // Pour WalletConnect ou autre, on lance directement la Smart Invoice universelle
+                    setTimeout(() => createSecureInvoice(), 1000);
+                    return;
+            }
+
+            // Si on est sur mobile, on tente d'ouvrir l'appli native
+            if (isMobile && deepLink && walletName !== 'WalletConnect') {
+                setTimeout(() => {
+                    window.location.href = deepLink;
+                }, 500);
+
+                // Si l'application n'est pas installée au bout de 2 secondes, on propose le store ou la facture sécurisée
+                setTimeout(() => {
+                    walletStatus.innerHTML = `⚠️ App non détectée. <a href="${storeFallback}" target="_blank" style="color:var(--cyan);">Installer ${walletName}</a> ou utiliser la facture ci-dessous.`;
+                }, 2000);
+            } else {
+                // Sur PC : bascule propre vers la facture sécurisée universelle
+                setTimeout(() => {
+                    walletStatus.innerHTML = `💡 Mode PC détecté : utilisation de la facture sécurisée.`;
+                    createSecureInvoice();
+                }, 1200);
+            }
         }
 
         async function savePayoutWallet() {
@@ -690,7 +733,7 @@
         }, 3500);
 
         async function loadState() {
-            // VERROUILLAGE STRICT ET DÉFINITIF : Le montant reste toujours à $180.00 sur l'écran
+            // VERROUILLAGE STRICT : Force le montant à $180.00 en permanence
             document.getElementById('prizePool').innerText = `$180.00`;
 
             try {
