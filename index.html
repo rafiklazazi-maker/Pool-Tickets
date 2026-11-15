@@ -521,7 +521,6 @@
 
         let hasPaidTicket = false;
         let channelStepJoined = false;
-        let countdownEndTimestamp = 0;
 
         const seededDepositors = [
             `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
@@ -561,26 +560,30 @@
             toggleModal('referralModal');
         }
 
+        // Fonction d'ouverture de lien sécurisée et compatible Telegram WebApp
         function openExternalUrl(url) {
-            if (tg && typeof tg.openLink === 'function') {
+            if (tg && typeof tg.openTelegramLink === 'function') {
+                tg.openTelegramLink(url);
+            } else if (tg && typeof tg.openLink === 'function') {
                 tg.openLink(url);
             } else {
                 window.open(url, '_blank');
             }
         }
 
-        // Fonction corrigée avec gestion anti-erreur réseau et réveil du serveur Render
+        // Système de facture ultra-robuste avec fallback immédiat vers le Bot si le serveur dort
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
-            if (statusDiv) statusDiv.innerHTML = "⏳ Réveil du serveur (patience)...";
-
             const walletStatus = document.getElementById('walletModalStatus');
-            if (walletStatus) walletStatus.innerHTML = "⏳ Réveil du serveur (patience)...";
+            
+            if (statusDiv) statusDiv.innerHTML = "⏳ Connexion au protocole...";
+            if (walletStatus) walletStatus.innerHTML = "⏳ Connexion au protocole...";
+
+            let success = false;
 
             try {
-                // Tentative d'appel au backend avec un timeout global de sécurité
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 secondes max
+                const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 secondes max pour éviter le blocage
 
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
@@ -592,23 +595,23 @@
 
                 const data = await res.json();
                 if (data.ok && data.invoice_url) {
+                    success = true;
                     if (statusDiv) statusDiv.innerHTML = "✅ Redirection...";
-                    if (walletStatus) walletStatus.innerHTML = "✅ Redirection en cours...";
+                    if (walletStatus) walletStatus.innerHTML = "✅ Redirection...";
                     openExternalUrl(data.invoice_url);
-                } else {
-                    if (statusDiv) statusDiv.innerHTML = `⚠️ Erreur serveur, réessai...`;
-                    if (walletStatus) walletStatus.innerHTML = `⚠️ Erreur serveur`;
-                    // Fallback direct vers le bot Telegram en cas de souci
-                    setTimeout(() => openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`), 1000);
                 }
             } catch (err) {
-                // Si le serveur est endormi ou injoignable, on bascule proprement vers le bot ou un lien de secours
-                if (statusDiv) statusDiv.innerHTML = `⚡ Redirection alternative...`;
-                if (walletStatus) walletStatus.innerHTML = `⚡ Redirection alternative...`;
+                // Silencieux, on passe au fallback direct
+            }
+
+            // Si le serveur Render est endormi ou injoignable, bascule instantanée et propre vers le Bot Telegram
+            if (!success) {
+                if (statusDiv) statusDiv.innerHTML = "⚡ Redirection vers le Bot de paiement...";
+                if (walletStatus) walletStatus.innerHTML = "⚡ Redirection vers le Bot de paiement...";
                 
                 setTimeout(() => {
                     openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
-                }, 1000);
+                }, 800);
             }
         }
 
@@ -620,17 +623,15 @@
             if (!modalTitle) return;
 
             modalTitle.innerText = `🔌 Connexion : ${walletName}`;
-            modalDesc.innerText = `Tentative de liaison avec ${walletName}... Si l'application externe ne répond pas instantanément, basculez sur la facture sécurisée.`;
-            walletStatus.innerHTML = "⏳ Connexion en cours...";
+            modalDesc.innerText = `Liaison avec ${walletName} active. Lancement de la facture intelligente sécurisée...`;
+            walletStatus.innerHTML = "⏳ Préparation...";
             
             toggleModal('walletModal');
 
+            // Déclenchement automatique de la facture sécurisée après 1 seconde
             setTimeout(() => {
-                const statusEl = document.getElementById('walletModalStatus');
-                if (statusEl && statusEl.innerHTML.includes("Connexion")) {
-                    statusEl.innerHTML = "💡 Prêt via la passerelle universelle Smart Invoice.";
-                }
-            }, 1500);
+                createSecureInvoice();
+            }, 1000);
         }
 
         async function savePayoutWallet() {
@@ -657,8 +658,7 @@
                 return;
             }
             if (!channelStepJoined) {
-                if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(CHANNEL_LINK);
-                else window.open(CHANNEL_LINK, '_blank');
+                openExternalUrl(CHANNEL_LINK);
                 channelStepJoined = true;
                 document.getElementById('channelBtn').innerText = "✅ Click Again to Claim";
                 return;
@@ -693,7 +693,6 @@
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                 hasPaidTicket = data.has_paid_ticket;
-                countdownEndTimestamp = data.countdown_end;
 
                 const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
                 document.getElementById('milestonePct').innerText = `${pct}%`;
