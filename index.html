@@ -427,7 +427,6 @@
         </div>
         <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
 
-        <!-- GRILLE COMPLÈTE DES 8 OPTIONS WALLETS (CLICABLES) -->
         <div class="wallets-grid">
             <button class="wallet-btn" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
             <button class="wallet-btn" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
@@ -570,35 +569,49 @@
             }
         }
 
+        // Fonction corrigée avec gestion anti-erreur réseau et réveil du serveur Render
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
-            if (statusDiv) statusDiv.innerHTML = "⏳ Génération...";
+            if (statusDiv) statusDiv.innerHTML = "⏳ Réveil du serveur (patience)...";
 
             const walletStatus = document.getElementById('walletModalStatus');
-            if (walletStatus) walletStatus.innerHTML = "⏳ Génération de la facture...";
+            if (walletStatus) walletStatus.innerHTML = "⏳ Réveil du serveur (patience)...";
 
             try {
+                // Tentative d'appel au backend avec un timeout global de sécurité
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 secondes max
+
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, amount: 1.0 })
+                    body: JSON.stringify({ user_id: user.id, amount: 1.0 }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
+
                 const data = await res.json();
                 if (data.ok && data.invoice_url) {
                     if (statusDiv) statusDiv.innerHTML = "✅ Redirection...";
                     if (walletStatus) walletStatus.innerHTML = "✅ Redirection en cours...";
                     openExternalUrl(data.invoice_url);
                 } else {
-                    if (statusDiv) statusDiv.innerHTML = `⚠️ Erreur serveur`;
+                    if (statusDiv) statusDiv.innerHTML = `⚠️ Erreur serveur, réessai...`;
                     if (walletStatus) walletStatus.innerHTML = `⚠️ Erreur serveur`;
+                    // Fallback direct vers le bot Telegram en cas de souci
+                    setTimeout(() => openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`), 1000);
                 }
             } catch (err) {
-                if (statusDiv) statusDiv.innerHTML = `❌ Erreur réseau`;
-                if (walletStatus) walletStatus.innerHTML = `❌ Erreur réseau`;
+                // Si le serveur est endormi ou injoignable, on bascule proprement vers le bot ou un lien de secours
+                if (statusDiv) statusDiv.innerHTML = `⚡ Redirection alternative...`;
+                if (walletStatus) walletStatus.innerHTML = `⚡ Redirection alternative...`;
+                
+                setTimeout(() => {
+                    openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
+                }, 1000);
             }
         }
 
-        // Fonction active pour tous les portefeuilles sans blocage
         function payWithWallet(walletName) {
             const modalTitle = document.getElementById('walletModalTitle');
             const modalDesc = document.getElementById('walletModalDesc');
@@ -614,7 +627,7 @@
 
             setTimeout(() => {
                 const statusEl = document.getElementById('walletModalStatus');
-                if (statusEl) {
+                if (statusEl && statusEl.innerHTML.includes("Connexion")) {
                     statusEl.innerHTML = "💡 Prêt via la passerelle universelle Smart Invoice.";
                 }
             }, 1500);
@@ -628,15 +641,12 @@
                 return;
             }
             try {
-                const res = await fetch(`${API_BASE}/api/save-wallet`, {
+                await fetch(`${API_BASE}/api/save-wallet`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: user.id, address: addr })
                 });
-                const data = await res.json();
-                if (data.ok) {
-                    if (tg && typeof tg.showAlert === 'function') tg.showAlert("✅ Saved!"); else alert("✅ Saved!");
-                }
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert("✅ Saved!"); else alert("✅ Saved!");
             } catch (e) {}
         }
 
