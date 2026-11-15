@@ -296,6 +296,11 @@
             gap: 5px;
         }
 
+        .wallet-btn:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 243, 255, 0.1);
+        }
+
         .section {
             background: var(--card);
             border-radius: 12px;
@@ -422,7 +427,7 @@
         </div>
         <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
 
-        <!-- GRILLE COMPLÈTE DES 8 OPTIONS WALLETS -->
+        <!-- GRILLE COMPLÈTE DES 8 OPTIONS WALLETS (CLICABLES) -->
         <div class="wallets-grid">
             <button class="wallet-btn" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
             <button class="wallet-btn" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
@@ -593,6 +598,7 @@
             }
         }
 
+        // Fonction active pour tous les portefeuilles sans blocage
         function payWithWallet(walletName) {
             const modalTitle = document.getElementById('walletModalTitle');
             const modalDesc = document.getElementById('walletModalDesc');
