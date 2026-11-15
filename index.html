@@ -43,6 +43,19 @@
         .logo-title span { color: var(--cyan); }
         .user-badge { background: rgba(10, 13, 20, 0.9); padding: 6px 14px; border-radius: 8px; font-size: 11px; color: var(--cyan); border: 1px solid var(--border-cyan); font-family: 'JetBrains Mono', monospace; }
         
+        .ticker-bar {
+            background: rgba(10, 13, 20, 0.85);
+            border: 1px solid rgba(255, 204, 0, 0.35);
+            color: var(--gold);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+        }
+
         .jackpot-card {
             background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
             border: 1.5px solid var(--cyan);
@@ -54,18 +67,34 @@
 
         .season-pill { display: inline-block; background: rgba(0, 243, 255, 0.12); color: var(--cyan); border: 1px solid var(--border-cyan); padding: 3px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; font-family: 'Orbitron', sans-serif; text-transform: uppercase; margin-bottom: 8px; }
         .jackpot-amount { font-size: 42px; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(0, 243, 255, 0.5); margin: 6px 0; font-family: 'Orbitron', sans-serif; }
-        
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-family: 'Orbitron', sans-serif; }
+        .status-box { background: rgba(0, 0, 0, 0.6); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.1); color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
+
+        .trust-shield {
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
+            border: 1px solid rgba(0, 243, 255, 0.32);
+            border-radius: 12px;
+            padding: 11px 13px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            color: var(--text);
+            line-height: 1.45;
+        }
+
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-family: 'Orbitron', sans-serif; transition: all 0.2s ease; }
+        .btn:active { transform: scale(0.97); }
         .btn-cyber { background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%); color: #030407; box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); font-weight: 900; }
         .btn-silver { background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%); color: #030407; font-family: 'Orbitron', sans-serif; }
         .btn-outline { background: var(--card); color: var(--text); border: 1px solid var(--border-cyan); font-family: 'Orbitron', sans-serif; font-size: 11px; }
 
         .section, .modal { background: var(--card); border-radius: 14px; padding: 14px; border: 1px solid rgba(255, 255, 255, 0.08); }
-        .modal { display: none; background: #080b12; border: 1.5px solid var(--cyan); flex-direction: column; gap: 12px; }
+        .section-title { font-size: 12px; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 1px; color: var(--cyan); font-family: 'Orbitron', sans-serif; }
+        .modal { display: none; background: #080b12; border: 1.5px solid var(--cyan); flex-direction: column; gap: 12px; box-shadow: 0 15px 45px rgba(0,0,0,0.9); }
         
         .copy-box { background: #030407; padding: 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; word-break: break-all; border: 1px dashed var(--border-cyan); color: var(--cyan); }
         .input-field { width: 100%; box-sizing: border-box; background: #030407; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 12px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 11px; outline: none; }
         .ticket-item { background: #030407; padding: 10px 12px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; border-left: 3px solid var(--cyan); }
+        .empty-state { text-align: center; color: var(--muted); font-size: 11px; padding: 12px 0; font-family: 'JetBrains Mono', monospace; }
         .footer { text-align: center; font-size: 9px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; }
     </style>
 </head>
@@ -76,11 +105,17 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
+    <div class="ticker-bar">⚡ PROTECTED BLOCKCHAIN PROTOCOL // REAL USDT PRIZE POOL</div>
+
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
         <div class="jackpot-label" style="font-size: 10px; color: var(--muted); text-transform: uppercase;">Verified Real Grand Prize Pool (70%)</div>
         <div class="jackpot-amount" id="prizePool">$371.00</div>
-        <div class="status-box" id="drawStatus" style="font-size: 11px; color: var(--green); font-family: 'JetBrains Mono', monospace;">🎯 Target Goal: $371 / $2,000 USDT</div>
+        <div class="status-box" id="drawStatus">🎯 Target Goal: $371 / $2,000 USDT</div>
+    </div>
+
+    <div class="trust-shield">
+        🛡️ <b style="color: var(--cyan);">100% Secure On-Chain Engine:</b> Real USDT Jackpot • Autonomous Payouts.
     </div>
 
     <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET REAL TICKETS</button>
@@ -111,8 +146,22 @@
     </div>
 
     <div class="section">
-        <div class="section-title" style="color: var(--cyan); font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; margin-bottom: 8px;">🎟️ Active Tickets Ledger</div>
-        <div id="ticketsList"><div class="empty-state" style="text-align: center; color: var(--muted); font-size: 11px; font-family: 'JetBrains Mono', monospace;">NO ACTIVE TICKETS FOUND IN LEDGER</div></div>
+        <div class="section-title"><span>💳 Portefeuille de Payout (BEP20)</span></div>
+        <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace;">
+            Enregistrez votre adresse personnelle pour recevoir automatiquement vos gains.
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Adresse BEP20">
+            <button class="btn btn-cyber" style="width: auto; padding: 0 14px; font-size: 11px;" onclick="savePayoutWallet()">Enregistrer</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span>🎟️ Mes Tickets Actifs</span>
+            <span id="ticketCount" style="color: var(--cyan);">0</span>
+        </div>
+        <div id="ticketsList"><div class="empty-state">AUCUN TICKET ACTIF DANS LE REGISTRE</div></div>
     </div>
 
     <div class="footer">POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL</div>
@@ -126,12 +175,15 @@
         const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
 
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
-        document.getElementById('username').innerText = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
-        document.getElementById('memoCode').innerText = `PT-${user.id}`;
+        const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
+        const memoString = `PT-${user.id}`;
+
+        document.getElementById('username').innerText = username;
+        document.getElementById('memoCode').innerText = memoString;
 
         function copyText(txt, msg) { navigator.clipboard.writeText(txt); tg.showAlert(msg); }
         function copyWallet() { copyText(RECEIVE_WALLET, "BEP20 Address copied!"); }
-        function copyMemo() { copyText(`PT-${user.id}`, "Reference Memo copied!"); }
+        function copyMemo() { copyText(memoString, "Reference Memo copied!"); }
         function toggleModal(id) {
             const modal = document.getElementById(id);
             modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
@@ -140,7 +192,7 @@
         async function connectAndPayWeb3() {
             const statusDiv = document.getElementById('web3Status');
 
-            // SOLUTION ANTI-CRASH : Si aucun provider injecté (on est dans Telegram mobile), on ouvre proprement via l'API Telegram
+            // Sécurité anti-crash WebView Telegram pour éviter l'erreur ERR_UNKNOWN_URL_SCHEME
             if (typeof window.ethereum === 'undefined') {
                 statusDiv.innerHTML = "⏳ Ouverture de MetaMask...";
                 const metamaskUrl = "https://metamask.app.link/dapp/rafiklazazi-maker.github.io/pool-tickets/";
@@ -195,19 +247,38 @@
             }
         }
 
+        async function savePayoutWallet() {
+            const addr = document.getElementById('payoutWalletInput').value.trim();
+            if (!addr.startsWith("0x") || addr.length !== 42) { tg.showAlert("Adresse BEP20 invalide."); return; }
+            try {
+                const res = await fetch(`${API_BASE}/api/save-wallet`, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, address: addr })
+                });
+                const data = await res.json();
+                if (data.ok) tg.showAlert("✅ Portefeuille de payout enregistré !");
+            } catch (e) { tg.showAlert("Erreur de connexion au serveur."); }
+        }
+
         async function submitTxHash() {
             const txHash = document.getElementById('txHashInput').value.trim();
             if (!txHash.startsWith("0x") || txHash.length !== 66) { tg.showAlert("Invalid TXID hash."); return; }
-            const res = await fetch(`${API_BASE}/api/verify-tx`, {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: user.id, tx_hash: txHash })
-            });
-            const data = await res.json();
-            if (data.ok) {
-                document.getElementById('txHashInput').value = "";
-                tg.showAlert(`⚡ Verified On-Chain! ${data.tickets_issued} ticket(s) minted!`);
-                loadState();
-            } else { tg.showAlert(data.error || "Verification failed."); }
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, tx_hash: txHash })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    document.getElementById('txHashInput').value = "";
+                    tg.showAlert(`⚡ Verified On-Chain! ${data.tickets_issued} ticket(s) minted!`);
+                    loadState();
+                    toggleModal('buyModal');
+                } else {
+                    tg.showAlert(data.error || "Verification failed.");
+                }
+            } catch (e) { tg.showAlert("Erreur de communication."); }
         }
 
         async function loadState() {
@@ -216,13 +287,21 @@
                 const data = await res.json();
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-                if (data.my_tickets && data.my_tickets.length > 0) {
+                
+                if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
+                    document.getElementById('payoutWalletInput').value = data.payout_address;
+                }
+                
+                const myCount = data.my_tickets.length;
+                document.getElementById('ticketCount').innerText = myCount;
+                if (myCount > 0) {
                     document.getElementById('ticketsList').innerHTML = data.my_tickets.map(t => `
                         <div class="ticket-item"><span>${t.source}</span><b style="color: var(--cyan);">${t.code}</b></div>
                     `).join('');
                 }
             } catch (e) {}
         }
+
         loadState();
     </script>
 </body>
