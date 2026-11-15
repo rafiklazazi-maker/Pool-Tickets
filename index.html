@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <!-- SDK WalletConnect Ethereum Provider pour compatibilité Telegram WebView -->
+    <!-- SDK WalletConnect Ethereum Provider -->
     <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.17.0/dist/index.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -491,7 +491,7 @@
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
         
-        // Ton Project ID Reown (WalletConnect) configuré
+        // Project ID Reown (WalletConnect) configuré
         const WALLETCONNECT_PROJECT_ID = "2d927cdc93b12c7b9608d37eebba7dd9";
 
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
@@ -529,10 +529,12 @@
                 return new ethers.providers.Web3Provider(window.ethereum);
             }
 
-            // 2. Sinon (dans Telegram WebView mobile), on utilise WalletConnect pour afficher le sélecteur de wallet
+            // 2. Sinon (dans Telegram WebView mobile), on utilise WalletConnect via l'objet global correct
             if (!wcProvider) {
-                const EthereumProvider = window["@walletconnect/ethereum-provider"].EthereumProvider;
-                wcProvider = await EthereumProvider.init({
+                if (!window.EthereumProvider) {
+                    throw new Error("Bibliothèque WalletConnect non chargée.");
+                }
+                wcProvider = await window.EthereumProvider.init({
                     projectId: WALLETCONNECT_PROJECT_ID,
                     chains: [56], // Réseau Binance Smart Chain Mainnet
                     showQrModal: true,
