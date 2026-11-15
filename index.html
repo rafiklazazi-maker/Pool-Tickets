@@ -418,6 +418,18 @@
             letter-spacing: 2px;
             font-family: 'Orbitron', sans-serif;
         }
+
+        .manual-alert {
+            background: rgba(255, 204, 0, 0.08);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 10px;
+            color: var(--gold);
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -487,6 +499,10 @@
         <div style="font-size: 9px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Reference Memo (Optional):</div>
         <div class="copy-box" id="memoCode" style="font-weight: bold; color: var(--gold);">PT-000000</div>
         <button class="btn btn-outline" style="padding: 7px; font-size: 9.5px;" onclick="copyMemo()">📋 Copy Memo</button>
+
+        <div class="manual-alert">
+            ⚠️ <b>Copier-Coller détecté ?</b> Si vous transférez manuellement, collez impérativement votre ID de transaction (TXID) ci-dessous pour recevoir vos tickets instantanément !
+        </div>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
         <div style="font-size: 9.5px; font-weight: 700; color: var(--text);">Paste TXID from ANY wallet/exchange:</div>
@@ -590,11 +606,13 @@
         }
 
         function copyWallet() {
-            copyText(RECEIVE_WALLET, "BEP20 Address copied! Transfer USDT on BNB Smart Chain.");
+            copyText(RECEIVE_WALLET, "📋 Adresse BEP20 copiée !\n\n💡 N'oubliez pas de coller le TXID ci-dessous après votre virement manuel.");
+            // Met en évidence l'input TXID pour guider l'utilisateur suite au copier-coller
+            document.getElementById('txHashInput').focus();
         }
 
         function copyMemo() {
-            copyText(memoString, "Reference Memo copied!");
+            copyText(memoString, "📋 Mémo copié !");
         }
 
         function copyRefLink() {
