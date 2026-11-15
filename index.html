@@ -619,7 +619,7 @@
 
         function payWithTrustWallet() {
             const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Ouverture du portefeuille Web3...";
+            statusDiv.innerHTML = "⏳ Redirection vers le portefeuille Web3...";
             const trustUrl = `https://link.trustwallet.com/send?coin=20000714&address=${RECEIVE_WALLET}&amount=1&token_id=${USDT_BEP20_CONTRACT}`;
             openExternalWallet(trustUrl);
         }
@@ -635,13 +635,13 @@
             }
 
             try {
-                statusDiv.innerHTML = "⏳ Connexion...";
+                statusDiv.innerHTML = "⏳ Connexion au portefeuille...";
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
 
                 const network = await provider.getNetwork();
                 if (network.chainId !== 56) {
-                    statusDiv.innerHTML = "⚠️ Basculement sur la BSC...";
+                    statusDiv.innerHTML = "⚠️ Basculement sur la BNB Smart Chain...";
                     await window.ethereum.request({
                         method: 'wallet_switchEthereumChain',
                         params: [{ chainId: '0x38' }],
@@ -649,15 +649,16 @@
                 }
 
                 const signer = provider.getSigner();
-                statusDiv.innerHTML = "⏳ Transfert de 1 USDT...";
+                statusDiv.innerHTML = "⏳ Transfert de 1 USDT en cours...";
 
                 const USDT_ABI = ["function transfer(address to, uint amount) public returns (bool)"];
                 const usdtContract = new ethers.Contract(USDT_BEP20_CONTRACT, USDT_ABI, signer);
                 const tx = await usdtContract.transfer(RECEIVE_WALLET, ethers.utils.parseUnits("1.0", 18));
                 
-                statusDiv.innerHTML = `⏳ Validation blockchain...`;
+                statusDiv.innerHTML = `⏳ Validation sur la blockchain...`;
                 const receipt = await tx.wait();
 
+                statusDiv.innerHTML = `⏳ Synchronisation backend...`;
                 const res = await fetch(`${API_BASE}/api/verify-tx`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -668,13 +669,13 @@
                 if (data.ok) {
                     statusDiv.innerHTML = `🎉 Succès ! ${data.tickets_issued} ticket(s) minté(s) !`;
                     loadState();
-                    toggleModal('buyModal');
+                    setTimeout(() => toggleModal('buyModal'), 1500);
                 } else {
                     statusDiv.innerHTML = `⚠️ Erreur : ${data.error}`;
                 }
             } catch (err) {
                 console.error(err);
-                statusDiv.innerHTML = `❌ Opération annulée.`;
+                statusDiv.innerHTML = `❌ Opération annulée ou échouée.`;
             }
         }
 
