@@ -534,8 +534,8 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        const tg = window.Telegram?.WebApp || {};
+        if (typeof tg.expand === 'function') { tg.expand(); }
 
         const API_BASE = "https://pool-tickets-backend.onrender.com";
         const BOT_USERNAME = "PoolTickets_bot";
@@ -576,7 +576,11 @@
 
         function copyText(txt, msg) {
             navigator.clipboard.writeText(txt);
-            tg.showAlert(msg);
+            if (tg && typeof tg.showAlert === 'function') {
+                tg.showAlert(msg);
+            } else {
+                alert(msg);
+            }
         }
 
         function copyWallet() {
@@ -598,7 +602,8 @@
 
         function toggleReferral() {
             if (!hasPaidTicket) {
-                tg.showAlert("🔒 PROTOCOL LOCKED: Mint at least 1 ticket to unlock your referral link.");
+                const msg = "🔒 PROTOCOL LOCKED: Mint at least 1 ticket to unlock your referral link.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
             toggleModal('referralModal');
@@ -676,7 +681,8 @@
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
             if (!addr.startsWith("0x") || addr.length !== 42) {
-                tg.showAlert("Invalid BEP20 address. Must be 42 characters starting with 0x.");
+                const msg = "Invalid BEP20 address. Must be 42 characters starting with 0x.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
             try {
@@ -687,19 +693,23 @@
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    tg.showAlert("✅ Payout wallet securely registered!");
+                    const msg = "✅ Payout wallet securely registered!";
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 } else {
-                    tg.showAlert(data.error || "Error saving wallet.");
+                    const msg = data.error || "Error saving wallet.";
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 }
             } catch (e) {
-                tg.showAlert("Network error connecting to backend protocol.");
+                const msg = "Network error connecting to backend protocol.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
             }
         }
 
         async function submitTxHash() {
             const txHash = document.getElementById('txHashInput').value.trim();
             if (!txHash.startsWith("0x") || txHash.length !== 66) {
-                tg.showAlert("Invalid TXID hash. Must be 66 characters starting with 0x.");
+                const msg = "Invalid TXID hash. Must be 66 characters starting with 0x.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
             try {
@@ -711,23 +721,31 @@
                 const data = await res.json();
                 if (data.ok) {
                     document.getElementById('txHashInput').value = "";
-                    tg.showAlert(`⚡ Verified On-Chain! ${data.tickets_issued} real ticket(s) minted!`);
+                    const msg = `⚡ Verified On-Chain! ${data.tickets_issued} real ticket(s) minted!`;
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                     loadState();
                 } else {
-                    tg.showAlert(data.error || "Transaction verification failed.");
+                    const msg = data.error || "Transaction verification failed.";
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 }
             } catch (e) {
-                tg.showAlert("Connection error during blockchain verification.");
+                const msg = "Connection error during blockchain verification.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
             }
         }
 
         async function handleChannelAction() {
             if (!hasPaidTicket) {
-                tg.showAlert("🔒 Locked: Mint 1 ticket first to unlock VIP bonuses.");
+                const msg = "🔒 Locked: Mint 1 ticket first to unlock VIP bonuses.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
             if (!channelStepJoined) {
-                tg.openTelegramLink(CHANNEL_LINK);
+                if (tg && typeof tg.openTelegramLink === 'function') {
+                    tg.openTelegramLink(CHANNEL_LINK);
+                } else {
+                    window.open(CHANNEL_LINK, '_blank');
+                }
                 channelStepJoined = true;
                 document.getElementById('channelBtn').innerText = "✅ Click Again to Claim Ticket";
                 return;
@@ -740,13 +758,16 @@
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    tg.showAlert(`🎉 VIP Bonus Minted! Ticket ${data.ticket_code} added!`);
+                    const msg = `🎉 VIP Bonus Minted! Ticket ${data.ticket_code} added!`;
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                     loadState();
                 } else {
-                    tg.showAlert(data.error || "Please ensure you have joined the VIP network.");
+                    const msg = data.error || "Please ensure you have joined the VIP network.";
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 }
             } catch (e) {
-                tg.showAlert("Protocol connection error.");
+                const msg = "Protocol connection error.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
             }
         }
 
