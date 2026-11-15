@@ -450,7 +450,7 @@
         </div>
     </div>
 
-    <!-- Modale de Secours Universel avec Bloc Explicatif Rx Hash -->
+    <!-- Modale de Secours Universel avec Bloc Explicatif Tx Hash -->
     <div class="modal-backdrop" id="depositModalBackdrop">
         <div class="modal">
             <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
@@ -463,16 +463,15 @@
             <input type="text" id="modalWalletInput" class="input-field" readonly onclick="this.select()" style="text-align: center; font-size: 9.5px;">
             <button class="btn btn-cyber" type="button" onclick="copyDepositAddress()">📋 Copy Deposit Address</button>
             
-            <!-- BLOC EXPLICATIF AJOUTÉ POUR LE RX HASH -->
             <div style="background: rgba(0, 243, 255, 0.05); border: 1px dashed var(--border-cyan); border-radius: 8px; padding: 10px; margin-top: 4px;">
                 <div style="font-size: 9px; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 4px;">
                     💡 PAID FROM ANOTHER DEVICE? (E.G. SISTER'S PHONE)
                 </div>
                 <div style="font-size: 8.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; line-height: 1.3; margin-bottom: 6px;">
-                    If you scanned the QR code or sent funds from another phone, your Telegram account isn't linked to the wallet automatically. <b>You can safely claim your tickets instantly</b> by pasting your transaction hash (RX Hash / TxID) below:
+                    If you scanned the QR code or sent funds from another phone, your Telegram account isn't linked to the wallet automatically. <b>You can safely claim your tickets instantly</b> by pasting your transaction hash (Tx Hash / Rx Hash) below:
                 </div>
                 <div style="display: flex; gap: 4px;">
-                    <input type="text" id="externalTxInput" class="input-field" placeholder="0x... Transaction Hash (RX Hash)">
+                    <input type="text" id="externalTxInput" class="input-field" placeholder="0x... Transaction Hash (Tx Hash)">
                     <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 10px; font-size: 9px;" onclick="claimExternalTx()">Claim</button>
                 </div>
             </div>
@@ -481,14 +480,14 @@
         </div>
     </div>
 
-    <!-- SECTION SÉCURITÉ PAYOUT WALLET (OBLIGATOIRE POUR LE JACKPOT) -->
+    <!-- SECTION JACKPOT RECEIVE WALLET (CORRIGÉ : ADRESSE DE RÉCEPTION DU CLIENT POUR LE JACKPOT) -->
     <div class="section" style="border: 1px solid var(--gold);">
-        <div class="section-title"><span style="color: var(--gold);">💳 Payout Wallet (BEP20) - REQUIRED</span></div>
+        <div class="section-title"><span style="color: var(--gold);">💳 JACKPOT RECEIVE WALLET (BEP20) - REQUIRED</span></div>
         <div style="font-size: 9px; color: var(--muted); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">
-            ⚠️ You must save your receiving address before minting to ensure automatic jackpot payout!
+            ⚠️ Save your personal wallet address below so we know where to send your winnings when you win the jackpot!
         </div>
         <div style="display: flex; gap: 6px;">
-            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... BEP20 Address">
+            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Your Personal BEP20 Address">
             <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
         </div>
     </div>
@@ -561,7 +560,10 @@
 
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
             if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
-                notify("⚠️ SECURITY PROTOCOL: Please save your BEP20 Payout Wallet address below before paying so we know where to send your jackpot!");
+                notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before paying so we know where to send your winnings!");
+                
+                // SCROLL AUTOMATIQUE : Empêche le clavier de cacher le champ
+                document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('payoutWalletInput').focus();
                 return;
             }
@@ -646,7 +648,10 @@
         function openUniversalDepositModal() {
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
             if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
-                notify("⚠️ SECURITY PROTOCOL: Please save your BEP20 Payout Wallet address below before viewing deposit details!");
+                notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before viewing deposit details!");
+                
+                // SCROLL AUTOMATIQUE ICI AUSSI
+                document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('payoutWalletInput').focus();
                 return;
             }
@@ -669,7 +674,7 @@
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
 
             if (!txHash.startsWith("0x") || txHash.length < 60) {
-                notify("⚠️ Please enter a valid Transaction Hash (RX Hash).");
+                notify("⚠️ Please enter a valid Transaction Hash (Tx Hash).");
                 return;
             }
 
@@ -728,7 +733,7 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: user.id, address: addr })
                 });
-                notify("✅ Payout Wallet Saved Successfully!");
+                notify("✅ Jackpot Receive Wallet Saved Successfully!");
             } catch (e) {
                 notify("⚠️ Error saving wallet.");
             }
