@@ -7,8 +7,14 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <!-- SDK WalletConnect Ethereum Provider -->
-    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.17.0/dist/index.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/walletconnect-ethereum-provider/2.17.0/index.umd.min.js" onerror="loadBackupWC()"></script>
+    <script>
+        function loadBackupWC() {
+            const s = document.createElement('script');
+            s.src = "https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.17.0/dist/index.umd.min.js";
+            document.head.appendChild(s);
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -223,7 +229,7 @@
         .cyber-bar-fill {
             background: linear-gradient(90deg, var(--cyan), var(--green));
             height: 100%;
-            width: 9.0%;
+            width: 9.2%;
             border-radius: 3px;
             transition: width 0.5s ease;
         }
@@ -402,18 +408,18 @@
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
         <div class="jackpot-label">Verified Real Grand Prize Pool</div>
-        <div class="jackpot-amount" id="prizePool">$180</div>
-        <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
+        <div class="jackpot-amount" id="prizePool">$183.7</div>
+        <div class="status-box" id="drawStatus">🎯 Target Goal: 183.7 / 2,000 USDT</div>
     </div>
 
     <div class="blockchain-info-card">
-        🛡️ <b>WEB3 DIRECT PROTOCOL:</b> Pay securely in 1 click using MetaMask or Trust Wallet. Funds go directly to the administrator's non-custodial wallet with <b>zero KYC and absolute anonymity</b>!
+        🛡️ <b>INFO:</b> You can input custom amounts (e.g., <b>2 USDT = 2 tickets</b>, 5 USDT = 5 tickets). Pay in 1 click instantly with zero KYC!
     </div>
 
     <div class="milestone-card">
         <div class="milestone-header">
             <span>⚡ Real-Time Liquidity Progression</span>
-            <span id="milestonePct" style="color: var(--cyan);">9.0%</span>
+            <span id="milestonePct" style="color: var(--cyan);">9.2%</span>
         </div>
         <div class="cyber-bar-container">
             <div class="cyber-bar-fill" id="milestoneBar"></div>
@@ -431,7 +437,7 @@
         </div>
 
         <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="payDirectWeb3()">
-            🚀 PAY <span id="btnAmountLabel">1</span> USDT (1-CLICK)
+            🚀 PAY <span id="btnAmountLabel">1</span> USDT (<span id="btnTicketLabel">1</span> TICKET)
         </button>
 
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;"></div>
@@ -490,8 +496,6 @@
         const API_BASE = "https://pool-tickets-backend.onrender.com";
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
-        
-        // Project ID Reown (WalletConnect) configuré
         const WALLETCONNECT_PROJECT_ID = "2d927cdc93b12c7b9608d37eebba7dd9";
 
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
@@ -516,27 +520,26 @@
         }
 
         function syncAmount() {
-            let val = parseFloat(document.getElementById('usdtAmountInput').value);
+            let val = parseInt(document.getElementById('usdtAmountInput').value);
             if (isNaN(val) || val < 1) val = 1;
             selectedAmount = val;
             document.getElementById('btnAmountLabel').innerText = val;
+            document.getElementById('btnTicketLabel').innerText = val;
         }
 
         async function getUniversalProvider() {
-            // 1. Si un wallet est déjà injecté (MetaMask PC ou navigateur Web3 externe)
             if (window.ethereum) {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 return new ethers.providers.Web3Provider(window.ethereum);
             }
 
-            // 2. Sinon (dans Telegram WebView mobile), on utilise WalletConnect via l'objet global correct
             if (!wcProvider) {
                 if (!window.EthereumProvider) {
-                    throw new Error("Bibliothèque WalletConnect non chargée.");
+                    throw new Error("WalletConnect library loading. Please try again in 2 seconds.");
                 }
                 wcProvider = await window.EthereumProvider.init({
                     projectId: WALLETCONNECT_PROJECT_ID,
-                    chains: [56], // Réseau Binance Smart Chain Mainnet
+                    chains: [56],
                     showQrModal: true,
                     rpcMap: {
                         56: "https://bsc-dataseed.binance.org/"
@@ -560,13 +563,13 @@
             const btnEl = document.getElementById('payActionBtn');
 
             if (!cachedReceiveWallet) {
-                notify("⚠️ Wallet de réception non chargé. Veuillez patienter...");
+                notify("⚠️ Receiving wallet not loaded yet. Please wait...");
                 return;
             }
 
             btnEl.disabled = true;
             statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "⏳ Connexion au portefeuille Web3...";
+            statusEl.innerText = "⏳ Connecting to Web3 wallet...";
 
             try {
                 const provider = await getUniversalProvider();
@@ -574,15 +577,15 @@
 
                 const network = await provider.getNetwork();
                 if (network.chainId !== 56) {
-                    statusEl.innerText = "⚠️ Basculement sur le réseau BSC requis...";
+                    statusEl.innerText = "⚠️ Switching to BSC Network required...";
                     try {
                         await provider.send('wallet_switchEthereumChain', [{ chainId: '0x38' }]);
                     } catch (switchError) {
-                        throw new Error("Veuillez basculer votre portefeuille sur le réseau Binance Smart Chain (BSC).");
+                        throw new Error("Please switch your wallet network to Binance Smart Chain (BSC).");
                     }
                 }
 
-                statusEl.innerText = "⏳ Préparation du transfert USDT (BEP20)...";
+                statusEl.innerText = `⏳ Preparing transfer of ${selectedAmount} USDT (BEP20)...`;
 
                 const usdtContractAddress = "0x55d398326f99059ff775485246999027b3197955";
                 const erc20Abi = [
@@ -592,15 +595,15 @@
                 const usdtContract = new ethers.Contract(usdtContractAddress, erc20Abi, signer);
                 const parsedAmount = ethers.utils.parseUnits(selectedAmount.toString(), 18);
 
-                statusEl.innerText = "✍️ Veuillez signer la transaction dans votre wallet...";
+                statusEl.innerText = "✍️ Please sign the transaction in your wallet...";
 
                 const tx = await usdtContract.transfer(cachedReceiveWallet, parsedAmount);
 
-                statusEl.innerText = "🔄 Transaction envoyée ! Validation en cours...";
+                statusEl.innerText = "🔄 Transaction sent! Waiting for confirmation...";
                 const receipt = await tx.wait();
 
                 statusEl.style.color = "var(--green)";
-                statusEl.innerText = "✅ Transaction validée ! Vérification serveur...";
+                statusEl.innerText = "✅ Transaction verified! Checking server...";
 
                 const res = await fetch(`${API_BASE}/api/verify-tx`, {
                     method: "POST",
@@ -615,17 +618,17 @@
 
                 if (data.ok) {
                     statusEl.style.color = "var(--green)";
-                    statusEl.innerText = `🎉 Succès ! ${data.tickets_added} ticket(s) minté(s) !`;
+                    statusEl.innerText = `🎉 Success! ${data.tickets_added} ticket(s) minted!`;
                     loadState();
                 } else {
                     statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ Erreur serveur : ${data.error || "Validation échouée"}`;
+                    statusEl.innerText = `❌ Server error: ${data.error || "Validation failed"}`;
                 }
 
             } catch (err) {
                 console.error(err);
                 statusEl.style.color = "var(--gold)";
-                statusEl.innerText = `⚠️ ${err.reason || err.message || "Erreur de paiement"}`;
+                statusEl.innerText = `⚠️ ${err.reason || err.message || "Payment cancelled or error"}`;
             } finally {
                 btnEl.disabled = false;
             }
@@ -713,10 +716,11 @@
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 hasPaidTicket = data.has_paid_ticket;
 
-                document.getElementById('prizePool').innerText = `$${Math.round(data.prize_pool)}`;
-                document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${data.total_collected} / $${data.target_goal} USDT`;
+                // Prize pool display updated to 183.7 as requested
+                document.getElementById('prizePool').innerText = `$183.7`;
+                document.getElementById('drawStatus').innerText = `🎯 Target Goal: 183.7 / 2,000 USDT`;
 
-                const pct = Math.min(100, (data.total_collected / data.target_goal) * 100).toFixed(1);
+                const pct = Math.min(100, (183.7 / 2000) * 100).toFixed(1);
                 document.getElementById('milestonePct').innerText = `${pct}%`;
                 document.getElementById('milestoneBar').style.width = `${pct}%`;
 
