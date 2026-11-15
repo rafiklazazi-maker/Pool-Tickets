@@ -297,6 +297,7 @@
             justify-content: center;
             gap: 5px;
             pointer-events: auto !important;
+            z-index: 20;
         }
 
         .wallet-btn:hover {
@@ -435,7 +436,7 @@
         <div style="font-size: 11px; color: var(--text); font-weight: 700; margin-bottom: 8px;">
             Achat instantané en 1 clic. Choisissez votre passerelle :
         </div>
-        <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
+        <button class="btn btn-cyber" type="button" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
 
         <div class="wallets-grid">
             <button class="wallet-btn" type="button" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
@@ -455,9 +456,9 @@
         <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;">
             Cliquez pour lancer votre session de paiement sécurisée liée à Telegram :
         </div>
-        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" onclick="createSecureInvoice()">🚀 Ouvrir la Smart Invoice</button>
+        <button class="btn btn-cyber" type="button" onclick="createSecureInvoice()">🚀 Ouvrir la Smart Invoice</button>
         <div id="invoiceStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
-        <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('buyModal')">Fermer</button>
+        <button class="btn btn-outline" type="button" onclick="toggleModal('buyModal')">Fermer</button>
     </div>
 
     <!-- Modale anti-blocage pour les portefeuilles -->
@@ -467,27 +468,27 @@
             Établissement d'une liaison sécurisée...
         </div>
         <div id="walletModalStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
-        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" id="walletActionBtn" onclick="createSecureInvoice()">🚀 Lancer la Smart Invoice Sécurisée</button>
-        <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('walletModal')">Fermer</button>
+        <button class="btn btn-cyber" type="button" id="walletActionBtn" onclick="createSecureInvoice()">🚀 Lancer la Smart Invoice Sécurisée</button>
+        <button class="btn btn-outline" type="button" onclick="toggleModal('walletModal')">Fermer</button>
     </div>
 
-    <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
-    <button class="btn btn-outline" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards)</button>
+    <button class="btn btn-outline" type="button" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
+    <button class="btn btn-outline" type="button" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards)</button>
 
     <div class="modal" id="referralModal">
         <div style="font-size: 10px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
             Share your link. Every 4 verified players mints 1 Free Ticket!
         </div>
         <div id="qrcode"></div>
-        <button class="btn btn-cyber" style="padding: 9px; font-size: 10px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
-        <button class="btn btn-outline" style="padding: 8px; font-size: 9.5px;" onclick="toggleModal('referralModal')">Fermer</button>
+        <button class="btn btn-cyber" type="button" onclick="copyRefLink()">📋 Copy Referral Link</button>
+        <button class="btn btn-outline" type="button" onclick="toggleModal('referralModal')">Fermer</button>
     </div>
 
     <div class="section">
         <div class="section-title"><span>💳 Payout Wallet (BEP20)</span></div>
         <div style="display: flex; gap: 6px;">
             <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... BEP20 Address">
-            <button class="btn btn-cyber" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
+            <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
         </div>
     </div>
 
@@ -580,19 +581,19 @@
             }
         }
 
-        // Facture sécurisée avec redirection garantie et anti-erreur réseau
+        // Facture sécurisée instantanée avec redirection propre vers le bot Telegram
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
             const walletStatus = document.getElementById('walletModalStatus');
             
-            if (statusDiv) statusDiv.innerHTML = "⏳ Connexion au protocole...";
-            if (walletStatus) walletStatus.innerHTML = "⏳ Connexion au protocole...";
+            if (statusDiv) statusDiv.innerHTML = "⏳ Génération de la facture...";
+            if (walletStatus) walletStatus.innerHTML = "⏳ Génération de la facture...";
 
-            let success = false;
+            let targetUrl = `https://t.me/${BOT_USERNAME}?start=pay_${user.id}`;
 
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sec max pour ne pas bloquer
 
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
@@ -604,24 +605,21 @@
 
                 const data = await res.json();
                 if (data.ok && data.invoice_url) {
-                    success = true;
-                    if (statusDiv) statusDiv.innerHTML = "✅ Redirection...";
-                    if (walletStatus) walletStatus.innerHTML = "✅ Redirection...";
-                    openExternalUrl(data.invoice_url);
+                    targetUrl = data.invoice_url;
                 }
-            } catch (err) {}
-
-            if (!success) {
-                if (statusDiv) statusDiv.innerHTML = "⚡ Redirection vers le Bot...";
-                if (walletStatus) walletStatus.innerHTML = "⚡ Redirection vers le Bot...";
-                
-                setTimeout(() => {
-                    openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
-                }, 800);
+            } catch (err) {
+                // Utilise le lien direct du bot en cas de mise en veille de Render
             }
+
+            if (statusDiv) statusDiv.innerHTML = "✅ Redirection...";
+            if (walletStatus) walletStatus.innerHTML = "✅ Redirection...";
+            
+            setTimeout(() => {
+                openExternalUrl(targetUrl);
+            }, 600);
         }
 
-        // Fonction des wallets totalement débloquée et interactive
+        // Gestion propre des wallets sans bloquer l'interface
         function payWithWallet(walletName) {
             const modalTitle = document.getElementById('walletModalTitle');
             const modalDesc = document.getElementById('walletModalDesc');
@@ -629,15 +627,15 @@
 
             if (!modalTitle) return;
 
-            modalTitle.innerText = `🔌 Connexion : ${walletName}`;
-            modalDesc.innerText = `Liaison avec ${walletName} active. Lancement de la facture intelligente sécurisée...`;
-            walletStatus.innerHTML = "⏳ Préparation...";
+            modalTitle.innerText = `🔌 ${walletName}`;
+            modalDesc.innerText = `Liaison sécurisée initialisée. Redirection vers le paiement...`;
+            walletStatus.innerHTML = "⏳ Prêt...";
             
             toggleModal('walletModal');
 
             setTimeout(() => {
                 createSecureInvoice();
-            }, 1000);
+            }, 800);
         }
 
         async function savePayoutWallet() {
@@ -692,15 +690,14 @@
         }, 3500);
 
         async function loadState() {
+            // VERROUILLAGE STRICT ET DÉFINITIF : Le montant reste toujours à $180.00 sur l'écran
+            document.getElementById('prizePool').innerText = `$180.00`;
+
             try {
                 const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
                 const data = await res.json();
 
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
-                
-                // VERROUILLAGE STRICT : Le montant affiché reste fixé à 180.00 USDT
-                document.getElementById('prizePool').innerText = `$180.00`;
-                
                 hasPaidTicket = data.has_paid_ticket;
 
                 const pct = Math.min(100, (180 / data.target_goal) * 100).toFixed(1);
@@ -722,9 +719,7 @@
                         </div>
                     `).join('');
                 }
-            } catch (e) {
-                document.getElementById('prizePool').innerText = `$180.00`;
-            }
+            } catch (e) {}
         }
 
         loadState();
