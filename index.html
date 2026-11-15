@@ -117,6 +117,17 @@
             font-size: 10.5px;
         }
 
+        /* VRAI FILTRE DE FLOUTAGE CSS POUR LES PSEUDOS DANS LE LIVE FEED */
+        .blurred-username {
+            filter: blur(4px);
+            user-select: none;
+            opacity: 0.8;
+            transition: filter 0.3s ease;
+        }
+        .blurred-username:hover {
+            filter: blur(0px); /* Optionnel : défloute au survol si besoin */
+        }
+
         .jackpot-card {
             background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
             border: 1.5px solid var(--cyan);
@@ -167,6 +178,21 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--green);
             font-family: 'JetBrains Mono', monospace;
+        }
+
+        .blockchain-info-card {
+            background: rgba(0, 243, 255, 0.04);
+            border: 1px dashed var(--border-cyan);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 9.5px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #94a3b8;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .blockchain-info-card b {
+            color: var(--cyan);
         }
 
         .milestone-card {
@@ -369,6 +395,7 @@
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
+        <!-- Utilisation d'un conteneur pour appliquer le vrai filtre de floutage CSS -->
         <div class="deposit-feed-text" id="depositFeedText">
             Chargement du flux en direct...
         </div>
@@ -379,6 +406,10 @@
         <div class="jackpot-label">Verified Real Grand Prize Pool</div>
         <div class="jackpot-amount" id="prizePool">$180</div>
         <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
+    </div>
+
+    <div class="blockchain-info-card">
+        🛡️ <b>PROTOCOLE BLOCKCHAIN RÉEL :</b> Cette application fonctionne sur une infrastructure décentralisée et sécurisée via CryptoBot. Chaque ticket acheté est enregistré sur la blockchain, et <b>le jackpot est versé automatiquement</b> sur votre wallet BEP20 enregistré à la fin de la saison !
     </div>
 
     <div class="milestone-card">
@@ -586,11 +617,17 @@
         let feedIndex = 0;
         let cachedFeed = [];
 
+        // Fonction pour formater le texte du flux live en appliquant le flou CSS sur le pseudo
+        function formatLiveFeedItem(itemText) {
+            // Regex pour détecter les pseudos commençant par @ dans le texte du backend
+            return itemText.replace(/(@[a-zA-Z0-9_]+)/g, '<span class="blurred-username">$1</span>');
+        }
+
         setInterval(() => {
             if (cachedFeed.length > 0) {
                 feedIndex = (feedIndex + 1) % cachedFeed.length;
                 const feedEl = document.getElementById('depositFeedText');
-                if (feedEl) feedEl.innerText = cachedFeed[feedIndex];
+                if (feedEl) feedEl.innerHTML = formatLiveFeedItem(cachedFeed[feedIndex]);
             }
         }, 4000);
 
@@ -602,7 +639,6 @@
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 hasPaidTicket = data.has_paid_ticket;
 
-                // Affichage brut de la cagnotte
                 document.getElementById('prizePool').innerText = `$${Math.round(data.prize_pool)}`;
                 document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${data.total_collected} / $${data.target_goal} USDT`;
 
@@ -637,7 +673,7 @@
 
                 if (data.live_feed && data.live_feed.length > 0) {
                     cachedFeed = data.live_feed;
-                    document.getElementById('depositFeedText').innerText = cachedFeed[0];
+                    document.getElementById('depositFeedText').innerHTML = formatLiveFeedItem(cachedFeed[0]);
                 }
             } catch (e) {}
         }
