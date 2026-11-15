@@ -217,9 +217,8 @@
         .cyber-bar-fill {
             background: linear-gradient(90deg, var(--cyan), var(--green));
             height: 100%;
-            width: 0%;
+            width: 9.0%;
             border-radius: 3px;
-            transition: width 0.8s ease;
         }
 
         .btn {
@@ -427,7 +426,7 @@
             <span id="milestonePct" style="color: var(--cyan);">9.0%</span>
         </div>
         <div class="cyber-bar-container">
-            <div class="cyber-bar-fill" id="milestoneBar" style="width: 9.0%;"></div>
+            <div class="cyber-bar-fill" id="milestoneBar"></div>
         </div>
     </div>
 
@@ -461,14 +460,13 @@
         <button class="btn btn-outline" type="button" onclick="toggleModal('buyModal')">Fermer</button>
     </div>
 
-    <!-- Modale native pour les portefeuilles -->
+    <!-- Modale dédiée pour chaque Wallet (sans passer par le bot) -->
     <div class="modal" id="walletModal">
-        <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;" id="walletModalTitle">🔌 Connexion...</div>
+        <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;" id="walletModalTitle">🔌 Connexion Wallet</div>
         <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;" id="walletModalDesc">
-            Ouverture de l'application de portefeuille...
+            Cliquez ci-dessous pour ouvrir l'application ou accéder au site officiel du portefeuille :
         </div>
-        <div id="walletModalStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
-        <button class="btn btn-cyber" type="button" id="walletActionBtn" onclick="createSecureInvoice()">💳 Utiliser la Smart Invoice universelle</button>
+        <button class="btn btn-cyber" type="button" id="walletActionBtn" onclick="openWalletApp()">🚀 Ouvrir l'application</button>
         <button class="btn btn-outline" type="button" onclick="toggleModal('walletModal')">Fermer</button>
     </div>
 
@@ -532,6 +530,7 @@
 
         let hasPaidTicket = false;
         let channelStepJoined = false;
+        let currentWalletUrl = "";
 
         const seededDepositors = [
             `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
@@ -584,10 +583,7 @@
         // Smart Invoice principale
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
-            const walletStatus = document.getElementById('walletModalStatus');
-            
             if (statusDiv) statusDiv.innerHTML = "⏳ Génération de la facture...";
-            if (walletStatus) walletStatus.innerHTML = "⏳ Génération de la facture...";
 
             try {
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
@@ -602,76 +598,54 @@
                 }
             } catch (err) {}
 
-            // Fallback universel vers le bot en cas de mise en veille du serveur
             openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
         }
 
-        // REDIRECTION NATIVE VERS LES APPLICATIONS DE WALLETS (Deep Links)
+        // GESTION PROPRE DES WALLETS SANS BOT CACHÉ
         function payWithWallet(walletName) {
             const modalTitle = document.getElementById('walletModalTitle');
             const modalDesc = document.getElementById('walletModalDesc');
-            const walletStatus = document.getElementById('walletModalStatus');
 
             if (!modalTitle) return;
 
-            modalTitle.innerText = `🔌 Connexion : ${walletName}`;
-            modalDesc.innerText = `Tentative d'ouverture de l'application ${walletName}...`;
-            walletStatus.innerHTML = "⏳ Lancement...";
+            modalTitle.innerText = `🔌 ${walletName}`;
             
-            toggleModal('walletModal');
-
-            let deepLink = "";
-            let storeFallback = "";
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
             switch(walletName) {
                 case 'MetaMask':
-                    deepLink = "https://metamask.app.link/dapp/";
-                    storeFallback = "https://metamask.io/download/";
+                    currentWalletUrl = "https://metamask.app.link/dapp/";
                     break;
                 case 'Trust Wallet':
-                    deepLink = "https://link.trustwallet.com/open_url?coin_id=60&url=";
-                    storeFallback = "https://trustwallet.com/download";
+                    currentWalletUrl = "https://link.trustwallet.com/open_url?coin_id=60&url=";
                     break;
                 case 'Tonkeeper':
-                    deepLink = "tonkeeper://";
-                    storeFallback = "https://tonkeeper.com/";
+                    currentWalletUrl = "https://app.tonkeeper.com/";
                     break;
                 case 'Binance Pay':
-                    deepLink = "binance://";
-                    storeFallback = "https://www.binance.com";
+                    currentWalletUrl = "https://www.binance.com";
                     break;
                 case 'OKX Pay':
-                    deepLink = "okx://";
-                    storeFallback = "https://www.okx.com";
+                    currentWalletUrl = "https://www.okx.com";
                     break;
                 case 'Bybit Pay':
-                    deepLink = "bybit://";
-                    storeFallback = "https://www.bybit.com";
+                    currentWalletUrl = "https://www.bybit.com";
                     break;
                 case 'SafePal':
-                    deepLink = "safepalwallet://";
-                    storeFallback = "https://safepal.com/";
+                    currentWalletUrl = "https://safepal.com/";
                     break;
                 case 'WalletConnect':
                 default:
-                    setTimeout(() => createSecureInvoice(), 1000);
-                    return;
+                    currentWalletUrl = "https://walletconnect.com/";
+                    break;
             }
 
-            if (isMobile && deepLink && walletName !== 'WalletConnect') {
-                setTimeout(() => {
-                    window.location.href = deepLink;
-                }, 500);
+            modalDesc.innerText = `Connexion prête pour ${walletName}. Cliquez ci-dessous pour ouvrir l'application :`;
+            toggleModal('walletModal');
+        }
 
-                setTimeout(() => {
-                    walletStatus.innerHTML = `⚠️ App non détectée. <a href="${storeFallback}" target="_blank" style="color:var(--cyan);">Installer ${walletName}</a> ou utiliser la facture sécurisée.`;
-                }, 2000);
-            } else {
-                setTimeout(() => {
-                    walletStatus.innerHTML = `💡 Mode PC détecté : utilisation de la facture sécurisée.`;
-                    createSecureInvoice();
-                }, 1200);
+        function openWalletApp() {
+            if (currentWalletUrl) {
+                openExternalUrl(currentWalletUrl);
+                toggleModal('walletModal');
             }
         }
 
