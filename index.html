@@ -6,6 +6,8 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Inclusion d'Ethers.js pour le Web3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -471,10 +473,16 @@
     <div class="modal" id="buyModal">
         <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Protected BEP20 Deposit</div>
         <div style="font-size: 11px; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Send <b>1 USDT or more</b> to the official pool address below (1 USDT = 1 Ticket). Every deposit is verified directly on the BNB Smart Chain (2, 3, 4, 5, 7 USDT = instant multi-tickets).
+            Achetez vos tickets instantanément en 1 clic grâce à votre portefeuille Web3 (1 USDT = 1 Ticket). Pas de copier-coller nécessaire !
         </div>
 
-        <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Official Pool Address (BEP20):</div>
+        <!-- BOUTON WEB3 1 CLIC (NOUVEAU) -->
+        <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Connecter & Payer 1 USDT (1 Clic)</button>
+        <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0;"></div>
+
+        <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Alternative (Manuel - Pool Address BEP20):</div>
         <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
         <button class="btn btn-silver" style="padding: 10px; font-size: 11px;" onclick="copyWallet()">📋 Copy Pool Address</button>
 
@@ -483,7 +491,7 @@
         <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="copyMemo()">📋 Copy Memo</button>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
-        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Paste your Blockchain TXID for automated ticket minting:</div>
+        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Ou entrez votre TXID manuellement :</div>
         <input type="text" id="txHashInput" class="input-field" placeholder="0x... (66-character BEP20 TXID)">
         <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
     </div>
@@ -540,6 +548,7 @@
         const API_BASE = "https://pool-tickets-backend.onrender.com";
         const BOT_USERNAME = "PoolTickets_bot";
         const RECEIVE_WALLET = "0x93872BdE7652373c87Afd53b6659054cCAb060D2";
+        const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
@@ -602,6 +611,76 @@
                 return;
             }
             toggleModal('referralModal');
+        }
+
+        /* --- NOUVELLE FONCTION WEB3 1 CLIC --- */
+        async function connectAndPayWeb3() {
+            const statusDiv = document.getElementById('web3Status');
+            
+            if (typeof window.ethereum === 'undefined') {
+                statusDiv.innerHTML = "❌ Aucun portefeuille détecté. Ouvrez via MetaMask/TrustWallet.";
+                tg.showAlert("Aucun portefeuille Web3 détecté sur ce navigateur.");
+                return;
+            }
+
+            try {
+                statusDiv.innerHTML = "⏳ Connexion au portefeuille...";
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+
+                // Vérifier la BSC (Chain ID 56)
+                const network = await provider.getNetwork();
+                if (network.chainId !== 56) {
+                    statusDiv.innerHTML = "⚠️ Basculement sur la BNB Smart Chain...";
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x38' }], // 56 en hexa
+                        });
+                    } catch (switchError) {
+                        statusDiv.innerHTML = "❌ Veuillez basculer manuellement sur la BSC.";
+                        return;
+                    }
+                }
+
+                const signer = provider.getSigner();
+                statusDiv.innerHTML = "⏳ Envoi de 1 USDT en cours...";
+
+                // Contrat ERC20 / BEP20 USDT ABI minimale
+                const USDT_ABI = ["function transfer(address to, uint amount) public returns (bool)"];
+                const usdtContract = new ethers.Contract(USDT_BEP20_CONTRACT, USDT_ABI, signer);
+
+                // 1 USDT avec 18 décimales sur BSC
+                const amountToSend = ethers.utils.parseUnits("1.0", 18);
+
+                // Déclencher le transfert direct vers le wallet de réception
+                const tx = await usdtContract.transfer(RECEIVE_WALLET, amountToSend);
+                statusDiv.innerHTML = `⏳ Transaction envoyée ! Attente confirmation...`;
+
+                const receipt = await tx.wait();
+                statusDiv.innerHTML = `✅ Paiement validé ! Synchronisation...`;
+
+                // Envoyer automatiquement le hash au backend pour valider les tickets
+                const res = await fetch(`${API_BASE}/api/verify-tx`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, tx_hash: receipt.transactionHash })
+                });
+
+                const data = await res.json();
+                if (data.ok) {
+                    statusDiv.innerHTML = `🎉 Succès ! ${data.tickets_issued} ticket(s) minté(s) !`;
+                    tg.showAlert(`⚡ Paiement Web3 réussi ! ${data.tickets_issued} ticket(s) actif(s).`);
+                    loadState();
+                    toggleModal('buyModal');
+                } else {
+                    statusDiv.innerHTML = `⚠️ Erreur backend : ${data.error}`;
+                }
+
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerHTML = `❌ Erreur ou transaction annulée.`;
+            }
         }
 
         async function savePayoutWallet() {
