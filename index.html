@@ -7,8 +7,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <!-- Intégration directe ultra-stable du provider WalletConnect UMD -->
-    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.17.0/dist/index.umd.js"></script>
+    <!-- Chargement universel ultra-robuste avec double fallback CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.17.0/dist/index.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -406,9 +406,9 @@
         <div class="status-box" id="drawStatus">🎯 Target Goal: 183.7 / 2,000 USDT</div>
     </div>
 
-    <!-- Carte marketing conservée et enrichie : Non-custodial, décentralisée, paiement automatique sans accord admin -->
+    <!-- Carte marketing conservée : Blockchain non centralisée, paiement automatique sans accord admin, 0 KYC, montants personnalisables -->
     <div class="blockchain-info-card">
-        🛡️ <b>WEB3 DIRECT PROTOCOL:</b> Secure decentralized blockchain payment. Funds transfer <b>automatically</b> to the non-custodial wallet with <b>zero KYC, absolute anonymity, and zero admin approval required</b>! Input any amount (e.g., <b>2 USDT = 2 tickets</b>).
+        🛡️ <b>WEB3 DIRECT PROTOCOL:</b> Powered by a decentralized blockchain. Funds transfer <b>automatically</b> to the non-custodial wallet with <b>zero KYC, absolute anonymity, and zero admin approval required</b>! Input any amount (e.g., <b>2 USDT = 2 tickets</b>).
     </div>
 
     <div class="milestone-card">
@@ -529,12 +529,12 @@
             }
 
             if (!wcProvider) {
-                // Utilisation sécurisée de l'objet global EthereumProvider
-                const ProviderClass = window.EthereumProvider || window["@walletconnect/ethereum-provider"]?.EthereumProvider;
-                if (!ProviderClass) {
-                    throw new Error("WalletConnect library loading. Please try again in a moment.");
+                // Détection robuste multi-variante de l'objet WalletConnect UMD
+                const WCModule = window.EthereumProvider || window.WalletConnectEthereumProvider || window['@walletconnect/ethereum-provider']?.EthereumProvider;
+                if (!WCModule) {
+                    throw new Error("WalletConnect library loading error. Please refresh the page.");
                 }
-                wcProvider = await ProviderClass.init({
+                wcProvider = await WCModule.init({
                     projectId: WALLETCONNECT_PROJECT_ID,
                     chains: [56],
                     showQrModal: true,
