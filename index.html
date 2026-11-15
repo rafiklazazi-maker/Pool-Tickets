@@ -274,10 +274,10 @@
 
         .btn {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             border: none;
             border-radius: 12px;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -307,7 +307,7 @@
             border: 1px solid var(--border-cyan);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
+            font-size: 10.5px;
         }
 
         .section {
@@ -337,7 +337,7 @@
             border-radius: 16px;
             padding: 18px;
             flex-direction: column;
-            gap: 10px;
+            gap: 9px;
             box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(0, 243, 255, 0.2);
             animation: fadeIn 0.25s ease;
         }
@@ -364,7 +364,7 @@
             background: #030407;
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 10px;
-            padding: 12px;
+            padding: 11px;
             color: var(--text);
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
@@ -463,33 +463,35 @@
     <button class="btn btn-cyber" onclick="toggleModal('buyModal')">⚡ EXECUTE DEPOSIT // GET REAL TICKETS</button>
 
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Centre de Paiement BEP20</div>
-        <div style="font-size: 11px; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Sélectionnez votre portefeuille favori pour payer 1 USDT instantanément :
+        <div style="font-weight: 800; font-size: 13px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Centre de Paiement BEP20 (Multi-Wallets)</div>
+        <div style="font-size: 10.5px; color: var(--text); line-height: 1.35; font-family: 'JetBrains Mono', monospace;">
+            Sélectionnez votre portefeuille préféré :
         </div>
 
-        <!-- ACCÈS UNIVERSEL À TOUS LES PORTEFEUILLES -->
-        <button class="btn btn-cyber" style="padding: 11px; font-size: 11px;" onclick="connectAndPayWeb3()">🦊 MetaMask / Extension Web3 (PC & Mobile)</button>
-        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithTrustWallet()">🛡️ Trust Wallet (App Mobile)</button>
-        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithBinanceWallet()">🟡 Binance Web3 / Pay Wallet</button>
-        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithOKXWallet()">🟢 OKX Wallet (BEP20)</button>
+        <!-- LISTE MAXIMALE DE PORTEFEUILLES -->
+        <button class="btn btn-cyber" style="padding: 10px; font-size: 10.5px;" onclick="connectAndPayWeb3()">🦊 MetaMask / Web3 Extension</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 10px;" onclick="payWithTrustWallet()">🛡️ Trust Wallet</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 10px;" onclick="payWithBinanceWallet()">🟡 Binance Web3 Wallet</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 10px;" onclick="payWithOKXWallet()">🟢 OKX Wallet</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 10px;" onclick="payWithBitgetWallet()">🟣 Bitget Wallet</button>
+        <button class="btn btn-outline" style="padding: 9.5px; font-size: 10px;" onclick="payWithSafePal()">🔒 SafePal Wallet</button>
         
-        <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 2px;"></div>
+        <div id="web3Status" style="font-size: 10px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
 
-        <div style="font-size: 10px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Official Pool Address (BEP20):</div>
+        <div style="font-size: 9.5px; font-weight: 700; color: var(--muted); font-family: 'Orbitron', sans-serif;">Official Pool Address (BEP20):</div>
         <div class="copy-box" id="walletAddr">0x93872BdE7652373c87Afd53b6659054cCAb060D2</div>
-        <button class="btn btn-silver" style="padding: 9px; font-size: 10.5px;" onclick="copyWallet()">📋 Copy Pool Address</button>
+        <button class="btn btn-silver" style="padding: 8px; font-size: 10px;" onclick="copyWallet()">📋 Copy Pool Address</button>
 
-        <div style="font-size: 10px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Reference Memo (Optional):</div>
+        <div style="font-size: 9.5px; font-weight: 700; color: var(--gold); font-family: 'Orbitron', sans-serif;">Reference Memo (Optional):</div>
         <div class="copy-box" id="memoCode" style="font-weight: bold; color: var(--gold);">PT-000000</div>
-        <button class="btn btn-outline" style="padding: 9px; font-size: 10.5px;" onclick="copyMemo()">📋 Copy Memo</button>
+        <button class="btn btn-outline" style="padding: 8px; font-size: 10px;" onclick="copyMemo()">📋 Copy Memo</button>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 2px 0;"></div>
-        <div style="font-size: 10.5px; font-weight: 700; color: var(--text);">Paste TXID from ANY wallet (Binance, Ledger, Bybit, etc.):</div>
+        <div style="font-size: 10px; font-weight: 700; color: var(--text);">Paste TXID from ANY wallet / exchange (Binance, Bybit, Ledger...):</div>
         <input type="text" id="txHashInput" class="input-field" placeholder="0x... (66-character BEP20 TXID)">
-        <button class="btn btn-cyber" style="padding: 10px; font-size: 11px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
+        <button class="btn btn-cyber" style="padding: 10px; font-size: 10.5px;" onclick="submitTxHash()">⚡ Verify TXID & Mint Tickets</button>
     </div>
 
     <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
@@ -621,7 +623,7 @@
             }
         }
 
-        // --- PROTOCOLES DE REDIRECTION MULTI-PORTEFEUILLES ---
+        // --- PROTOCOLES DE REDIRECTION ÉTENDUS (TOUS LES WALLETS) ---
         function payWithTrustWallet() {
             const statusDiv = document.getElementById('web3Status');
             statusDiv.innerHTML = "⏳ Ouverture de Trust Wallet...";
@@ -643,11 +645,25 @@
             openExternalWallet(url);
         }
 
+        function payWithBitgetWallet() {
+            const statusDiv = document.getElementById('web3Status');
+            statusDiv.innerHTML = "⏳ Ouverture de Bitget Wallet...";
+            const url = `https://bkcode.vip?action=transfer&address=${RECEIVE_WALLET}&amount=1&token=${USDT_BEP20_CONTRACT}&chain=bsc`;
+            openExternalWallet(url);
+        }
+
+        function payWithSafePal() {
+            const statusDiv = document.getElementById('web3Status');
+            statusDiv.innerHTML = "⏳ Ouverture de SafePal Wallet...";
+            const url = `https://safepal.io/deeplink/send?address=${RECEIVE_WALLET}&amount=1&token=${USDT_BEP20_CONTRACT}&chain=BSC`;
+            openExternalWallet(url);
+        }
+
         async function connectAndPayWeb3() {
             const statusDiv = document.getElementById('web3Status');
 
             if (typeof window.ethereum === 'undefined') {
-                statusDiv.innerHTML = "⏳ Extension Web3 absente. Redirection universelle (EIP-681)...";
+                statusDiv.innerHTML = "⏳ Extension Web3 absente. Redirection universelle...";
                 const eip681Url = `https://metamask.app.link/send/${USDT_BEP20_CONTRACT}@56/transfer?address=${RECEIVE_WALLET}&uint256=1000000000000000000`;
                 openExternalWallet(eip681Url);
                 return;
