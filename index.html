@@ -236,7 +236,7 @@
             font-size: 9.5px;
         }
 
-        .direct-pay-box {
+        .smart-invoice-cta {
             background: linear-gradient(135deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
             border: 1.5px solid var(--cyan);
             border-radius: 12px;
@@ -245,50 +245,18 @@
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
         }
 
-        .amount-selector {
-            display: flex;
-            gap: 6px;
-            margin: 10px 0;
-        }
-
-        .amt-chip {
-            flex: 1;
-            background: #030407;
-            border: 1px solid var(--border-cyan);
-            color: var(--cyan);
-            padding: 8px 4px;
-            border-radius: 6px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
+        .smart-badge {
+            display: inline-block;
+            background: rgba(0, 255, 102, 0.15);
+            color: var(--green);
+            border: 1px solid rgba(0, 255, 102, 0.4);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 9px;
             font-weight: 800;
-            cursor: pointer;
-        }
-
-        .amt-chip.active {
-            background: var(--cyan);
-            color: #030407;
-        }
-
-        .custom-amount-row {
-            display: flex;
-            align-items: center;
-            background: #030407;
-            border: 1px solid var(--cyan);
-            border-radius: 8px;
-            padding: 4px 10px;
-            margin-bottom: 10px;
-        }
-
-        .custom-amount-row input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #fff;
             font-family: 'Orbitron', sans-serif;
-            font-size: 16px;
-            font-weight: 900;
-            outline: none;
-            width: 100%;
+            margin-bottom: 6px;
+            text-transform: uppercase;
         }
 
         .wallets-grid {
@@ -299,8 +267,8 @@
         }
 
         .wallet-btn {
-            background: rgba(3, 4, 7, 0.9);
-            border: 1px solid rgba(0, 243, 255, 0.25);
+            background: rgba(3, 4, 7, 0.85);
+            border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: 8px;
             padding: 11px 6px;
             color: var(--text);
@@ -316,7 +284,7 @@
 
         .wallet-btn:hover {
             border-color: var(--cyan);
-            background: rgba(0, 243, 255, 0.12);
+            background: rgba(0, 243, 255, 0.1);
         }
 
         .section {
@@ -339,28 +307,22 @@
             font-family: 'Orbitron', sans-serif;
         }
 
-        .modal-backdrop {
+        .modal {
             display: none;
             position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 9998;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .modal {
-            width: 100%;
-            max-width: 350px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 340px;
             background: #080b12;
             border: 1.5px solid var(--cyan);
             border-radius: 14px;
             padding: 16px;
-            display: flex;
             flex-direction: column;
             gap: 10px;
-            box-shadow: 0 10px 40px rgba(0, 243, 255, 0.25);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 9999;
         }
 
         .input-field {
@@ -373,19 +335,6 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 10.5px;
             outline: none;
-        }
-
-        .addr-box {
-            background: #030407;
-            border: 1px dashed var(--cyan);
-            padding: 8px;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
-            color: var(--green);
-            word-break: break-all;
-            text-align: center;
-            cursor: pointer;
         }
 
         .ticket-item {
@@ -401,12 +350,11 @@
             border-left: 3px solid var(--cyan);
         }
 
-        #qrcode, #payQrcode {
+        #qrcode {
             background: #fff;
             padding: 8px;
             border-radius: 8px;
             margin: 0 auto;
-            width: fit-content;
         }
 
         .empty-state {
@@ -435,12 +383,12 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar">⚡ DIRECT ON-CHAIN GATEWAY // USDT (BEP20) INSTANT MINT</div>
+    <div class="ticker-bar">⚡ MULTI-WALLET DIRECT LAUNCH PROTOCOL</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            @<span class="masked-txt">player1x</span> deposited 1 USDT
+            @<span class="masked-txt">net_runner</span> deposited 1 USDT
         </div>
     </div>
 
@@ -461,88 +409,46 @@
         </div>
     </div>
 
-    <!-- BLOC DE PAIEMENT DIRECT (1 à 100+ USDT) -->
-    <div class="direct-pay-box">
-        <div style="font-size: 10px; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
-            💳 PAIEMENT DIRECT (1 USDT = 1 TICKET)
+    <div class="smart-invoice-cta">
+        <div class="smart-badge">⚡ MULTI-WALLET GATEWAY ACTIVE</div>
+        <div style="font-size: 11px; color: var(--text); font-weight: 700; margin-bottom: 8px;">
+            Choisissez votre portefeuille pour lancer l'application :
         </div>
-
-        <div class="amount-selector">
-            <button type="button" class="amt-chip active" onclick="setAmount(1, this)">1 USDT</button>
-            <button type="button" class="amt-chip" onclick="setAmount(5, this)">5 USDT</button>
-            <button type="button" class="amt-chip" onclick="setAmount(20, this)">20 USDT</button>
-            <button type="button" class="amt-chip" onclick="setAmount(100, this)">100 USDT</button>
-        </div>
-
-        <div class="custom-amount-row">
-            <input type="number" id="usdtAmountInput" value="1" min="1" step="1" oninput="syncAmount()">
-            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;">USDT</span>
-        </div>
-
-        <button class="btn btn-cyber" type="button" onclick="triggerDirectPayment('Direct Web3 / BEP20')">
-            ⚡ PAYER <span id="btnAmountLabel">1</span> USDT MAINTENANT
-        </button>
+        <button class="btn btn-cyber" type="button" onclick="createSecureInvoice()">💳 PAYER 1 USDT (Smart Invoice)</button>
 
         <div class="wallets-grid">
-            <button class="wallet-btn" type="button" onclick="triggerDirectPayment('MetaMask')">🦊 MetaMask</button>
-            <button class="wallet-btn" type="button" onclick="triggerDirectPayment('Trust Wallet')">🛡️ Trust Wallet</button>
-            <button class="wallet-btn" type="button" onclick="triggerDirectPayment('Binance Pay')">🟡 Binance</button>
-            <button class="wallet-btn" type="button" onclick="triggerDirectPayment('Tonkeeper')">💎 Tonkeeper</button>
-            <button class="wallet-btn" type="button" onclick="triggerDirectPayment('OKX Wallet')">⬛ OKX</button>
-            <button class="wallet-btn" type="button" onclick="triggerDirectPayment('SafePal')">🔒 SafePal</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('MetaMask')">🦊 MetaMask</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('Trust Wallet')">🛡️ Trust Wallet</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('Binance Pay')">🟡 Binance Pay</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('Tonkeeper')">💎 Tonkeeper</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('OKX Pay')">⬛ OKX Pay</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('Bybit Pay')">🪙 Bybit Pay</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('SafePal')">🔒 SafePal</button>
+            <button class="wallet-btn" type="button" onclick="openWalletDeepLink('WalletConnect')">🔗 WalletConnect</button>
         </div>
     </div>
 
-    <!-- MODALE DE PAIEMENT DIRECT ON-CHAIN -->
-    <div class="modal-backdrop" id="directPayBackdrop">
-        <div class="modal">
-            <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif; text-align: center;" id="payModalTitle">
-                ⚡ PAIEMENT DIRECT USDT (BEP20)
-            </div>
-            <div style="font-size: 10px; color: var(--text); font-family: 'JetBrains Mono', monospace; text-align: center;" id="payModalSubtitle">
-                Envoyez exactement <b style="color: var(--green);" id="modalUsdtText">1 USDT</b> (Réseau BSC / BEP20) :
-            </div>
-
-            <div id="payQrcode"></div>
-
-            <div class="addr-box" id="merchantAddrDisplay" onclick="copyMerchantAddress()">
-                0x71C3D649319B4B8D05D90a5E5A64E9B27732a39E
-            </div>
-            <div style="font-size: 8.5px; color: var(--muted); text-align: center; font-family: 'JetBrains Mono', monospace;">
-                (Cliquez sur l'adresse pour copier)
-            </div>
-
-            <button class="btn btn-cyber" type="button" id="web3TriggerBtn" onclick="executeWeb3Transaction()" style="padding: 10px; font-size: 10px;">
-                🦊 Déclencher le Wallet (1-Clic)
-            </button>
-
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                <div style="font-size: 9px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-bottom: 4px;">
-                    Déjà envoyé ? Collez le Hash (TxID) pour valider vos tickets :
-                </div>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="txHashInput" class="input-field" placeholder="0x... Hash de transaction">
-                    <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 10px; font-size: 9.5px;" onclick="verifyTxHash()">Valider</button>
-                </div>
-            </div>
-
-            <div id="payStatusMsg" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
-            <button class="btn btn-outline" type="button" style="padding: 8px;" onclick="closeDirectModal()">Fermer</button>
+    <!-- Modale d'information portefeuille -->
+    <div class="modal" id="walletModal">
+        <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;" id="walletModalTitle">🔌 Connexion...</div>
+        <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;" id="walletModalDesc">
+            Ouverture de l'application...
         </div>
+        <div id="walletModalStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
+        <button class="btn btn-cyber" type="button" onclick="createSecureInvoice()">🚀 Lancer la Smart Invoice</button>
+        <button class="btn btn-outline" type="button" onclick="toggleModal('walletModal')">Fermer</button>
     </div>
 
     <button class="btn btn-outline" type="button" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
     <button class="btn btn-outline" type="button" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards)</button>
 
-    <div class="modal-backdrop" id="referralBackdrop">
-        <div class="modal">
-            <div style="font-size: 10px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
-                Share your link. Every 4 verified players mints 1 Free Ticket!
-            </div>
-            <div id="qrcode"></div>
-            <button class="btn btn-cyber" type="button" onclick="copyRefLink()">📋 Copy Referral Link</button>
-            <button class="btn btn-outline" type="button" onclick="document.getElementById('referralBackdrop').style.display='none'">Fermer</button>
+    <div class="modal" id="referralModal">
+        <div style="font-size: 10px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
+            Share your link. Every 4 verified players mints 1 Free Ticket!
         </div>
+        <div id="qrcode"></div>
+        <button class="btn btn-cyber" type="button" onclick="copyRefLink()">📋 Copy Referral Link</button>
+        <button class="btn btn-outline" type="button" onclick="toggleModal('referralModal')">Fermer</button>
     </div>
 
     <div class="section">
@@ -577,12 +483,10 @@
     <script>
         const tg = window.Telegram?.WebApp || {};
         try {
-            if (typeof tg.expand === 'function') tg.expand();
-            if (typeof tg.ready === 'function') tg.ready();
+            if (typeof tg.expand === 'function') { tg.expand(); }
+            if (typeof tg.ready === 'function') { tg.ready(); }
         } catch(e) {}
 
-        const MERCHANT_BEP20_ADDRESS = "0x71C3D649319B4B8D05D90a5E5A64E9B27732a39E";
-        const USDT_BEP20_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
         const API_BASE = "https://pool-tickets-backend.onrender.com";
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
@@ -592,172 +496,126 @@
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
 
         document.getElementById('username').innerText = username;
-        document.getElementById('merchantAddrDisplay').innerText = MERCHANT_BEP20_ADDRESS;
 
-        let selectedAmount = 1;
         let hasPaidTicket = false;
         let channelStepJoined = false;
 
-        try {
-            new QRCode(document.getElementById("qrcode"), { text: refLink, width: 110, height: 110 });
-        } catch(e) {}
+        const seededDepositors = [
+            `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
+            `@<span class="masked-txt">node_04</span> deposited 3 USDT`,
+            `@<span class="masked-txt">cyber_ghost</span> deposited 2 USDT`,
+            `@<span class="masked-txt">bep_whale</span> deposited 7 USDT`
+        ];
+        let depositFeedList = [...seededDepositors];
+        let depositIdx = 0;
 
         try {
-            new QRCode(document.getElementById("payQrcode"), {
-                text: MERCHANT_BEP20_ADDRESS,
-                width: 120,
-                height: 120
+            new QRCode(document.getElementById("qrcode"), {
+                text: refLink,
+                width: 110,
+                height: 110
             });
         } catch(e) {}
 
-        function notify(msg) {
-            if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg);
-            else alert(msg);
-        }
-
-        function setAmount(val, btnEl) {
-            selectedAmount = val;
-            document.getElementById('usdtAmountInput').value = val;
-            document.getElementById('btnAmountLabel').innerText = val;
-            document.querySelectorAll('.amt-chip').forEach(c => c.classList.remove('active'));
-            if (btnEl) btnEl.classList.add('active');
-        }
-
-        function syncAmount() {
-            let val = parseFloat(document.getElementById('usdtAmountInput').value);
-            if (isNaN(val) || val < 1) val = 1;
-            selectedAmount = val;
-            document.getElementById('btnAmountLabel').innerText = val;
-            document.querySelectorAll('.amt-chip').forEach(c => c.classList.remove('active'));
-        }
-
-        function copyMerchantAddress() {
-            navigator.clipboard.writeText(MERCHANT_BEP20_ADDRESS);
-            notify("✅ Adresse USDT (BEP20) copiée !");
-        }
-
-        function closeDirectModal() {
-            document.getElementById('directPayBackdrop').style.display = 'none';
-            document.getElementById('payStatusMsg').innerText = "";
-        }
-
-        async function triggerDirectPayment(walletName) {
-            syncAmount();
-            document.getElementById('payModalTitle').innerText = `🔌 ${walletName} // DIRECT PAY`;
-            document.getElementById('modalUsdtText').innerText = `${selectedAmount} USDT`;
-            document.getElementById('payStatusMsg').innerText = "";
-            document.getElementById('directPayBackdrop').style.display = 'flex';
-
-            if (typeof window.ethereum !== 'undefined') {
-                executeWeb3Transaction();
-            }
-        }
-
-        async function executeWeb3Transaction() {
-            const statusEl = document.getElementById('payStatusMsg');
-
-            if (typeof window.ethereum === 'undefined') {
-                statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "📱 Copiez l'adresse ou scannez le QR code avec votre application Wallet, puis validez votre Hash ci-dessus.";
-                return;
-            }
-
-            try {
-                statusEl.style.color = "var(--cyan)";
-                statusEl.innerText = "⏳ Connexion au portefeuille...";
-
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const sender = accounts[0];
-
-                try {
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0x38' }],
-                    });
-                } catch (switchError) {}
-
-                const amountWei = BigInt(Math.floor(selectedAmount * 1e6)) * BigInt(1e12);
-                const amountHex = amountWei.toString(16).padStart(64, '0');
-                const toAddressClean = MERCHANT_BEP20_ADDRESS.replace('0x', '').toLowerCase().padStart(64, '0');
-                const txData = `0xa9059cbb${toAddressClean}${amountHex}`;
-
-                statusEl.innerText = `✍️ Confirmez l'envoi de ${selectedAmount} USDT dans votre wallet...`;
-
-                const txHash = await window.ethereum.request({
-                    method: 'eth_sendTransaction',
-                    params: [{
-                        from: sender,
-                        to: USDT_BEP20_CONTRACT,
-                        data: txData
-                    }],
-                });
-
-                statusEl.style.color = "var(--green)";
-                statusEl.innerText = "✅ Transaction envoyée ! Validation des tickets...";
-                document.getElementById('txHashInput').value = txHash;
-
-                await verifyTxHash();
-
-            } catch (err) {
-                statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "⚠️ Transaction annulée ou non signée.";
-            }
-        }
-
-        async function verifyTxHash() {
-            const txHash = document.getElementById('txHashInput').value.trim();
-            const statusEl = document.getElementById('payStatusMsg');
-
-            if (!txHash.startsWith("0x") || txHash.length < 40) {
-                notify("⚠️ Veuillez entrer un Hash de transaction (0x...) valide.");
-                return;
-            }
-
-            statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "⏳ Vérification blockchain en cours...";
-
-            try {
-                const res = await fetch(`${API_BASE}/api/verify-direct-tx`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        user_id: user.id,
-                        tx_hash: txHash,
-                        amount: selectedAmount
-                    })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    statusEl.style.color = "var(--green)";
-                    statusEl.innerText = `🎉 ${selectedAmount} Ticket(s) crédité(s) !`;
-                    loadState();
-                } else {
-                    statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = data.message || "⏳ En attente de confirmation réseau.";
-                }
-            } catch (e) {
-                statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "📡 Hash enregistré. Vos tickets apparaîtront dès confirmation.";
-            }
-        }
-
         function copyRefLink() {
             navigator.clipboard.writeText(refLink);
-            notify("Referral link copied.");
+            if (tg && typeof tg.showAlert === 'function') tg.showAlert("Referral link copied."); else alert("Referral link copied.");
+        }
+
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            }
         }
 
         function toggleReferral() {
             if (!hasPaidTicket) {
-                notify("🔒 PROTOCOL LOCKED: Mint at least 1 ticket first.");
+                const msg = "🔒 PROTOCOL LOCKED: Mint at least 1 ticket first.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
-            document.getElementById('referralBackdrop').style.display = 'flex';
+            toggleModal('referralModal');
+        }
+
+        function openExternalUrl(url) {
+            if (tg && typeof tg.openTelegramLink === 'function') {
+                tg.openTelegramLink(url);
+            } else if (tg && typeof tg.openLink === 'function') {
+                tg.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        async function createSecureInvoice() {
+            try {
+                const res = await fetch(`${API_BASE}/api/create-invoice`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, amount: 1.0 })
+                });
+                const data = await res.json();
+                if (data.ok && data.invoice_url) {
+                    openExternalUrl(data.invoice_url);
+                    return;
+                }
+            } catch (err) {}
+            openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
+        }
+
+        // OUVERTURE DIRECTE DES LIENS NATIFS POUR CHAQUE WALLET
+        function openWalletDeepLink(walletName) {
+            const modalTitle = document.getElementById('walletModalTitle');
+            const modalDesc = document.getElementById('walletModalDesc');
+            const walletStatus = document.getElementById('walletModalStatus');
+
+            if (!modalTitle) return;
+
+            modalTitle.innerText = `🔌 ${walletName}`;
+            modalDesc.innerText = `Lancement de l'application ${walletName}...`;
+            walletStatus.innerHTML = "⏳ Ouverture...";
+            toggleModal('walletModal');
+
+            let deepLink = "";
+            switch(walletName) {
+                case 'MetaMask':
+                    deepLink = "https://metamask.app.link/dapp/";
+                    break;
+                case 'Trust Wallet':
+                    deepLink = "https://link.trustwallet.com/open_url?coin_id=60&url=";
+                    break;
+                case 'Tonkeeper':
+                    deepLink = "tonkeeper://";
+                    break;
+                case 'Binance Pay':
+                    deepLink = "binance://";
+                    break;
+                case 'OKX Pay':
+                    deepLink = "okx://";
+                    break;
+                case 'Bybit Pay':
+                    deepLink = "bybit://";
+                    break;
+                case 'SafePal':
+                    deepLink = "safepalwallet://";
+                    break;
+                case 'WalletConnect':
+                default:
+                    deepLink = "https://walletconnect.com/";
+                    break;
+            }
+
+            setTimeout(() => {
+                openExternalUrl(deepLink);
+            }, 400);
         }
 
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
             if (!addr.startsWith("0x") || addr.length !== 42) {
-                notify("Invalid BEP20 address.");
+                const msg = "Invalid BEP20 address.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
             try {
@@ -766,18 +624,18 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: user.id, address: addr })
                 });
-                notify("✅ Saved!");
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert("✅ Saved!"); else alert("✅ Saved!");
             } catch (e) {}
         }
 
         async function handleChannelAction() {
             if (!hasPaidTicket) {
-                notify("🔒 Mint 1 ticket first.");
+                const msg = "🔒 Mint 1 ticket first.";
+                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
             if (!channelStepJoined) {
-                if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(CHANNEL_LINK);
-                else window.open(CHANNEL_LINK, '_blank');
+                openExternalUrl(CHANNEL_LINK);
                 channelStepJoined = true;
                 document.getElementById('channelBtn').innerText = "✅ Click Again to Claim";
                 return;
@@ -790,23 +648,18 @@
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    notify("🎉 Bonus Claimed!");
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert("🎉 Bonus Claimed!"); else alert("🎉 Bonus Claimed!");
                     loadState();
                 }
             } catch (e) {}
         }
 
-        const seededDepositors = [
-            `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
-            `@<span class="masked-txt">node_04</span> deposited 5 USDT`,
-            `@<span class="masked-txt">cyber_ghost</span> deposited 20 USDT`,
-            `@<span class="masked-txt">bep_whale</span> deposited 100 USDT`
-        ];
-        let depositIdx = 0;
         setInterval(() => {
-            depositIdx = (depositIdx + 1) % seededDepositors.length;
-            const feedEl = document.getElementById('depositFeedText');
-            if (feedEl) feedEl.innerHTML = seededDepositors[depositIdx];
+            if (depositFeedList.length > 0) {
+                depositIdx = (depositIdx + 1) % depositFeedList.length;
+                const feedEl = document.getElementById('depositFeedText');
+                if (feedEl) feedEl.innerHTML = depositFeedList[depositIdx];
+            }
         }, 3500);
 
         async function loadState() {
