@@ -278,13 +278,15 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 7px;
             margin-top: 10px;
+            position: relative;
+            z-index: 10;
         }
 
         .wallet-btn {
             background: rgba(3, 4, 7, 0.85);
             border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: 8px;
-            padding: 9px 6px;
+            padding: 11px 6px;
             color: var(--text);
             font-size: 9.5px;
             font-weight: 700;
@@ -294,6 +296,7 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
+            pointer-events: auto !important;
         }
 
         .wallet-btn:hover {
@@ -323,13 +326,20 @@
 
         .modal {
             display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 340px;
             background: #080b12;
             border: 1.5px solid var(--cyan);
             border-radius: 14px;
             padding: 16px;
             flex-direction: column;
             gap: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 9999;
         }
 
         .input-field {
@@ -428,14 +438,14 @@
         <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
 
         <div class="wallets-grid">
-            <button class="wallet-btn" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
-            <button class="wallet-btn" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
-            <button class="wallet-btn" onclick="payWithWallet('Binance Pay')">🟡 Binance Pay</button>
-            <button class="wallet-btn" onclick="payWithWallet('Tonkeeper')">💎 Tonkeeper</button>
-            <button class="wallet-btn" onclick="payWithWallet('OKX Pay')">⬛ OKX Pay</button>
-            <button class="wallet-btn" onclick="payWithWallet('Bybit Pay')">🪙 Bybit Pay</button>
-            <button class="wallet-btn" onclick="payWithWallet('SafePal')">🔒 SafePal</button>
-            <button class="wallet-btn" onclick="payWithWallet('WalletConnect')">🔗 WalletConnect</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('Binance Pay')">🟡 Binance Pay</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('Tonkeeper')">💎 Tonkeeper</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('OKX Pay')">⬛ OKX Pay</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('Bybit Pay')">🪙 Bybit Pay</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('SafePal')">🔒 SafePal</button>
+            <button class="wallet-btn" type="button" onclick="payWithWallet('WalletConnect')">🔗 WalletConnect</button>
         </div>
     </div>
 
@@ -570,7 +580,7 @@
             }
         }
 
-        // Facture sécurisée avec redirection de secours garantie
+        // Facture sécurisée avec redirection garantie et anti-erreur réseau
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
             const walletStatus = document.getElementById('walletModalStatus');
@@ -611,6 +621,7 @@
             }
         }
 
+        // Fonction des wallets totalement débloquée et interactive
         function payWithWallet(walletName) {
             const modalTitle = document.getElementById('walletModalTitle');
             const modalDesc = document.getElementById('walletModalDesc');
@@ -687,7 +698,7 @@
 
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 
-                // FORÇAGE STRICT : On garde $180.00 quoiqu'en dise le backend Render
+                // VERROUILLAGE STRICT : Le montant affiché reste fixé à 180.00 USDT
                 document.getElementById('prizePool').innerText = `$180.00`;
                 
                 hasPaidTicket = data.has_paid_ticket;
@@ -712,7 +723,6 @@
                     `).join('');
                 }
             } catch (e) {
-                // En cas de coupure réseau, on s'assure que le montant reste bloqué à 180
                 document.getElementById('prizePool').innerText = `$180.00`;
             }
         }
