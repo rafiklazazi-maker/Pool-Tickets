@@ -468,7 +468,6 @@
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
-        const initData = tg.initData || "";
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
         const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
@@ -508,7 +507,7 @@
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ init_data: initData, user_id: user.id, amount: selectedAmount })
+                    body: JSON.stringify({ user_id: user.id, amount: selectedAmount })
                 });
                 const data = await res.json();
 
@@ -558,7 +557,7 @@
                 await fetch(`${API_BASE}/api/save-wallet`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ init_data: initData, user_id: user.id, address: addr })
+                    body: JSON.stringify({ user_id: user.id, address: addr })
                 });
                 notify("✅ Saved!");
             } catch (e) {}
@@ -580,7 +579,7 @@
                 const res = await fetch(`${API_BASE}/api/claim-channel`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ init_data: initData, user_id: user.id })
+                    body: JSON.stringify({ user_id: user.id })
                 });
                 const data = await res.json();
                 if (data.ok) {
