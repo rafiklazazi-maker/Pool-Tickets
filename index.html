@@ -393,7 +393,7 @@
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            Loading live feed...
+            Waiting for live feed...
         </div>
     </div>
 
@@ -433,7 +433,7 @@
             🚀 PAY <span id="btnAmountLabel">1</span> USDT (<span id="btnTicketLabel">1</span> TICKET)
         </button>
 
-        <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Click PAY to start...</div>
+        <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
     </div>
 
     <button class="btn btn-outline" type="button" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
@@ -499,7 +499,8 @@
         let selectedAmount = 1;
         let hasPaidTicket = false;
         let channelStepJoined = false;
-        let cachedReceiveWallet = "";
+        // Sécurité : Adresse de secours par défaut au cas où le backend met du temps à répondre
+        let cachedReceiveWallet = "0x789b91e92D533d1b66b4C9B47294828E43b7B9D3"; 
 
         try {
             new QRCode(document.getElementById("qrcode"), { text: refLink, width: 110, height: 110 });
@@ -524,21 +525,14 @@
             const btnEl = document.getElementById('payActionBtn');
 
             statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "⚡ Click detected. Checking wallet...";
-
-            if (!cachedReceiveWallet) {
-                statusEl.innerText = "⚠️ Error: Receiving wallet not loaded yet from backend.";
-                return;
-            }
+            statusEl.innerText = "⚡ Connecting to Web3 wallet...";
+            btnEl.disabled = true;
 
             try {
                 if (!window.ethereum) {
-                    statusEl.innerText = "❌ No Web3 provider found!";
-                    notify("Please open this app inside MetaMask or Trust Wallet browser.");
-                    return;
+                    throw new Error("No Web3 provider found. Please open inside MetaMask or Trust Wallet browser.");
                 }
 
-                statusEl.innerText = "⏳ Requesting accounts...";
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -677,22 +671,17 @@
                     cachedReceiveWallet = data.receive_wallet;
                 }
 
-                document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
+                if (data.season) {
+                    document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
+                }
                 hasPaidTicket = data.has_paid_ticket;
-
-                document.getElementById('prizePool').innerText = `$183.7`;
-                document.getElementById('drawStatus').innerText = `🎯 Target Goal: 183.7 / 2,000 USDT`;
-
-                const pct = Math.min(100, (183.7 / 2000) * 100).toFixed(1);
-                document.getElementById('milestonePct').innerText = `${pct}%`;
-                document.getElementById('milestoneBar').style.width = `${pct}%`;
 
                 if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
                     document.getElementById('payoutWalletInput').value = data.payout_address;
                 }
-                document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
+                document.getElementById('shardCounter').innerText = `${data.fragments || 0}/4`;
 
-                const myCount = data.my_tickets.length;
+                const myCount = data.my_tickets ? data.my_tickets.length : 0;
                 document.getElementById('ticketCount').innerText = myCount;
                 if (myCount > 0) {
                     document.getElementById('ticketsList').innerHTML = data.my_tickets.map(t => `
@@ -715,8 +704,13 @@
                 if (data.live_feed && data.live_feed.length > 0) {
                     cachedFeed = data.live_feed;
                     document.getElementById('depositFeedText').innerHTML = formatLiveFeedItem(cachedFeed[0]);
+                } else {
+                    document.getElementById('depositFeedText').innerHTML = "No recent deposits yet.";
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("State sync error:", e);
+                document.getElementById('depositFeedText').innerHTML = "Protocol online (Offline sync)";
+            }
         }
 
         loadState();
