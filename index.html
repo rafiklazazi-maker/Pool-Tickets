@@ -465,11 +465,11 @@
     <div class="modal" id="buyModal">
         <div style="font-weight: 800; font-size: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Protected BEP20 Deposit</div>
         <div style="font-size: 11px; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Payez instantanément en 1 clic via votre portefeuille Web3 favori ou utilisez l'alternative manuelle par TXID.
+            Payez instantanément en 1 clic via votre portefeuille Web3 ou utilisez l'alternative manuelle par TXID.
         </div>
 
-        <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Payer avec MetaMask (BEP20)</button>
-        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithTrustWallet()">🛡️ Payer avec Trust Wallet (BEP20)</button>
+        <button class="btn btn-cyber" style="padding: 12px; font-size: 12px;" onclick="connectAndPayWeb3()">🚀 Payer 1 USDT en 1 Clic</button>
+        <button class="btn btn-outline" style="padding: 10px; font-size: 11px;" onclick="payWithTrustWallet()">🛡️ Autre Portefeuille Web3 (BEP20)</button>
         <div id="web3Status" style="font-size: 10.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
 
         <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0;"></div>
@@ -619,7 +619,7 @@
 
         function payWithTrustWallet() {
             const statusDiv = document.getElementById('web3Status');
-            statusDiv.innerHTML = "⏳ Redirection vers Trust Wallet...";
+            statusDiv.innerHTML = "⏳ Ouverture du portefeuille Web3...";
             const trustUrl = `https://link.trustwallet.com/send?coin=20000714&address=${RECEIVE_WALLET}&amount=1&token_id=${USDT_BEP20_CONTRACT}`;
             openExternalWallet(trustUrl);
         }
@@ -628,7 +628,7 @@
             const statusDiv = document.getElementById('web3Status');
 
             if (typeof window.ethereum === 'undefined') {
-                statusDiv.innerHTML = "⏳ Ouverture de MetaMask (1 USDT BEP20)...";
+                statusDiv.innerHTML = "⏳ Ouverture du portefeuille (1 USDT BEP20)...";
                 const eip681Url = `https://metamask.app.link/send/${USDT_BEP20_CONTRACT}@56/transfer?address=${RECEIVE_WALLET}&uint256=1000000000000000000`;
                 openExternalWallet(eip681Url);
                 return;
