@@ -347,7 +347,7 @@
             border-radius: 10px;
             padding: 10px;
             color: var(--text);
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
@@ -522,10 +522,15 @@
         </div>
         <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
 
+        <!-- GRILLE ÉTENDUE DE 8 OPTIONS WALLETS & PASSERELLES -->
         <div class="wallets-grid">
             <button class="wallet-btn" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
             <button class="wallet-btn" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
             <button class="wallet-btn" onclick="payWithWallet('Binance Pay')">🟡 Binance Pay</button>
+            <button class="wallet-btn" onclick="payWithWallet('Tonkeeper')">💎 Tonkeeper</button>
+            <button class="wallet-btn" onclick="payWithWallet('OKX Pay')">⬛ OKX Pay</button>
+            <button class="wallet-btn" onclick="payWithWallet('Bybit Pay')">🪙 Bybit Pay</button>
+            <button class="wallet-btn" onclick="payWithWallet('SafePal')">🔒 SafePal</button>
             <button class="wallet-btn" onclick="payWithWallet('WalletConnect')">🔗 WalletConnect</button>
         </div>
     </div>
