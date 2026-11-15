@@ -404,8 +404,9 @@
         <div class="status-box" id="drawStatus">🎯 Target Goal: 183.7 / 2,000 USDT</div>
     </div>
 
+    <!-- Texte marketing complet conservé : Blockchain non centralisée, paiement 100% autonome sans accord de l'admin, zéro KYC, anonymat total, montants personnalisables -->
     <div class="blockchain-info-card">
-        🛡️ <b>WEB3 DIRECT PROTOCOL:</b> Powered by a decentralized blockchain. Funds transfer <b>automatically</b> to the non-custodial wallet with <b>zero KYC, absolute anonymity, and zero admin approval required</b>! Input any amount (e.g., <b>2 USDT = 2 tickets</b>).
+        🛡️ <b>WEB3 DIRECT PROTOCOL:</b> 100% autonomous decentralized blockchain system. Funds transfer directly and automatically to the non-custodial wallet with <b>zero KYC, absolute anonymity, and zero admin approval required</b>! Input any amount (e.g., <b>2 USDT = 2 tickets</b>).
     </div>
 
     <div class="milestone-card">
@@ -432,7 +433,7 @@
             🚀 PAY <span id="btnAmountLabel">1</span> USDT (<span id="btnTicketLabel">1</span> TICKET)
         </button>
 
-        <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;"></div>
+        <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Click PAY to start...</div>
     </div>
 
     <button class="btn btn-outline" type="button" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
@@ -517,87 +518,81 @@
             document.getElementById('btnTicketLabel').innerText = val;
         }
 
-        async function getUniversalProvider() {
-            if (!window.ethereum) {
-                // Si aucun wallet injecté n'est détecté sur le mobile, on invite proprement à ouvrir via MetaMask/TrustWallet Browser
-                throw new Error("Please open this app inside MetaMask, Trust Wallet, or a Web3 mobile browser.");
-            }
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            return new ethers.providers.Web3Provider(window.ethereum);
-        }
-
         async function payDirectWeb3() {
             syncAmount();
             const statusEl = document.getElementById('payStatus');
             const btnEl = document.getElementById('payActionBtn');
 
+            statusEl.style.color = "var(--cyan)";
+            statusEl.innerText = "⚡ Click detected. Checking wallet...";
+
             if (!cachedReceiveWallet) {
-                notify("⚠️ Receiving wallet not loaded yet. Please wait...");
+                statusEl.innerText = "⚠️ Error: Receiving wallet not loaded yet from backend.";
                 return;
             }
 
-            btnEl.disabled = true;
-            statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "⏳ Connecting to Web3 wallet...";
-
             try {
-                const provider = await getUniversalProvider();
+                if (!window.ethereum) {
+                    statusEl.innerText = "❌ No Web3 provider found!";
+                    notify("Please open this app inside MetaMask or Trust Wallet browser.");
+                    return;
+                }
+
+                statusEl.innerText = "⏳ Requesting accounts...";
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
 
                 const network = await provider.getNetwork();
                 if (network.chainId !== 56) {
-                    statusEl.innerText = "⚠️ Switching to BSC Network required...";
+                    statusEl.innerText = "⚠️ Switching to BSC Network...";
                     try {
-                        await provider.send('wallet_switchEthereumChain', [{ chainId: '0x38' }]);
-                    } catch (switchError) {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x38' }],
+                        });
+                    } catch (swErr) {
                         throw new Error("Please switch your wallet network to Binance Smart Chain (BSC).");
                     }
                 }
 
-                statusEl.innerText = `⏳ Preparing transfer of ${selectedAmount} USDT (BEP20)...`;
-
+                statusEl.innerText = `⏳ Preparing transfer of ${selectedAmount} USDT...`;
                 const usdtContractAddress = "0x55d398326f99059ff775485246999027b3197955";
-                const erc20Abi = [
-                    "function transfer(address to, uint256 amount) public returns (bool)"
-                ];
+                const erc20Abi = ["function transfer(address to, uint256 amount) public returns (bool)"];
 
                 const usdtContract = new ethers.Contract(usdtContractAddress, erc20Abi, signer);
                 const parsedAmount = ethers.utils.parseUnits(selectedAmount.toString(), 18);
 
-                statusEl.innerText = "✍️ Please sign the transaction in your wallet...";
-
+                statusEl.innerText = "✍️ Please sign transaction in your wallet...";
                 const tx = await usdtContract.transfer(cachedReceiveWallet, parsedAmount);
 
-                statusEl.innerText = "🔄 Transaction sent! Waiting for confirmation...";
+                statusEl.innerText = "🔄 Transaction sent! Waiting confirmation...";
                 const receipt = await tx.wait();
 
                 statusEl.style.color = "var(--green)";
-                statusEl.innerText = "✅ Transaction verified! Checking server...";
+                statusEl.innerText = "✅ Confirmed! Verifying with server...";
 
                 const res = await fetch(`${API_BASE}/api/verify-tx`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        user_id: user.id, 
-                        tx_hash: receipt.transactionHash 
-                    })
+                    body: JSON.stringify({ user_id: user.id, tx_hash: receipt.transactionHash })
                 });
 
                 const data = await res.json();
-
                 if (data.ok) {
                     statusEl.style.color = "var(--green)";
                     statusEl.innerText = `🎉 Success! ${data.tickets_added} ticket(s) minted!`;
                     loadState();
                 } else {
                     statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ Server error: ${data.error || "Validation failed"}`;
+                    statusEl.innerText = `❌ Server error: ${data.error || "Failed"}`;
                 }
 
             } catch (err) {
                 console.error(err);
                 statusEl.style.color = "var(--gold)";
-                statusEl.innerText = `⚠️ ${err.reason || err.message || "Payment cancelled or error"}`;
+                statusEl.innerText = `⚠️ Error: ${err.reason || err.message || "Cancelled"}`;
             } finally {
                 btnEl.disabled = false;
             }
@@ -693,7 +688,7 @@
                 document.getElementById('milestoneBar').style.width = `${pct}%`;
 
                 if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
-                    document.getElementById('payoutWalletInput'].value = data.payout_address;
+                    document.getElementById('payoutWalletInput').value = data.payout_address;
                 }
                 document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
 
