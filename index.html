@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -12,15 +12,18 @@
         :root {
             --bg: #030407;
             --card: #0a0d14;
-            --card-glow: #101522;
             --cyan: #00f3ff;
             --green: #00ff66;
             --gold: #ffcc00;
-            --pink: #ff0055;
             --text: #e2e8f0;
             --muted: #64748b;
             --border-cyan: rgba(0, 243, 255, 0.3);
             --border-green: rgba(0, 255, 102, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -28,18 +31,14 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 14px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            overflow-x: hidden;
+            gap: 12px;
+            min-height: 100vh;
             background-image: 
-                linear-gradient(rgba(3, 4, 7, 0.92), rgba(3, 4, 7, 0.92)),
-                radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 10% 90%, rgba(0, 255, 102, 0.08) 0%, transparent 50%),
-                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px),
-                linear-gradient(0deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+                linear-gradient(rgba(3, 4, 7, 0.94), rgba(3, 4, 7, 0.94)),
+                radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.12) 0%, transparent 60%);
             background-attachment: fixed;
         }
 
@@ -52,10 +51,10 @@
         .logo-title {
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
-            font-size: 20px;
+            font-size: 18px;
             color: #fff;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.6), 0 0 20px rgba(0, 243, 255, 0.3);
-            letter-spacing: 1.5px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+            letter-spacing: 1px;
         }
 
         .logo-title span {
@@ -64,72 +63,49 @@
 
         .user-badge {
             background: rgba(10, 13, 20, 0.9);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 10.5px;
             font-weight: 700;
             color: var(--cyan);
             border: 1px solid var(--border-cyan);
             font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
         }
 
         .ticker-bar {
             background: rgba(10, 13, 20, 0.85);
             border: 1px solid rgba(255, 204, 0, 0.35);
             color: var(--gold);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 10.5px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: 700;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .deposits-bar {
             background: rgba(8, 11, 17, 0.95);
             border: 1px solid var(--border-green);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 10.5px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.05);
+            gap: 8px;
         }
 
         .deposit-tag {
             background: rgba(0, 255, 102, 0.15);
             color: var(--green);
             border: 1px solid rgba(0, 255, 102, 0.4);
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
-            font-size: 9px;
+            font-size: 8.5px;
             font-weight: 800;
             font-family: 'Orbitron', sans-serif;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .deposit-tag::before {
-            content: '';
-            width: 5px;
-            height: 5px;
-            background: var(--green);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--green);
-            animation: pulseDot 1.2s infinite;
-        }
-
-        @keyframes pulseDot {
-            0% { transform: scale(0.9); opacity: 0.6; }
-            50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 10px var(--green); }
-            100% { transform: scale(0.9); opacity: 0.6; }
         }
 
         .deposit-feed-text {
@@ -140,26 +116,22 @@
             flex: 1;
             text-align: right;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            transition: opacity 0.3s ease;
+            font-size: 10.5px;
         }
 
         .masked-txt {
-            filter: blur(2.5px);
+            filter: blur(2px);
             opacity: 0.6;
-            user-select: none;
             color: var(--muted);
         }
 
         .jackpot-card {
             background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
             border: 1.5px solid var(--cyan);
-            border-radius: 16px;
-            padding: 22px 14px;
+            border-radius: 14px;
+            padding: 18px 12px;
             text-align: center;
-            position: relative;
-            box-shadow: 0 0 35px rgba(0, 243, 255, 0.2), inset 0 0 25px rgba(0, 243, 255, 0.05);
-            overflow: hidden;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
         }
 
         .season-pill {
@@ -167,156 +139,124 @@
             background: rgba(0, 243, 255, 0.12);
             color: var(--cyan);
             border: 1px solid var(--border-cyan);
-            padding: 3px 12px;
-            border-radius: 6px;
-            font-size: 10px;
+            padding: 2px 10px;
+            border-radius: 5px;
+            font-size: 9.5px;
             font-weight: 800;
             font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1.5px;
+            margin-bottom: 6px;
             text-transform: uppercase;
-            margin-bottom: 8px;
         }
 
         .jackpot-label {
-            font-size: 10px;
+            font-size: 9.5px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             color: var(--muted);
             font-weight: 700;
         }
 
         .jackpot-amount {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 900;
             color: #fff;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.5), 0 0 40px rgba(0, 243, 255, 0.2);
-            margin: 6px 0;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+            margin: 4px 0;
             font-family: 'Orbitron', sans-serif;
         }
 
         .status-box {
             background: rgba(0, 0, 0, 0.6);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 10.5px;
             font-weight: 600;
             display: inline-block;
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--green);
             font-family: 'JetBrains Mono', monospace;
-            margin-top: 4px;
         }
 
         .trust-shield {
-            background: linear-gradient(90deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
-            border: 1px solid rgba(0, 243, 255, 0.32);
-            border-radius: 12px;
-            padding: 11px 13px;
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.06) 0%, rgba(0, 255, 102, 0.06) 100%);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 10px;
+            padding: 10px;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            color: var(--text);
-            line-height: 1.45;
-            box-shadow: 0 4px 20px rgba(0, 243, 255, 0.08);
+            font-size: 10px;
+            line-height: 1.4;
         }
 
         .milestone-card {
             background: var(--card);
-            border-radius: 14px;
-            padding: 14px;
+            border-radius: 12px;
+            padding: 12px;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
 
         .milestone-header {
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--muted);
         }
 
         .cyber-bar-container {
             position: relative;
             background: #020305;
-            height: 12px;
-            border-radius: 6px;
+            height: 10px;
+            border-radius: 5px;
             overflow: hidden;
             border: 1px solid rgba(0, 243, 255, 0.3);
-            padding: 2px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
+            padding: 1px;
         }
 
         .cyber-bar-fill {
             background: linear-gradient(90deg, var(--cyan), var(--green));
             height: 100%;
             width: 0%;
-            border-radius: 4px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
-        }
-
-        .cyber-bar-fill::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            animation: shimmerBar 2s infinite;
-        }
-
-        @keyframes shimmerBar {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            border-radius: 3px;
+            transition: width 0.8s ease;
         }
 
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 13px;
             border: none;
-            border-radius: 12px;
-            font-size: 12.5px;
+            border-radius: 10px;
+            font-size: 11.5px;
             font-weight: 800;
             cursor: pointer;
-            transition: all 0.2s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-family: 'Orbitron', sans-serif;
         }
 
-        .btn:active { transform: scale(0.97); }
+        .btn:active { transform: scale(0.98); }
 
         .btn-cyber {
             background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%);
             color: #030407;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 1px 2px rgba(255,255,255,0.5);
-            font-weight: 900;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
         }
 
         .btn-outline {
             background: var(--card);
             color: var(--text);
             border: 1px solid var(--border-cyan);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
+            font-size: 9.5px;
         }
 
         .smart-invoice-cta {
-            background: linear-gradient(135deg, rgba(0, 243, 255, 0.08) 0%, rgba(0, 255, 102, 0.08) 100%);
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
             border: 1.5px solid var(--cyan);
-            border-radius: 14px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 14px;
             text-align: center;
-            position: relative;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
-            animation: pulseGlow 2.5s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); }
-            100% { border-color: rgba(0, 255, 102, 0.6); box-shadow: 0 0 30px rgba(0, 255, 102, 0.25); }
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
         }
 
         .smart-badge {
@@ -324,62 +264,54 @@
             background: rgba(0, 255, 102, 0.15);
             color: var(--green);
             border: 1px solid rgba(0, 255, 102, 0.4);
-            padding: 3px 10px;
-            border-radius: 6px;
-            font-size: 9.5px;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 9px;
             font-weight: 800;
             font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
         }
 
         .wallets-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 12px;
+            gap: 7px;
+            margin-top: 10px;
         }
 
         .wallet-btn {
             background: rgba(3, 4, 7, 0.85);
             border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: 8px;
+            padding: 9px 6px;
             color: var(--text);
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-
-        .wallet-btn:hover {
-            border-color: var(--cyan);
-            background: rgba(0, 243, 255, 0.08);
-            box-shadow: 0 0 12px rgba(0, 243, 255, 0.2);
+            gap: 5px;
         }
 
         .section {
             background: var(--card);
-            border-radius: 14px;
-            padding: 14px;
+            border-radius: 12px;
+            padding: 12px;
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: var(--cyan);
             font-family: 'Orbitron', sans-serif;
         }
@@ -388,90 +320,61 @@
             display: none;
             background: #080b12;
             border: 1.5px solid var(--cyan);
-            border-radius: 16px;
-            padding: 18px;
+            border-radius: 14px;
+            padding: 16px;
             flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(0, 243, 255, 0.2);
-            animation: fadeIn 0.25s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         .input-field {
             width: 100%;
-            box-sizing: border-box;
             background: #030407;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: 8px;
+            padding: 9px;
             color: var(--text);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 10.5px;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .input-field:focus {
-            border-color: var(--cyan);
-            box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
         }
 
         .ticket-item {
             background: #030407;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 10.5px;
             border-left: 3px solid var(--cyan);
-            border-top: 1px solid rgba(255,255,255,0.02);
-            border-right: 1px solid rgba(255,255,255,0.02);
-            border-bottom: 1px solid rgba(255,255,255,0.02);
         }
 
         #qrcode {
             background: #fff;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 8px;
+            border-radius: 8px;
             margin: 0 auto;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
         }
 
         .empty-state {
             text-align: center;
             color: var(--muted);
-            font-size: 11px;
-            padding: 12px 0;
+            font-size: 10.5px;
+            padding: 10px 0;
             font-family: 'JetBrains Mono', monospace;
         }
 
         .footer {
             text-align: center;
-            font-size: 9px;
+            font-size: 8.5px;
             color: var(--muted);
-            margin-top: 6px;
+            margin-top: 4px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             font-family: 'Orbitron', sans-serif;
-        }
-
-        .secure-notice {
-            background: rgba(0, 255, 102, 0.06);
-            border: 1px solid rgba(0, 255, 102, 0.25);
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 10.5px;
-            color: var(--green);
-            font-family: 'JetBrains Mono', monospace;
-            text-align: center;
-            line-height: 1.4;
         }
     </style>
 </head>
@@ -485,7 +388,7 @@
     <div class="ticker-bar" id="liveTicker">⚡ SECURE ON-CHAIN PROTOCOL // SMART INVOICE ACTIVE</div>
 
     <div class="deposits-bar">
-        <span class="deposit-tag">LIVE STREAM</span>
+        <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
             @<span class="masked-txt">player1x</span> deposited 1 USDT
         </div>
@@ -499,30 +402,26 @@
     </div>
 
     <div class="trust-shield">
-        🛡️ <b style="color: var(--cyan);">100% Zero-Loss Automated Gateway:</b> Secure instant checkout powered by Smart Invoice. No manual codes, no lost funds.
+        🛡️ <b style="color: var(--cyan);">100% Zero-Loss Automated Gateway:</b> Instant checkout powered by Smart Invoice.
     </div>
 
     <div class="milestone-card">
         <div class="milestone-header">
             <span>⚡ Real-Time Liquidity Progression</span>
-            <span id="milestonePct" style="color: var(--cyan);">9.0% ($180 / $2,000)</span>
+            <span id="milestonePct" style="color: var(--cyan);">9.0%</span>
         </div>
         <div class="cyber-bar-container">
             <div class="cyber-bar-fill" id="milestoneBar" style="width: 9.0%;"></div>
-        </div>
-        <div style="font-size: 10.5px; color: var(--muted); margin-top: 8px; line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Reaching the target automatically triggers the <b>7-Day Final Countdown</b> + 3 Second-Chance lucky rewards on-chain.
         </div>
     </div>
 
     <div class="smart-invoice-cta">
         <div class="smart-badge">⚡ SMART INVOICE PROTOCOL ACTIVE</div>
-        <div style="font-size: 11.5px; color: var(--text); font-weight: 700; margin-bottom: 10px; font-family: 'Plus Jakarta Sans', sans-serif;">
-            Achat instantané et sécurisé en 1 clic. Choisissez votre passerelle ou portefeuille préféré :
+        <div style="font-size: 11px; color: var(--text); font-weight: 700; margin-bottom: 8px;">
+            Achat instantané en 1 clic. Choisissez votre passerelle :
         </div>
         <button class="btn btn-cyber" onclick="toggleModal('buyModal')">💳 PAYER 1 USDT (Smart Invoice)</button>
 
-        <!-- GRILLE ÉTENDUE DE 8 OPTIONS WALLETS & PASSERELLES -->
         <div class="wallets-grid">
             <button class="wallet-btn" onclick="payWithWallet('MetaMask')">🦊 MetaMask</button>
             <button class="wallet-btn" onclick="payWithWallet('Trust Wallet')">🛡️ Trust Wallet</button>
@@ -536,41 +435,30 @@
     </div>
 
     <div class="modal" id="buyModal">
-        <div style="font-weight: 800; font-size: 12.5px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Smart Invoice Checkout</div>
-        <div style="font-size: 10px; color: var(--text); line-height: 1.3; font-family: 'JetBrains Mono', monospace;">
-            Cliquez ci-dessous pour lancer votre session de paiement sécurisée liée à votre profil Telegram :
+        <div style="font-weight: 800; font-size: 12px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">🪙 Smart Invoice Checkout</div>
+        <div style="font-size: 9.5px; color: var(--text); font-family: 'JetBrains Mono', monospace;">
+            Cliquez pour lancer votre session de paiement sécurisée liée à Telegram :
         </div>
-
-        <button class="btn btn-cyber" style="padding: 12px; font-size: 11px;" onclick="createSecureInvoice()">🚀 Ouvrir la Smart Invoice 1 USDT</button>
-        
-        <div id="invoiceStatus" style="font-size: 10px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 4px;"></div>
-
-        <div class="secure-notice">
-            🔒 <b>Protection Totale :</b> Chaque Smart Invoice génère un identifiant unique infalsifiable. Votre ticket arrive dans votre ledger dès la validation du réseau.
-        </div>
+        <button class="btn btn-cyber" style="padding: 10px; font-size: 10px;" onclick="createSecureInvoice()">🚀 Ouvrir la Smart Invoice</button>
+        <div id="invoiceStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
     </div>
 
     <button class="btn btn-outline" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
-    <button class="btn btn-outline" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards = +1 Ticket)</button>
+    <button class="btn btn-outline" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards)</button>
 
     <div class="modal" id="referralModal">
-        <div style="font-size: 11px; text-align: center; color: var(--text); line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Share your personal link. Every <b>4 verified players</b> who join through your link automatically mints <b>1 Free Ticket</b> into your ledger!
+        <div style="font-size: 10px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
+            Share your link. Every 4 verified players mints 1 Free Ticket!
         </div>
         <div id="qrcode"></div>
-        <button class="btn btn-cyber" style="padding: 10px; font-size: 11px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
+        <button class="btn btn-cyber" style="padding: 9px; font-size: 10px;" onclick="copyRefLink()">📋 Copy Referral Link</button>
     </div>
 
     <div class="section">
-        <div class="section-title">
-            <span>💳 Automated Payout Wallet (BEP20)</span>
-        </div>
-        <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; font-family: 'JetBrains Mono', monospace;">
-            Register your personal <b>USDT (BEP20)</b> wallet address where your real 70% grand prize will be dispatched automatically upon winning.
-        </div>
-        <div style="display: flex; gap: 8px;">
-            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... Personal BEP20 Address">
-            <button class="btn btn-cyber" style="width: auto; padding: 0 14px; font-size: 11px;" onclick="savePayoutWallet()">Save</button>
+        <div class="section-title"><span>💳 Payout Wallet (BEP20)</span></div>
+        <div style="display: flex; gap: 6px;">
+            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... BEP20 Address">
+            <button class="btn btn-cyber" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
         </div>
     </div>
 
@@ -580,24 +468,28 @@
             <span id="ticketCount" style="color: var(--cyan);">0</span>
         </div>
         <div id="ticketsList">
-            <div class="empty-state">NO ACTIVE TICKETS FOUND IN LEDGER</div>
+            <div class="empty-state">NO ACTIVE TICKETS FOUND</div>
         </div>
     </div>
 
     <div class="section">
-        <div class="section-title">🏆 Hall of Fame (Past Seasons)</div>
+        <div class="section-title">🏆 Hall of Fame</div>
         <div id="winnersHistory">
-            <div class="empty-state">SEASON #1 CURRENTLY IN PROGRESS</div>
+            <div class="empty-state">SEASON #1 IN PROGRESS</div>
         </div>
     </div>
 
     <div class="footer">
-        POOL TICKETS • PROTECTED BLOCKCHAIN PROTOCOL • REAL USDT JACKPOT
+        POOL TICKETS • PROTECTED PROTOCOL
     </div>
 
     <script>
+        // Sécurité anti-plantage Telegram mobile
         const tg = window.Telegram?.WebApp || {};
-        if (typeof tg.expand === 'function') { tg.expand(); }
+        try {
+            if (typeof tg.expand === 'function') { tg.expand(); }
+            if (typeof tg.ready === 'function') { tg.ready(); }
+        } catch(e) {}
 
         const API_BASE = "https://pool-tickets-backend.onrender.com";
         const BOT_USERNAME = "PoolTickets_bot";
@@ -617,28 +509,22 @@
             `@<span class="masked-txt">net_runner</span> deposited 1 USDT`,
             `@<span class="masked-txt">node_04</span> deposited 3 USDT`,
             `@<span class="masked-txt">cyber_ghost</span> deposited 2 USDT`,
-            `@<span class="masked-txt">bep_whale</span> deposited 7 USDT`,
-            `@<span class="masked-txt">hex_trader</span> deposited 4 USDT`,
-            `@<span class="masked-txt">sys_admin</span> deposited 5 USDT`,
-            `@<span class="masked-txt">z_ion</span> deposited 2 USDT`,
-            `@<span class="masked-txt">neo_trx</span> deposited 7 USDT`
+            `@<span class="masked-txt">bep_whale</span> deposited 7 USDT`
         ];
         let depositFeedList = [...seededDepositors];
         let depositIdx = 0;
 
-        new QRCode(document.getElementById("qrcode"), {
-            text: refLink,
-            width: 120,
-            height: 120
-        });
+        try {
+            new QRCode(document.getElementById("qrcode"), {
+                text: refLink,
+                width: 110,
+                height: 110
+            });
+        } catch(e) {}
 
         function copyRefLink() {
             navigator.clipboard.writeText(refLink);
-            if (tg && typeof tg.showAlert === 'function') {
-                tg.showAlert("Referral link copied to clipboard.");
-            } else {
-                alert("Referral link copied to clipboard.");
-            }
+            if (tg && typeof tg.showAlert === 'function') tg.showAlert("Referral link copied."); else alert("Referral link copied.");
         }
 
         function toggleModal(id) {
@@ -648,7 +534,7 @@
 
         function toggleReferral() {
             if (!hasPaidTicket) {
-                const msg = "🔒 PROTOCOL LOCKED: Mint at least 1 ticket to unlock your referral link.";
+                const msg = "🔒 PROTOCOL LOCKED: Mint at least 1 ticket first.";
                 if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
@@ -657,7 +543,7 @@
 
         function openExternalUrl(url) {
             if (tg && typeof tg.openLink === 'function') {
-                tg.openLink(url, { try_instant_view: false });
+                tg.openLink(url);
             } else {
                 window.open(url, '_blank');
             }
@@ -665,7 +551,7 @@
 
         async function createSecureInvoice() {
             const statusDiv = document.getElementById('invoiceStatus');
-            statusDiv.innerHTML = "⏳ Génération de la Smart Invoice...";
+            statusDiv.innerHTML = "⏳ Génération...";
 
             try {
                 const res = await fetch(`${API_BASE}/api/create-invoice`, {
@@ -673,34 +559,28 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: user.id, amount: 1.0 })
                 });
-
                 const data = await res.json();
                 if (data.ok && data.invoice_url) {
-                    statusDiv.innerHTML = "✅ Smart Invoice prête ! Redirection...";
+                    statusDiv.innerHTML = "✅ Redirection...";
                     openExternalUrl(data.invoice_url);
                 } else {
-                    statusDiv.innerHTML = `⚠️ Erreur : ${data.error || "Impossible de générer la facture."}`;
+                    statusDiv.innerHTML = `⚠️ Erreur serveur`;
                 }
             } catch (err) {
-                console.error(err);
-                statusDiv.innerHTML = `❌ Erreur de connexion au serveur de paiement.`;
+                statusDiv.innerHTML = `❌ Erreur réseau`;
             }
         }
 
         function payWithWallet(walletName) {
-            const msg = `🔌 Connexion à ${walletName} en cours...\nLancement de la passerelle de paiement sécurisée pour 1 USDT (BEP20).`;
-            if (tg && typeof tg.showAlert === 'function') {
-                tg.showAlert(msg);
-            } else {
-                alert(msg);
-            }
+            const msg = `🔌 Connexion à ${walletName}...`;
+            if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
             createSecureInvoice();
         }
 
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
             if (!addr.startsWith("0x") || addr.length !== 42) {
-                const msg = "Invalid BEP20 address. Must be 42 characters starting with 0x.";
+                const msg = "Invalid BEP20 address.";
                 if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
@@ -712,32 +592,22 @@
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    const msg = "✅ Payout wallet securely registered!";
-                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-                } else {
-                    const msg = data.error || "Error saving wallet.";
-                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert("✅ Saved!"); else alert("✅ Saved!");
                 }
-            } catch (e) {
-                const msg = "Network error connecting to backend protocol.";
-                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-            }
+            } catch (e) {}
         }
 
         async function handleChannelAction() {
             if (!hasPaidTicket) {
-                const msg = "🔒 Locked: Mint 1 ticket first to unlock VIP bonuses.";
+                const msg = "🔒 Mint 1 ticket first.";
                 if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 return;
             }
             if (!channelStepJoined) {
-                if (tg && typeof tg.openTelegramLink === 'function') {
-                    tg.openTelegramLink(CHANNEL_LINK);
-                } else {
-                    window.open(CHANNEL_LINK, '_blank');
-                }
+                if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(CHANNEL_LINK);
+                else window.open(CHANNEL_LINK, '_blank');
                 channelStepJoined = true;
-                document.getElementById('channelBtn').innerText = "✅ Click Again to Claim Ticket";
+                document.getElementById('channelBtn').innerText = "✅ Click Again to Claim";
                 return;
             }
             try {
@@ -748,41 +618,17 @@
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    const msg = `🎉 VIP Bonus Minted! Ticket ${data.ticket_code} added!`;
-                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
+                    if (tg && typeof tg.showAlert === 'function') tg.showAlert("🎉 Bonus Claimed!"); else alert("🎉 Bonus Claimed!");
                     loadState();
-                } else {
-                    const msg = data.error || "Please ensure you have joined the VIP network.";
-                    if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
                 }
-            } catch (e) {
-                const msg = "Protocol connection error.";
-                if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg); else alert(msg);
-            }
+            } catch (e) {}
         }
-
-        function updateTimerDisplay() {
-            if (countdownEndTimestamp > 0) {
-                const nowSec = Math.floor(Date.now() / 1000);
-                const diff = Math.max(0, countdownEndTimestamp - nowSec);
-                const d = Math.floor(diff / 86400);
-                const h = Math.floor((diff % 86400) / 3600);
-                const m = Math.floor((diff % 3600) / 60);
-                const s = diff % 60;
-                document.getElementById('drawStatus').innerText = `⏳ FINAL COUNTDOWN: ${d}d ${h}h ${m}m ${s}s`;
-            }
-        }
-        setInterval(updateTimerDisplay, 1000);
 
         setInterval(() => {
             if (depositFeedList.length > 0) {
                 depositIdx = (depositIdx + 1) % depositFeedList.length;
                 const feedEl = document.getElementById('depositFeedText');
-                feedEl.style.opacity = '0';
-                setTimeout(() => {
-                    feedEl.innerHTML = depositFeedList[depositIdx];
-                    feedEl.style.opacity = '1';
-                }, 200);
+                if (feedEl) feedEl.innerHTML = depositFeedList[depositIdx];
             }
         }, 3500);
 
@@ -792,71 +638,30 @@
                 const data = await res.json();
 
                 document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
-                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                document.getElementById('prizePool').innerText = `$${data.prize_pool.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                 hasPaidTicket = data.has_paid_ticket;
                 countdownEndTimestamp = data.countdown_end;
 
-                const displayPool = Math.floor(data.prize_pool);
                 const pct = Math.min(100, (data.prize_pool / data.target_goal) * 100).toFixed(1);
-                document.getElementById('milestonePct').innerText = `${pct}% ($${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()})`;
+                document.getElementById('milestonePct').innerText = `${pct}%`;
                 document.getElementById('milestoneBar').style.width = `${pct}%`;
-
-                if (countdownEndTimestamp === 0) {
-                    document.getElementById('drawStatus').innerText = `🎯 Target Goal: $${displayPool.toLocaleString()} / $${data.target_goal.toLocaleString()} USDT`;
-                } else {
-                    updateTimerDisplay();
-                }
 
                 if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
                     document.getElementById('payoutWalletInput').value = data.payout_address;
                 }
-
                 document.getElementById('shardCounter').innerText = `${data.fragments}/4`;
-
-                if (data.channel_claimed) {
-                    const btn = document.getElementById('channelBtn');
-                    btn.innerText = "✅ VIP Protocol Claimed";
-                    btn.disabled = true;
-                }
 
                 const myCount = data.my_tickets.length;
                 document.getElementById('ticketCount').innerText = myCount;
-                const list = document.getElementById('ticketsList');
                 if (myCount > 0) {
-                    list.innerHTML = data.my_tickets.map(t => `
+                    document.getElementById('ticketsList').innerHTML = data.my_tickets.map(t => `
                         <div class="ticket-item">
                             <span>${t.source}</span>
                             <b style="color: var(--cyan);">${t.code}</b>
                         </div>
                     `).join('');
                 }
-
-                if (data.live_feed && data.live_feed.length > 0) {
-                    const realDeposits = data.live_feed
-                        .filter(item => !item.includes("entered Season"))
-                        .map(item => `<span style="color: var(--green); font-weight: 700;">✅ ${item}</span>`);
-                    
-                    if (realDeposits.length > 0) {
-                        depositFeedList = [...realDeposits, ...seededDepositors];
-                    } else {
-                        depositFeedList = [...seededDepositors];
-                    }
-                } else {
-                    depositFeedList = [...seededDepositors];
-                }
-
-                const histDiv = document.getElementById('winnersHistory');
-                if (data.history && data.history.length > 0) {
-                    histDiv.innerHTML = data.history.map(h => `
-                        <div class="ticket-item">
-                            <span>Season #${h.season}: <b>${h.winner}</b><br><small style="color:var(--muted)">${h.ticket}</small></span>
-                            <span style="color: var(--green); font-weight:bold;">$${h.prize.toFixed(2)}</span>
-                        </div>
-                    `).join('');
-                }
-            } catch (e) {
-                console.log("Protocol sync active...");
-            }
+            } catch (e) {}
         }
 
         loadState();
