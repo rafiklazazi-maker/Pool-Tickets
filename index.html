@@ -468,7 +468,7 @@
             Ouverture de l'application de portefeuille...
         </div>
         <div id="walletModalStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; text-align: center;"></div>
-        <button class="btn btn-cyber" type="button" id="walletActionBtn" onclick="createSecureInvoice()">💳 Utiliser la Smart Invoice de secours</button>
+        <button class="btn btn-cyber" type="button" id="walletActionBtn" onclick="createSecureInvoice()">💳 Utiliser la Smart Invoice universelle</button>
         <button class="btn btn-outline" type="button" onclick="toggleModal('walletModal')">Fermer</button>
     </div>
 
@@ -602,7 +602,7 @@
                 }
             } catch (err) {}
 
-            // Fallback si Render dort : ouvre la page web directe ou le bot de secours
+            // Fallback universel vers le bot en cas de mise en veille du serveur
             openExternalUrl(`https://t.me/${BOT_USERNAME}?start=pay_${user.id}`);
         }
 
@@ -620,10 +620,8 @@
             
             toggleModal('walletModal');
 
-            // Définition des protocoles natifs (Deep Links) pour chaque portefeuille
             let deepLink = "";
             let storeFallback = "";
-
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
             switch(walletName) {
@@ -657,23 +655,19 @@
                     break;
                 case 'WalletConnect':
                 default:
-                    // Pour WalletConnect ou autre, on lance directement la Smart Invoice universelle
                     setTimeout(() => createSecureInvoice(), 1000);
                     return;
             }
 
-            // Si on est sur mobile, on tente d'ouvrir l'appli native
             if (isMobile && deepLink && walletName !== 'WalletConnect') {
                 setTimeout(() => {
                     window.location.href = deepLink;
                 }, 500);
 
-                // Si l'application n'est pas installée au bout de 2 secondes, on propose le store ou la facture sécurisée
                 setTimeout(() => {
-                    walletStatus.innerHTML = `⚠️ App non détectée. <a href="${storeFallback}" target="_blank" style="color:var(--cyan);">Installer ${walletName}</a> ou utiliser la facture ci-dessous.`;
+                    walletStatus.innerHTML = `⚠️ App non détectée. <a href="${storeFallback}" target="_blank" style="color:var(--cyan);">Installer ${walletName}</a> ou utiliser la facture sécurisée.`;
                 }, 2000);
             } else {
-                // Sur PC : bascule propre vers la facture sécurisée universelle
                 setTimeout(() => {
                     walletStatus.innerHTML = `💡 Mode PC détecté : utilisation de la facture sécurisée.`;
                     createSecureInvoice();
