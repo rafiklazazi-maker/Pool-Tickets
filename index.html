@@ -407,14 +407,14 @@
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
         <div class="jackpot-label">Verified Real Grand Prize Pool</div>
-        <div class="jackpot-amount" id="prizePool">$371.00</div>
-        <div class="status-box" id="drawStatus">🎯 Target Goal: $530 / $2,000 USDT</div>
+        <div class="jackpot-amount" id="prizePool">$126.00</div>
+        <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
     </div>
 
     <div class="milestone-card">
         <div class="milestone-header">
             <span>⚡ Real-Time Liquidity Progression</span>
-            <span id="milestonePct" style="color: var(--cyan);">26.5%</span>
+            <span id="milestonePct" style="color: var(--cyan);">9.0%</span>
         </div>
         <div class="cyber-bar-container">
             <div class="cyber-bar-fill" id="milestoneBar"></div>
@@ -555,14 +555,7 @@
                     statusEl.style.color = "var(--green)";
                     statusEl.innerText = "✅ Facture prête ! Ouverture de la passerelle...";
 
-                    if (tg && typeof tg.openInvoice === 'function') {
-                        tg.openInvoice(data.invoice_url, (status) => {
-                            if (status === 'paid') {
-                                notify("Paiement validé avec succès !");
-                                loadState();
-                            }
-                        });
-                    } else if (tg && typeof tg.openTelegramLink === 'function') {
+                    if (tg && typeof tg.openTelegramLink === 'function') {
                         tg.openTelegramLink(data.invoice_url);
                     } else if (tg && typeof tg.openLink === 'function') {
                         tg.openLink(data.invoice_url);
@@ -596,7 +589,7 @@
 
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
-            if (!addr.startsWith("0x") || addr.length !== 42) {
+            if (!addr.startsWith("0x")  || addr.length !== 42) {
                 notify("Invalid BEP20 address.");
                 return;
             }
