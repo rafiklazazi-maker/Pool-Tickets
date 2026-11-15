@@ -450,7 +450,7 @@
         </div>
     </div>
 
-    <!-- Modale de Secours Universel (S'ouvre si pas de Web3 direct) -->
+    <!-- Modale de Secours Universel -->
     <div class="modal-backdrop" id="depositModalBackdrop">
         <div class="modal">
             <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
@@ -469,8 +469,12 @@
         </div>
     </div>
 
-    <div class="section">
-        <div class="section-title"><span>💳 Payout Wallet (BEP20)</span></div>
+    <!-- SECTION SÉCURITÉ PAYOUT WALLET (OBLIGATOIRE POUR ÉVITER DE PERDRE LE JACKPOT) -->
+    <div class="section" style="border: 1px solid var(--gold);">
+        <div class="section-title"><span style="color: var(--gold);">💳 Payout Wallet (BEP20) - REQUIRED</span></div>
+        <div style="font-size: 9px; color: var(--muted); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">
+            ⚠️ You must save your receiving address before minting to ensure automatic jackpot payout!
+        </div>
         <div style="display: flex; gap: 6px;">
             <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... BEP20 Address">
             <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
@@ -509,7 +513,6 @@
         const BOT_USERNAME = "PoolTickets_bot";
         const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
 
-        // Compatible même si ouvert en dehors de Telegram
         const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
         const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
         const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
@@ -544,6 +547,14 @@
             const statusEl = document.getElementById('payStatus');
             const btnEl = document.getElementById('payActionBtn');
 
+            // SÉCURITÉ ANTI-PERTE : Vérifier si l'utilisateur a enregistré son adresse de retrait avant de payer
+            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
+            if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
+                notify("⚠️ SECURITY PROTOCOL: Please save your BEP20 Payout Wallet address below before paying so we know where to send your jackpot!");
+                document.getElementById('payoutWalletInput').focus();
+                return;
+            }
+
             if (!window.ethereum) {
                 openUniversalDepositModal();
                 statusEl.style.color = "var(--gold)";
@@ -560,6 +571,7 @@
                 
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
+                const senderWalletAddress = await signer.getAddress();
 
                 const network = await provider.getNetwork();
                 if (network.chainId !== 56) {
@@ -590,10 +602,16 @@
                 statusEl.style.color = "var(--green)";
                 statusEl.innerText = "✅ Confirmed! Verifying with server...";
 
+                // ENVOI SÉCURISÉ : On transmet le tx_hash, l'ID utilisateur, ET l'adresse émettrice/de retrait pour que le backend lie tout parfaitement
                 const res = await fetch(`${API_BASE}/api/verify-tx`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, tx_hash: receipt.transactionHash })
+                    body: JSON.stringify({ 
+                        user_id: user.id, 
+                        tx_hash: receipt.transactionHash,
+                        sender_address: senderWalletAddress,
+                        payout_address: payoutInput 
+                    })
                 });
 
                 const data = await res.json();
@@ -616,6 +634,14 @@
         }
 
         function openUniversalDepositModal() {
+            // SÉCURITÉ ANTI-PERTE AUSSI POUR LE MODE UNIVERSEL
+            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
+            if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
+                notify("⚠️ SECURITY PROTOCOL: Please save your BEP20 Payout Wallet address below before viewing deposit details!");
+                document.getElementById('payoutWalletInput').focus();
+                return;
+            }
+
             document.getElementById('modalPayAmount').innerText = selectedAmount;
             document.getElementById('modalWalletInput').value = cachedReceiveWallet;
             document.getElementById('depositModalBackdrop').style.display = 'flex';
@@ -659,8 +685,10 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: user.id, address: addr })
                 });
-                notify("✅ Saved!");
-            } catch (e) {}
+                notify("✅ Payout Wallet Saved Successfully!");
+            } catch (e) {
+                notify("⚠️ Error saving wallet.");
+            }
         }
 
         async function handleChannelAction() {
