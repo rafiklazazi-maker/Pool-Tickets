@@ -396,7 +396,7 @@
 
     <div class="jackpot-card">
         <div class="season-pill" id="seasonBadge">SEASON #1</div>
-        <div class="jackpot-label">Verified Real Grand Prize Pool (70%)</div>
+        <div class="jackpot-label">Verified Real Grand Prize Pool</div>
         <div class="jackpot-amount" id="prizePool">$180.00</div>
         <div class="status-box" id="drawStatus">🎯 Target Goal: $180 / $2,000 USDT</div>
     </div>
@@ -593,7 +593,6 @@
             }
         }
 
-        // Gestion propre et sans bug de TOUS les portefeuilles (Tonkeeper, MetaMask, etc.)
         function payWithWallet(walletName) {
             const modalTitle = document.getElementById('walletModalTitle');
             const modalDesc = document.getElementById('walletModalDesc');
@@ -607,7 +606,6 @@
             
             toggleModal('walletModal');
 
-            // Timeout de sécurité anti-blocage (évite le freeze de l'interface)
             setTimeout(() => {
                 const statusEl = document.getElementById('walletModalStatus');
                 if (statusEl) {
