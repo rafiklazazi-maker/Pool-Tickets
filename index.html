@@ -173,6 +173,39 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        .milestone-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .milestone-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--muted);
+        }
+
+        .cyber-bar-container {
+            position: relative;
+            background: #020305;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 1px;
+        }
+
+        .cyber-bar-fill {
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+            height: 100%;
+            width: 9.2%;
+            border-radius: 3px;
+        }
+
         .blockchain-info-card {
             background: rgba(0, 243, 255, 0.04);
             border: 1px dashed var(--border-cyan);
@@ -277,6 +310,42 @@
             margin: 10px 0;
         }
 
+        .tickets-section {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .history-card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .social-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 9px;
+            font-weight: 700;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+        }
+
         .modal-backdrop {
             display: none;
             position: fixed;
@@ -334,7 +403,7 @@
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            Telegram Wallet & TON Connect Active
+            ⚡ @cyb***ip a minté 5 tickets pour 5 USDT !
         </div>
     </div>
 
@@ -345,14 +414,25 @@
         <div class="status-box" id="drawStatus">🎯 Target Goal: 183.7 / 2,000 USDT</div>
     </div>
 
-    <div class="blockchain-info-card">
-        🛡️ <b>TELEGRAM WALLET BSC (USDT BEP20):</b><br>
-        <span id="bscWalletDisplay" style="color: var(--green); word-break: break-all;">0x452B81baA0e9Ace0cE85BC5317bAef193E28d099</span><br><br>
-        💎 <b>TON WALLET (USDT-TON):</b><br>
-        <span id="tonWalletDisplay" style="color: var(--cyan); word-break: break-all;">UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_</span>
+    <!-- Barre de Progression Target -->
+    <div class="milestone-card">
+        <div class="milestone-header">
+            <span>Target Progress</span>
+            <span id="progressPercent">9.2%</span>
+        </div>
+        <div class="cyber-bar-container">
+            <div class="cyber-bar-fill" id="progressBarFill"></div>
+        </div>
     </div>
 
-    <!-- GATEWAY DE PAIEMENT UNIFIE -->
+    <div class="blockchain-info-card">
+        🛡️ <b>TELEGRAM WALLET BSC (USDT BEP20):</b><br>
+        <span style="color: var(--green); word-break: break-all;">0x452B81baA0e9Ace0cE85BC5317bAef193E28d099</span><br><br>
+        💎 <b>TON WALLET (USDT-TON):</b><br>
+        <span style="color: var(--cyan); word-break: break-all;">UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_</span>
+    </div>
+
+    <!-- Gateway de Paiement Unifié -->
     <div class="gateway-box">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
             💎 TELEGRAM PAYMENT GATEWAY
@@ -366,10 +446,10 @@
 
         <div class="custom-amount-row">
             <input type="number" id="usdtAmountInput" value="1" min="1" step="1" oninput="syncAmount()">
-            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">USDT</span>
+            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">USDT (BSC)</span>
         </div>
 
-        <!-- Bouton de connexion TON Connect natif -->
+        <!-- Bouton TON Connect -->
         <div id="ton-connect-button" style="display: none;"></div>
 
         <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
@@ -381,7 +461,29 @@
 
     <button class="btn btn-outline" type="button" onclick="openDepositModal()">📋 Open Universal Deposit QR</button>
 
-    <!-- Modale de Secours Universel -->
+    <!-- Mes Tickets Actifs -->
+    <div class="tickets-section">
+        <div style="font-family: 'Orbitron', sans-serif; font-weight: 800; color: var(--cyan); margin-bottom: 6px;">🎟️ MY ACTIVE TICKETS</div>
+        <div id="myTicketsList" style="color: var(--muted);">No tickets minted yet for this season.</div>
+    </div>
+
+    <!-- Historique des Gagnants de Saison -->
+    <div class="history-card">
+        <div style="font-family: 'Orbitron', sans-serif; font-weight: 800; color: var(--gold); margin-bottom: 6px;">🏆 PAST SEASONS WINNERS</div>
+        <div id="seasonHistoryList">
+            <div>Season #0: @communaute_VIP won $150.0</div>
+        </div>
+    </div>
+
+    <!-- Réseaux Sociaux -->
+    <div class="social-grid">
+        <a href="https://t.me/" target="_blank" class="social-btn">TELEGRAM</a>
+        <a href="https://youtube.com/" target="_blank" class="social-btn">YOUTUBE</a>
+        <a href="https://x.com/" target="_blank" class="social-btn">X (TWITTER)</a>
+        <a href="https://facebook.com/" target="_blank" class="social-btn">FACEBOOK</a>
+    </div>
+
+    <!-- Modale de Secours QR Code -->
     <div class="modal-backdrop" id="depositModalBackdrop">
         <div class="modal">
             <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
@@ -434,7 +536,7 @@
                 currencyLabel.innerText = 'USDT-TON';
                 btnCurrencyText.innerText = 'USDT-TON';
                 tonButton.style.display = 'flex';
-                payBtn.style.display = 'none'; // Géré par TON Connect UI
+                payBtn.style.display = 'none';
             }
         }
 
@@ -450,7 +552,6 @@
             document.getElementById('modalWalletInput').value = activeWallet;
             document.getElementById('depositModalBackdrop').style.display = 'flex';
             
-            // Génération du QR Code
             document.getElementById('depositQrcode').innerHTML = "";
             new QRCode(document.getElementById("depositQrcode"), {
                 text: activeWallet,
@@ -471,14 +572,41 @@
             const statusBox = document.getElementById('payStatus');
 
             if (currentTab === 'bsc') {
-                // Ouverture directe du QR code du Telegram Wallet BSC pour transfert direct
+                // Click-to-Pay fluide pour Telegram Wallet BSC : copie l'adresse et ouvre le QR Code de paiement
+                navigator.clipboard.writeText(BSC_RECEIVE_WALLET);
                 openDepositModal();
-                statusBox.innerText = "⚡ Send USDT (BEP20) to your Telegram Wallet address.";
+                statusBox.style.color = "var(--green)";
+                statusBox.innerHTML = `⚡ Telegram BSC Address Copied! Send <b>${amount} USDT</b>.`;
             } else if (currentTab === 'stars') {
+                statusBox.style.color = "var(--gold)";
                 statusBox.innerText = "⏳ Requesting Telegram Stars invoice...";
-                setTimeout(() => {
-                    statusBox.innerText = "⭐ Telegram Stars payment initialized.";
-                }, 1000);
+                
+                try {
+                    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
+                    const response = await fetch('/api/create-stars-invoice', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: userId, stars_amount: parseInt(amount) })
+                    });
+                    const data = await response.json();
+                    if (data.ok && data.invoice_link) {
+                        window.Telegram.WebApp.openInvoice(data.invoice_link, async (status) => {
+                            if (status === 'paid') {
+                                statusBox.style.color = "var(--green)";
+                                statusBox.innerText = "🎉 Stars payment successful! Tickets added.";
+                            } else {
+                                statusBox.style.color = "var(--red)";
+                                statusBox.innerText = "❌ Payment cancelled or failed.";
+                            }
+                        });
+                    } else {
+                        statusBox.style.color = "var(--red)";
+                        statusBox.innerText = "❌ Error: " + (data.error || "Could not create invoice");
+                    }
+                } catch (e) {
+                    statusBox.style.color = "var(--red)";
+                    statusBox.innerText = "❌ Network error connecting to backend.";
+                }
             }
         }
 
