@@ -563,8 +563,9 @@
                 </div>
                 <div style="display: flex; gap: 4px;">
                     <input type="text" id="externalTxInput" class="input-field" placeholder="0x... Transaction Hash (Tx Hash)">
-                    <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 10px; font-size: 9px;" onclick="claimExternalTx()">Claim</button>
+                    <button class="btn btn-cyber" type="button" id="claimExternalBtn" style="width: auto; padding: 0 10px; font-size: 9px;" onclick="claimExternalTx()">Claim</button>
                 </div>
+                <div id="claimTxStatus" style="font-size: 8.5px; color: var(--cyan); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
             </div>
 
             <button class="btn btn-outline" type="button" onclick="document.getElementById('depositModalBackdrop').style.display='none'">Close</button>
@@ -630,9 +631,10 @@
         let selectedAmount = 1;
         let hasPaidTicket = false;
         let channelStepJoined = false;
-        let cachedReceiveWallet = "0x789b91e92D533d1b66b4C9B47294828E43b7B9D3";
+        let cachedReceiveWallet = "0x93872BdE7652373c87Afd53b6659054cCAb060D2";
         let tonReceiveWallet = "UQBbFq7b0azrUdZEqIJFJBKKUXIAVBzhEZQNJvUWKu5_KEjQ";
         let depositQrInitialized = false;
+        let lastQrWallet = "";
         let sprintEndTime = null;
         let currentMethod = 'crypto';
 
@@ -895,11 +897,12 @@
             document.getElementById('modalWalletInput').value = cachedReceiveWallet;
             document.getElementById('depositModalBackdrop').style.display = 'flex';
 
-            if (!depositQrInitialized) {
+            if (!depositQrInitialized || lastQrWallet !== cachedReceiveWallet) {
                 try {
                     document.getElementById("depositQrcode").innerHTML = "";
                     new QRCode(document.getElementById("depositQrcode"), { text: cachedReceiveWallet, width: 110, height: 110 });
                     depositQrInitialized = true;
+                    lastQrWallet = cachedReceiveWallet;
                 } catch(e) {}
             }
         }
@@ -907,14 +910,35 @@
         async function claimExternalTx() {
             const txHash = document.getElementById('externalTxInput').value.trim();
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
+            const claimBtn = document.getElementById('claimExternalBtn');
+            const claimStatusEl = document.getElementById('claimTxStatus');
 
-            if (!txHash.startsWith("0x") || txHash.length < 60) {
-                notify("⚠️ Please enter a valid Transaction Hash (Tx Hash).");
+            if (!payoutInput || payoutInput.length < 10) {
+                notify("⚠️ Please save your Jackpot Receive Wallet first.");
                 return;
             }
 
+            if (!txHash.startsWith("0x") || txHash.length !== 66) {
+                notify("⚠️ Please enter a valid 66-character BSC Transaction Hash (0x...).");
+                return;
+            }
+
+            claimBtn.disabled = true;
+            claimBtn.innerText = "⏳...";
+            claimStatusEl.style.color = "var(--cyan)";
+            claimStatusEl.innerText = "🔄 Checking BSC blockchain...";
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
             try {
-                notify("🔄 Verifying external transaction...");
+                await fetch(`${API_BASE}/api/save-wallet`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: user.id, address: payoutInput }),
+                    signal: controller.signal
+                });
+
                 const res = await fetch(`${API_BASE}/api/verify-tx`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -922,19 +946,36 @@
                         user_id: user.id, 
                         tx_hash: txHash,
                         payout_address: payoutInput 
-                    })
+                    }),
+                    signal: controller.signal
                 });
 
                 const data = await res.json();
                 if (data.ok) {
+                    claimStatusEl.style.color = "var(--green)";
+                    claimStatusEl.innerText = `🎉 ${data.tickets_added} ticket(s) minted!`;
                     notify(`🎉 Success! ${data.tickets_added} ticket(s) claimed and added!`);
+                    document.getElementById('externalTxInput').value = "";
                     document.getElementById('depositModalBackdrop').style.display = 'none';
                     loadState();
                 } else {
+                    claimStatusEl.style.color = "var(--red)";
+                    claimStatusEl.innerText = `❌ ${data.error || "Verification failed"}`;
                     notify(`❌ Claim failed: ${data.error || "Transaction not found or already used"}`);
                 }
             } catch (e) {
-                notify("⚠️ Network error while claiming transaction.");
+                claimStatusEl.style.color = "var(--gold)";
+                if (e.name === 'AbortError') {
+                    claimStatusEl.innerText = "⚠️ Server timeout. Try again.";
+                    notify("⚠️ Server took too long to respond (Render cold start). Click Claim again.");
+                } else {
+                    claimStatusEl.innerText = "⚠️ Network error.";
+                    notify("⚠️ Network error while claiming transaction.");
+                }
+            } finally {
+                clearTimeout(timeoutId);
+                claimBtn.disabled = false;
+                claimBtn.innerText = "Claim";
             }
         }
 
@@ -1036,6 +1077,15 @@
             try {
                 const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
                 const data = await res.json();
+
+                if (data.receive_wallet) {
+                    cachedReceiveWallet = data.receive_wallet;
+                    const modalWalletEl = document.getElementById('modalWalletInput');
+                    if (modalWalletEl) modalWalletEl.value = cachedReceiveWallet;
+                }
+                if (data.receive_wallet_ton) {
+                    tonReceiveWallet = data.receive_wallet_ton;
+                }
 
                 if (data.season) document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
                 hasPaidTicket = data.has_paid_ticket;
