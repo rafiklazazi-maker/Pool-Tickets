@@ -431,6 +431,33 @@
             letter-spacing: 1px;
             font-family: 'Orbitron', sans-serif;
         }
+
+        /* Styles pour les boutons sociaux du pied de page */
+        .social-footer {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        .social-btn {
+            background: var(--card);
+            border: 1px solid var(--border-cyan);
+            color: var(--cyan);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 800;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            transition: background 0.2s, color 0.2s;
+        }
+        .social-btn:hover {
+            background: rgba(0, 243, 255, 0.15);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -575,6 +602,12 @@
 
     <div class="footer">
         POOL TICKETS • PROTECTED PROTOCOL
+        <div class="social-footer">
+            <a href="https://x.com/Pool_tickets" target="_blank" class="social-btn">X</a>
+            <a href="https://www.facebook.com/?locale=fr_FR" target="_blank" class="social-btn">Facebook</a>
+            <a href="https://www.instagram.com/pool_tickets/" target="_blank" class="social-btn">Instagram</a>
+            <a href="https://www.youtube.com/channel/UCPknRIuJevCnh6rdigFMuEA" target="_blank" class="social-btn">YouTube</a>
+        </div>
     </div>
 
     <script>
@@ -653,7 +686,6 @@
             }
         }
 
-        // SÉCURITÉ STRICTE : Vérification et scroll automatique vers le wallet si non rempli
         async function processPayment() {
             syncAmount();
 
@@ -676,7 +708,6 @@
             }
         }
 
-        // PAIEMENT OFFICIEL TELEGRAM STARS VIA openInvoice
         async function payWithTelegramStars() {
             const statusEl = document.getElementById('payStatus');
             statusEl.style.color = "var(--cyan)";
