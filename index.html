@@ -676,31 +676,52 @@
             }
         }
 
+        // PAIEMENT OFFICIEL TELEGRAM STARS VIA openInvoice
         async function payWithTelegramStars() {
             const statusEl = document.getElementById('payStatus');
             statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "⭐ Processing Telegram Stars payment...";
+            statusEl.innerText = "⭐ Generating secure Telegram Stars invoice...";
 
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
 
             try {
-                const res = await fetch(`${API_BASE}/api/verify-stars`, {
+                const res = await fetch(`${API_BASE}/api/create-stars-invoice`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user_id: user.id, stars_amount: selectedAmount, payout_address: payoutInput })
                 });
                 const data = await res.json();
-                if (data.ok) {
-                    statusEl.style.color = "var(--green)";
-                    statusEl.innerText = `🎉 Success! ${data.tickets_added} ticket(s) minted with Stars!`;
-                    loadState();
+                
+                if (data.ok && data.invoice_link) {
+                    statusEl.innerText = "⭐ Opening native payment window...";
+                    
+                    // Utilisation de l'API native Telegram WebApp pour ouvrir la facture Stars
+                    if (tg && typeof tg.openInvoice === 'function') {
+                        tg.openInvoice(data.invoice_link, async (status) => {
+                            if (status === 'paid') {
+                                statusEl.style.color = "var(--green)";
+                                statusEl.innerText = `🎉 Success! Payment confirmed by Telegram!`;
+                                loadState();
+                            } else if (status === 'cancelled') {
+                                statusEl.style.color = "var(--gold)";
+                                statusEl.innerText = "⚠️ Payment cancelled.";
+                            } else {
+                                statusEl.style.color = "var(--gold)";
+                                statusEl.innerText = `⚠️ Payment status: ${status}`;
+                            }
+                        });
+                    } else {
+                        // Fallback si ouvert hors Telegram Desktop/Mobile direct
+                        window.open(data.invoice_link, '_blank');
+                    }
                 } else {
                     statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ Error: ${data.error}`;
+                    statusEl.innerText = `❌ Error: ${data.error || "Failed to create invoice"}`;
                 }
             } catch (e) {
+                console.error(e);
                 statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "⚠️ Stars payment error.";
+                statusEl.innerText = "⚠️ Stars invoice network error.";
             }
         }
 
