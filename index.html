@@ -6,7 +6,6 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <!-- SDK TON Connect UI -->
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
@@ -189,67 +188,6 @@
             color: var(--cyan);
         }
 
-        .milestone-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .milestone-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10.5px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: var(--muted);
-        }
-
-        .cyber-bar-container {
-            position: relative;
-            background: #020305;
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            padding: 1px;
-        }
-
-        .cyber-bar-fill {
-            background: linear-gradient(90deg, var(--cyan), var(--green));
-            height: 100%;
-            width: 9.2%;
-            border-radius: 3px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 10px;
-            font-size: 11.5px;
-            font-weight: 800;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .btn:active { transform: scale(0.98); }
-
-        .btn-cyber {
-            background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%);
-            color: #030407;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-        }
-
-        .btn-outline {
-            background: var(--card);
-            color: var(--text);
-            border: 1px solid var(--border-cyan);
-            font-size: 9.5px;
-        }
-
         .gateway-box {
             background: linear-gradient(135deg, rgba(0, 243, 255, 0.07) 0%, rgba(0, 255, 102, 0.07) 100%);
             border: 1.5px solid var(--cyan);
@@ -304,6 +242,41 @@
             width: 100%;
         }
 
+        .btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 6px;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-cyber {
+            background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%);
+            color: #030407;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border-cyan);
+            font-size: 9.5px;
+        }
+
+        #ton-connect-button {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
         .modal-backdrop {
             display: none;
             position: fixed;
@@ -340,7 +313,7 @@
             outline: none;
         }
 
-        #qrcode, #depositQrcode {
+        #depositQrcode {
             background: #fff;
             padding: 8px;
             border-radius: 8px;
@@ -356,12 +329,12 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar">⚡ MULTI-CHAIN // WEB3 & TON CONNECT ACTIVE</div>
+    <div class="ticker-bar">⚡ TELEGRAM WALLET // UNIFIED ECOSYSTEM</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            Connected to BSC Mainnet // Secure Protocol Active
+            Telegram Wallet & TON Connect Active
         </div>
     </div>
 
@@ -373,20 +346,22 @@
     </div>
 
     <div class="blockchain-info-card">
-        🛡️ <b>OFFICIAL RECEPTION WALLET SECURED:</b><br>
-        <span id="officialWalletDisplay" style="color: var(--green); word-break: break-all;">0x4F43a5dF8CC0b1bfF2bb4C2E25B5923a97D8e6f2</span>
+        🛡️ <b>TELEGRAM WALLET BSC (USDT BEP20):</b><br>
+        <span id="bscWalletDisplay" style="color: var(--green); word-break: break-all;">0x452B81baA0e9Ace0cE85BC5317bAef193E28d099</span><br><br>
+        💎 <b>TON WALLET (USDT-TON):</b><br>
+        <span id="tonWalletDisplay" style="color: var(--cyan); word-break: break-all;">UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_</span>
     </div>
 
-    <!-- GATEWAY DE PAIEMENT MULTI-DEVISE -->
+    <!-- GATEWAY DE PAIEMENT UNIFIE -->
     <div class="gateway-box">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
-            💎 BALANCE REPLENISHMENT
+            💎 TELEGRAM PAYMENT GATEWAY
         </div>
 
         <div class="payment-tabs">
-            <button class="tab-btn active" onclick="switchTab('crypto')">💲 BSC Crypto</button>
+            <button class="tab-btn active" onclick="switchTab('bsc')">⚡ BSC Wallet</button>
             <button class="tab-btn" onclick="switchTab('stars')">⭐ Stars</button>
-            <button class="tab-btn" onclick="switchTab('ton')">💎 TON / GRAM</button>
+            <button class="tab-btn" onclick="switchTab('ton')">💎 TON Connect</button>
         </div>
 
         <div class="custom-amount-row">
@@ -394,8 +369,11 @@
             <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">USDT</span>
         </div>
 
+        <!-- Bouton de connexion TON Connect natif -->
+        <div id="ton-connect-button" style="display: none;"></div>
+
         <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
-            🚀 PAY <span id="btnAmountLabel">1</span> <span id="btnCurrencyText">USDT</span> (<span id="btnTicketLabel">1</span> TICKET)
+            🚀 PAY <span id="btnAmountLabel">1</span> <span id="btnCurrencyText">USDT (BSC)</span> (<span id="btnTicketLabel">1</span> TICKET)
         </button>
 
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
@@ -407,24 +385,30 @@
     <div class="modal-backdrop" id="depositModalBackdrop">
         <div class="modal">
             <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
-                🛡️ UNIVERSAL DEPOSIT GATEWAY
+                🛡️ TELEGRAM WALLET QR DEPOSIT
             </div>
             <div style="font-size: 9.5px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace;">
-                Send <b id="modalPayAmount" style="color: var(--green);">1</b> USDT (BEP20) to your official address:
+                Send <b id="modalPayAmount" style="color: var(--green);">1</b> USDT to your Telegram Wallet address:
             </div>
             <div id="depositQrcode"></div>
             <input type="text" id="modalWalletInput" class="input-field" readonly onclick="this.select()" style="text-align: center; font-size: 9.5px;">
-            <button class="btn btn-cyber" type="button" onclick="copyDepositAddress()">📋 Copy Deposit Address</button>
+            <button class="btn btn-cyber" type="button" onclick="copyDepositAddress()">📋 Copy Telegram Wallet Address</button>
             <button class="btn btn-outline" type="button" onclick="document.getElementById('depositModalBackdrop').style.display='none'">Close</button>
         </div>
     </div>
 
     <script>
-        // CONFIGURATION OFFICIELLE UNIQUE DE TON PORTEFEUILLE BSC MAINNET
-        const OFFICIAL_RECEIVE_WALLET = "0x4F43a5dF8CC0b1bfF2bb4C2E25B5923a97D8e6f2";
-        const USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955";
+        // CONFIGURATION DES PORTFEUILLES TELEGRAM OFFICIELS
+        const BSC_RECEIVE_WALLET = "0x452B81baA0e9Ace0cE85BC5317bAef193E28d099";
+        const TON_RECEIVE_WALLET = "UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_";
 
-        let currentTab = 'crypto';
+        let currentTab = 'bsc';
+
+        // Initialisation TON Connect UI
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://rafiklazazi-maker.github.io/pool-tickets/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
 
         function switchTab(tab) {
             currentTab = tab;
@@ -433,16 +417,24 @@
             
             const currencyLabel = document.getElementById('currencyLabel');
             const btnCurrencyText = document.getElementById('btnCurrencyText');
+            const tonButton = document.getElementById('ton-connect-button');
+            const payBtn = document.getElementById('payActionBtn');
             
-            if(tab === 'crypto') {
-                currencyLabel.innerText = 'USDT';
-                btnCurrencyText.innerText = 'USDT';
+            if(tab === 'bsc') {
+                currencyLabel.innerText = 'USDT (BSC)';
+                btnCurrencyText.innerText = 'USDT (BSC)';
+                tonButton.style.display = 'none';
+                payBtn.style.display = 'block';
             } else if(tab === 'stars') {
                 currencyLabel.innerText = 'STARS';
                 btnCurrencyText.innerText = 'STARS';
-            } else {
-                currencyLabel.innerText = 'TON';
-                btnCurrencyText.innerText = 'TON';
+                tonButton.style.display = 'none';
+                payBtn.style.display = 'block';
+            } else if(tab === 'ton') {
+                currencyLabel.innerText = 'USDT-TON';
+                btnCurrencyText.innerText = 'USDT-TON';
+                tonButton.style.display = 'flex';
+                payBtn.style.display = 'none'; // Géré par TON Connect UI
             }
         }
 
@@ -454,21 +446,23 @@
         }
 
         function openDepositModal() {
-            document.getElementById('modalWalletInput').value = OFFICIAL_RECEIVE_WALLET;
+            const activeWallet = (currentTab === 'ton') ? TON_RECEIVE_WALLET : BSC_RECEIVE_WALLET;
+            document.getElementById('modalWalletInput').value = activeWallet;
             document.getElementById('depositModalBackdrop').style.display = 'flex';
             
             // Génération du QR Code
             document.getElementById('depositQrcode').innerHTML = "";
             new QRCode(document.getElementById("depositQrcode"), {
-                text: OFFICIAL_RECEIVE_WALLET,
+                text: activeWallet,
                 width: 140,
                 height: 140
             });
         }
 
         function copyDepositAddress() {
-            navigator.clipboard.writeText(OFFICIAL_RECEIVE_WALLET);
-            document.getElementById('payStatus').innerText = "✅ Official wallet address copied!";
+            const activeWallet = (currentTab === 'ton') ? TON_RECEIVE_WALLET : BSC_RECEIVE_WALLET;
+            navigator.clipboard.writeText(activeWallet);
+            document.getElementById('payStatus').innerText = "✅ Telegram wallet address copied!";
             setTimeout(() => { document.getElementById('payStatus').innerText = "Ready for payment"; }, 3000);
         }
 
@@ -476,43 +470,15 @@
             const amount = document.getElementById('usdtAmountInput').value;
             const statusBox = document.getElementById('payStatus');
 
-            if (currentTab === 'crypto') {
-                if (!window.ethereum) {
-                    // Si aucun provider web3 direct (comme l'in-app browser de MetaMask), ouvrir la modale QR code
-                    openDepositModal();
-                    return;
-                }
-
-                try {
-                    statusBox.innerText = "⏳ Connecting wallet & requesting transfer...";
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const signer = provider.getSigner();
-
-                    // ABI standard pour le transfert de jeton BEP20 USDT
-                    const abi = ["function transfer(address to, uint256 value) public returns (bool)"];
-                    const usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, abi, signer);
-
-                    // Conversion du montant en unités avec 18 décimales pour l'USDT sur BSC
-                    const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
-
-                    statusBox.innerText = "✍️ Please confirm transaction in your wallet...";
-                    const tx = await usdtContract.transfer(OFFICIAL_RECEIVE_WALLET, parsedAmount);
-                    
-                    statusBox.innerText = `⏳ TX Broadcasted: ${tx.hash.substring(0, 10)}... Waiting confirmation`;
-                    
-                    // Attente de la validation sur la blockchain
-                    await tx.wait();
-                    statusBox.innerText = "🎉 Transfer successful! Ticket minted.";
-                } catch (err) {
-                    console.error(err);
-                    statusBox.innerText = "❌ Transaction cancelled or failed.";
-                }
-            } else {
-                statusBox.innerText = `⏳ Processing ${currentTab.toUpperCase()} payment simulation...`;
+            if (currentTab === 'bsc') {
+                // Ouverture directe du QR code du Telegram Wallet BSC pour transfert direct
+                openDepositModal();
+                statusBox.innerText = "⚡ Send USDT (BEP20) to your Telegram Wallet address.";
+            } else if (currentTab === 'stars') {
+                statusBox.innerText = "⏳ Requesting Telegram Stars invoice...";
                 setTimeout(() => {
-                    statusBox.innerText = "✅ Payment gateway processed successfully!";
-                }, 1500);
+                    statusBox.innerText = "⭐ Telegram Stars payment initialized.";
+                }, 1000);
             }
         }
 
