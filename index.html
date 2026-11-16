@@ -432,7 +432,6 @@
             font-family: 'Orbitron', sans-serif;
         }
 
-        /* Styles pour les boutons sociaux du pied de page */
         .social-footer {
             display: flex;
             justify-content: center;
@@ -562,7 +561,8 @@
                     If you scanned the QR code or sent funds from another phone, your Telegram account isn't linked to the wallet automatically. <b>You can safely claim your tickets instantly</b> by pasting your transaction hash (Tx Hash / TxID) below:
                 </div>
                 <div style="display: flex; gap: 4px;">
-                    <input type="text" id="externalTxInput" class="input-field" placeholder="0x... Transaction Hash (Tx Hash)">
+                    <!-- CORRECTION DE LA LONGUEUR MAXIMALE DU CHAMP DE SAISIE DU HASH -->
+                    <input type="text" id="externalTxInput" class="input-field" maxlength="100" placeholder="0x... Transaction Hash (Tx Hash)">
                     <button class="btn btn-cyber" type="button" id="claimExternalBtn" style="width: auto; padding: 0 10px; font-size: 9px;" onclick="claimExternalTx()">Claim</button>
                 </div>
                 <div id="claimTxStatus" style="font-size: 8.5px; color: var(--cyan); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
@@ -918,8 +918,9 @@
                 return;
             }
 
-            if (!txHash.startsWith("0x") || txHash.length !== 66) {
-                notify("⚠️ Please enter a valid 66-character BSC Transaction Hash (0x...).");
+            // CORRECTION DE LA CONDITION DE VALIDATION DU HASH
+            if (!txHash.startsWith("0x") || txHash.length < 60) {
+                notify("⚠️ Please enter a valid BSC Transaction Hash starting with 0x.");
                 return;
             }
 
@@ -929,7 +930,7 @@
             claimStatusEl.innerText = "🔄 Checking BSC blockchain...";
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
 
             try {
                 await fetch(`${API_BASE}/api/save-wallet`, {
