@@ -126,6 +126,16 @@
             font-size: 10.5px;
         }
 
+        .blur-user {
+            filter: blur(4px);
+            -webkit-filter: blur(4px);
+            user-select: none;
+            display: inline-block;
+            padding: 0 3px;
+            color: var(--cyan);
+            transition: filter 0.3s ease;
+        }
+
         .jackpot-card {
             background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
             border: 1.5px solid var(--cyan);
@@ -178,7 +188,6 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Bloc Texte Marketing & Sécurité Blockchain Autonome */
         .autonomous-trust-banner {
             background: linear-gradient(135deg, rgba(0, 255, 102, 0.08) 0%, rgba(0, 243, 255, 0.06) 100%);
             border: 1px solid var(--border-green);
@@ -239,13 +248,14 @@
             transition: width 0.4s ease;
         }
 
-        /* Carte Configuration Adresse de Réception Jackpot */
         .payout-wallet-card {
             background: linear-gradient(145deg, #0b101b 0%, #070a11 100%);
             border: 1.5px solid var(--gold);
             border-radius: 12px;
             padding: 13px;
             box-shadow: 0 0 18px rgba(255, 204, 0, 0.12);
+            scroll-margin-top: 16px;
+            transition: box-shadow 0.3s ease;
         }
 
         .payout-header {
@@ -277,21 +287,6 @@
             background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%);
             color: #030407;
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.25);
-        }
-
-        .blockchain-info-card {
-            background: rgba(0, 243, 255, 0.04);
-            border: 1px dashed var(--border-cyan);
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 9.5px;
-            font-family: 'JetBrains Mono', monospace;
-            color: #94a3b8;
-            line-height: 1.4;
-            text-align: center;
-        }
-        .blockchain-info-card b {
-            color: var(--cyan);
         }
 
         .gateway-box {
@@ -351,7 +346,7 @@
 
         .btn {
             width: 100%;
-            padding: 13px;
+            padding: 12px;
             border: none;
             border-radius: 10px;
             font-size: 11px;
@@ -360,7 +355,10 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-family: 'Orbitron', sans-serif;
-            margin-top: 6px;
+            margin-top: 4px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
         }
 
         .btn:active { transform: scale(0.98); }
@@ -369,6 +367,12 @@
             background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%);
             color: #030407;
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, var(--green) 0%, #00cc52 100%);
+            color: #030407;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
         }
 
         .btn-outline {
@@ -402,7 +406,6 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* BOUTONS RÉSEAUX AVEC VRAIS LOGOS VECTORIELS (SVG) */
         .social-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -428,7 +431,6 @@
         .social-card-btn svg {
             width: 18px;
             height: 18px;
-            transition: transform 0.2s ease;
         }
 
         .social-card-btn span {
@@ -441,43 +443,15 @@
             line-height: 1.1;
         }
 
-        .social-card-btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn-site {
-            border-color: rgba(0, 255, 102, 0.4);
-            color: var(--green);
-            box-shadow: 0 0 12px rgba(0, 255, 102, 0.1);
-        }
+        .btn-site { border-color: rgba(0, 255, 102, 0.4); color: var(--green); }
         .btn-site svg { fill: var(--green); }
-
-        .btn-x {
-            border-color: rgba(255, 255, 255, 0.35);
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
-        }
+        .btn-x { border-color: rgba(255, 255, 255, 0.35); color: #ffffff; }
         .btn-x svg { fill: #ffffff; }
-
-        .btn-yt {
-            border-color: rgba(255, 0, 51, 0.45);
-            color: #ff3355;
-            box-shadow: 0 0 12px rgba(255, 0, 51, 0.12);
-        }
+        .btn-yt { border-color: rgba(255, 0, 51, 0.45); color: #ff3355; }
         .btn-yt svg { fill: #ff0033; }
-
-        .btn-fb {
-            border-color: rgba(24, 119, 242, 0.45);
-            color: #4da3ff;
-            box-shadow: 0 0 12px rgba(24, 119, 242, 0.12);
-        }
+        .btn-fb { border-color: rgba(24, 119, 242, 0.45); color: #4da3ff; }
         .btn-fb svg { fill: #1877F2; }
-
-        .btn-ig {
-            border-color: rgba(225, 48, 108, 0.45);
-            color: #ff6699;
-            box-shadow: 0 0 12px rgba(225, 48, 108, 0.12);
-        }
+        .btn-ig { border-color: rgba(225, 48, 108, 0.45); color: #ff6699; }
         .btn-ig svg { fill: #E1306C; }
 
         .protocol-footer {
@@ -493,7 +467,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.88);
             z-index: 9998;
             align-items: center;
             justify-content: center;
@@ -509,7 +483,7 @@
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             box-shadow: 0 10px 40px rgba(0, 243, 255, 0.25);
         }
 
@@ -521,7 +495,7 @@
             padding: 9px;
             color: var(--text);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
+            font-size: 10px;
             outline: none;
         }
 
@@ -531,6 +505,12 @@
             border-radius: 8px;
             margin: 0 auto;
             width: fit-content;
+        }
+
+        .modal-action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
         }
     </style>
 </head>
@@ -543,11 +523,11 @@
 
     <div class="ticker-bar">⚡ TELEGRAM WALLET // UNIFIED ECOSYSTEM</div>
 
-    <!-- Flux en direct avec pseudos floutés -->
+    <!-- Flux en direct avec filtre flou CSS sur le pseudo -->
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            ⚡ @cyb***ip a minté 5 tickets pour 5 USDT !
+            ⚡ <span class="blur-user">@cybervip</span> a minté 5 tickets pour 5 USDT !
         </div>
     </div>
 
@@ -594,15 +574,7 @@
         <div id="payoutSaveStatus" style="font-size: 9px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
     </div>
 
-    <!-- Infos Portefeuilles Telegram Officiels -->
-    <div class="blockchain-info-card">
-        🛡️ <b>TELEGRAM WALLET BSC (USDT BEP20):</b><br>
-        <span style="color: var(--green); word-break: break-all;">0x452B81baA0e9Ace0cE85BC5317bAef193E28d099</span><br><br>
-        💎 <b>TON WALLET (USDT-TON):</b><br>
-        <span style="color: var(--cyan); word-break: break-all;">UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_</span>
-    </div>
-
-    <!-- Gateway de Paiement Unifié (Cible du Scroll Automatique) -->
+    <!-- Gateway de Paiement Unifié -->
     <div class="gateway-box" id="paymentGatewaySection">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
             💎 TELEGRAM PAYMENT GATEWAY
@@ -629,8 +601,6 @@
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
     </div>
 
-    <button class="btn btn-outline" type="button" onclick="openDepositModal()">⚡ BSC 1-Click & Claim TX Hash</button>
-
     <!-- Mes Tickets Actifs -->
     <div class="tickets-section">
         <div style="font-family: 'Orbitron', sans-serif; font-weight: 800; color: var(--cyan); margin-bottom: 6px;">🎟️ MY ACTIVE TICKETS</div>
@@ -641,37 +611,32 @@
     <div class="history-card">
         <div style="font-family: 'Orbitron', sans-serif; font-weight: 800; color: var(--gold); margin-bottom: 6px;">🏆 PAST SEASONS WINNERS</div>
         <div id="seasonHistoryList">
-            <div>Season #0: @communaute_VIP won $150.0</div>
+            <div>Season #0: <span class="blur-user">@communaute_VIP</span> won $150.0</div>
         </div>
     </div>
 
     <!-- Boutons Réseaux Sociaux & Landing Page avec Vrais Logos SVG & Noms Complets -->
     <div class="social-grid">
-        <!-- Landing Page / Website -->
         <a href="https://pool-tickets-team.github.io/Pool-ticket-landing-page/" target="_blank" class="social-card-btn btn-site">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
             <span>SITE WEB</span>
         </a>
 
-        <!-- X (Twitter) -->
         <a href="https://x.com/Pool_tickets" target="_blank" class="social-card-btn btn-x">
             <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             <span>X</span>
         </a>
 
-        <!-- YouTube -->
         <a href="https://www.youtube.com/@PoolTickets" target="_blank" class="social-card-btn btn-yt">
             <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             <span>YOUTUBE</span>
         </a>
 
-        <!-- Facebook -->
         <a href="https://www.facebook.com/profile.php?id=61596702147202" target="_blank" class="social-card-btn btn-fb">
             <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             <span>FACEBOOK</span>
         </a>
 
-        <!-- Instagram -->
         <a href="https://www.instagram.com/pool_tickets/" target="_blank" class="social-card-btn btn-ig">
             <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             <span>INSTAGRAM</span>
@@ -682,20 +647,34 @@
         Pool Tickets // Autonomous Web3 Grand Prize Protocol
     </div>
 
-    <!-- Modale BSC 1-Click & Claim TX Hash -->
+    <!-- Modale Paiement BSC (Copie + Lien Direct Wallet + Claim TX Hash) -->
     <div class="modal-backdrop" id="depositModalBackdrop">
         <div class="modal">
             <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
-                ⚡ BSC 1-CLICK & CLAIM
+                ⚡ SEND <span id="modalPayAmount" style="color: var(--green);">1</span> USDT (BEP20)
             </div>
-            <div style="font-size: 9.5px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace;">
-                1. Confirm the <b id="modalPayAmount" style="color: var(--green);">1</b> USDT (BEP20) transfer in your wallet.<br>
-                2. Paste your <b>TX Hash</b> below to mint tickets:
+            <div style="font-size: 9px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace;">
+                Network: <b>BNB Smart Chain (BEP20)</b>
             </div>
-            <div id="depositQrcode"></div>
-            <input type="text" id="modalWalletInput" class="input-field" readonly onclick="this.select()" style="text-align: center; font-size: 9px; color: var(--muted);">
             
-            <!-- Champ Claim TX Hash -->
+            <div id="depositQrcode"></div>
+            
+            <input type="text" id="modalWalletInput" class="input-field" readonly style="text-align: center; font-size: 9px; color: var(--cyan);">
+            
+            <div class="modal-action-row">
+                <button class="btn btn-outline" type="button" id="copyBscBtn" onclick="copyBscAddress()" style="margin-top: 0; font-size: 9px;">
+                    📋 COPY ADDRESS
+                </button>
+                <a id="directWalletLink" href="#" class="btn btn-green" style="margin-top: 0; font-size: 9px; display: flex; align-items: center; justify-content: center;">
+                    ↗️ OPEN WALLET
+                </a>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 4px 0;"></div>
+
+            <div style="font-size: 9px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
+                After sending, paste your <b>TX Hash</b> below:
+            </div>
             <input type="text" id="txHashInput" class="input-field" placeholder="Paste TX Hash (0x...)" style="border-color: var(--green); text-align: center;">
             <button class="btn btn-cyber" type="button" onclick="claimBscTx()">✅ VERIFY & CLAIM TICKETS</button>
             
@@ -704,7 +683,7 @@
     </div>
 
     <script>
-        // CONFIGURATION DES PORTFEUILLES TELEGRAM OFFICIELS
+        // CONFIGURATION INTERNE DES PORTEFEUILLES DE RÉCEPTION
         const BSC_RECEIVE_WALLET = "0x452B81baA0e9Ace0cE85BC5317bAef193E28d099";
         const TON_RECEIVE_WALLET = "UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_";
         const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
@@ -717,7 +696,6 @@
             buttonRootId: 'ton-connect-button'
         });
 
-        // Charger l'adresse de réception déjà enregistrée s'il y en a une
         window.addEventListener('DOMContentLoaded', () => {
             const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
             if (savedWallet) {
@@ -726,7 +704,6 @@
             }
         });
 
-        // Sauvegarde de l'adresse de réception du Jackpot + Scroll automatique vers le paiement
         function savePayoutWalletAndScroll() {
             const walletInput = document.getElementById('userPayoutWalletInput');
             const statusText = document.getElementById('payoutSaveStatus');
@@ -739,13 +716,11 @@
                 return;
             }
 
-            // Sauvegarde locale
             localStorage.setItem('pool_tickets_payout_wallet', address);
             badge.style.display = 'inline';
             statusText.style.color = "var(--green)";
             statusText.innerText = "✅ Payout wallet locked! Scrolling to payment...";
 
-            // Scroll fluide automatique vers la passerelle de paiement
             setTimeout(() => {
                 const gateway = document.getElementById('paymentGatewaySection');
                 if (gateway) {
@@ -790,38 +765,76 @@
         }
 
         function openDepositModal() {
-            const activeWallet = (currentTab === 'ton') ? TON_RECEIVE_WALLET : BSC_RECEIVE_WALLET;
-            document.getElementById('modalWalletInput').value = activeWallet;
+            const amount = parseFloat(document.getElementById('usdtAmountInput').value) || 1;
+            document.getElementById('modalPayAmount').innerText = amount;
+            document.getElementById('modalWalletInput').value = BSC_RECEIVE_WALLET;
+            
+            const amountInWei = BigInt(Math.round(amount * 1e6)) * BigInt(1e12);
+            const deepLink = `ethereum:${USDT_BSC_CONTRACT}@56/transfer?address=${BSC_RECEIVE_WALLET}&uint256=${amountInWei.toString()}`;
+            document.getElementById('directWalletLink').href = deepLink;
+
             document.getElementById('depositModalBackdrop').style.display = 'flex';
             
             document.getElementById('depositQrcode').innerHTML = "";
             new QRCode(document.getElementById("depositQrcode"), {
-                text: activeWallet,
-                width: 140,
-                height: 140
+                text: BSC_RECEIVE_WALLET,
+                width: 130,
+                height: 130
             });
+        }
+
+        function copyBscAddress() {
+            navigator.clipboard.writeText(BSC_RECEIVE_WALLET);
+            const btn = document.getElementById('copyBscBtn');
+            btn.innerText = "✅ COPIED!";
+            btn.style.borderColor = "var(--green)";
+            btn.style.color = "var(--green)";
+            setTimeout(() => {
+                btn.innerText = "📋 COPY ADDRESS";
+                btn.style.borderColor = "var(--border-cyan)";
+                btn.style.color = "var(--text)";
+            }, 2500);
+        }
+
+        function focusPayoutWallet() {
+            const card = document.getElementById('payoutWalletCard');
+            const input = document.getElementById('userPayoutWalletInput');
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.style.boxShadow = "0 0 28px rgba(255, 204, 0, 0.65)";
+                setTimeout(() => {
+                    card.style.boxShadow = "0 0 18px rgba(255, 204, 0, 0.12)";
+                }, 1500);
+            }
+            if (input) {
+                setTimeout(() => input.focus(), 400);
+            }
         }
 
         async function processPayment() {
             const amount = parseFloat(document.getElementById('usdtAmountInput').value) || 1;
             const statusBox = document.getElementById('payStatus');
-            const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
+            const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
+            const inputWallet = document.getElementById('userPayoutWalletInput').value.trim();
 
-            if (!payoutWallet) {
-                statusBox.style.color = "var(--gold)";
-                statusBox.innerText = "⚠️ Tip: Save your Jackpot receiving wallet above first!";
+            // Vérification stricte : le client doit avoir rempli ET cliqué sur Save
+            if (!savedWallet || savedWallet.length < 25 || savedWallet !== inputWallet) {
+                const msg = "⚠️ Action required: You must enter your Jackpot Receiving Wallet address and click 'SAVE WALLET' first to unlock payment!";
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
+                    window.Telegram.WebApp.showAlert(msg, () => {
+                        focusPayoutWallet();
+                    });
+                } else {
+                    alert(msg);
+                    focusPayoutWallet();
+                }
+                return;
             }
 
             if (currentTab === 'bsc') {
-                // Lien profond EIP-681 pour transfert 1-Click USDT (BEP20) sur BSC (Chain ID 56)
-                const amountInWei = BigInt(Math.round(amount * 1e6)) * BigInt(1e12);
-                const deepLink = `ethereum:${USDT_BSC_CONTRACT}@56/transfer?address=${BSC_RECEIVE_WALLET}&uint256=${amountInWei.toString()}`;
-
                 openDepositModal();
-                statusBox.style.color = "var(--green)";
-                statusBox.innerHTML = `⚡ Launching Wallet for <b>${amount} USDT</b>...`;
-                
-                window.location.href = deepLink;
+                statusBox.style.color = "var(--cyan)";
+                statusBox.innerHTML = `⚡ Ready to send <b>${amount} USDT (BEP20)</b>`;
 
             } else if (currentTab === 'stars') {
                 statusBox.style.color = "var(--gold)";
@@ -835,7 +848,7 @@
                         body: JSON.stringify({ 
                             user_id: userId, 
                             stars_amount: parseInt(amount),
-                            payout_wallet: payoutWallet 
+                            payout_wallet: savedWallet 
                         })
                     });
                     const data = await response.json();
@@ -862,7 +875,7 @@
 
         async function claimBscTx() {
             const txHash = document.getElementById('txHashInput').value.trim();
-            const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
+            const payoutWallet = localStorage.getItem('pool_tickets_payout_wallet') || document.getElementById('userPayoutWalletInput').value.trim();
             const statusBox = document.getElementById('payStatus');
 
             if (!txHash.startsWith('0x') || txHash.length < 60) {
@@ -904,7 +917,6 @@
             }
         }
 
-        // Initialisation Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
             const tg = window.Telegram.WebApp;
             tg.expand();
