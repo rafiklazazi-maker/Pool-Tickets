@@ -457,7 +457,7 @@
     </div>
 
     <div class="blockchain-info-card">
-        🛡️ <b>MULTI-CHAIN PROTOCOL:</b> Pay securely via BSC (USDT) or via Telegram / TON Connect ecosystem with absolute anonymity and zero KYC!
+        🛡️ <b>AUTOMATED SMART PROTOCOL:</b> 100% Autonomous & Trustless! No admins required—the prize pool verifies payments instantly and distributes rewards automatically when the target is reached. Pay securely via BSC (USDT) or via Telegram / TON Connect with zero KYC!
     </div>
 
     <div class="milestone-card">
@@ -695,7 +695,6 @@
                 if (data.ok && data.invoice_link) {
                     statusEl.innerText = "⭐ Opening native payment window...";
                     
-                    // Utilisation de l'API native Telegram WebApp pour ouvrir la facture Stars
                     if (tg && typeof tg.openInvoice === 'function') {
                         tg.openInvoice(data.invoice_link, async (status) => {
                             if (status === 'paid') {
@@ -711,7 +710,6 @@
                             }
                         });
                     } else {
-                        // Fallback si ouvert hors Telegram Desktop/Mobile direct
                         window.open(data.invoice_link, '_blank');
                     }
                 } else {
