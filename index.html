@@ -292,7 +292,6 @@
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
         }
 
-        /* Styles des onglets de paiement multi-devises */
         .payment-tabs {
             display: flex;
             gap: 6px;
@@ -480,14 +479,12 @@
             💎 BALANCE REPLENISHMENT
         </div>
 
-        <!-- Onglets de choix de paiement -->
         <div class="payment-tabs">
             <button class="tab-btn active" onclick="switchTab('crypto')">💲 BSC Crypto</button>
             <button class="tab-btn" onclick="switchTab('stars')">⭐ Stars</button>
             <button class="tab-btn" onclick="switchTab('ton')">💎 TON / GRAM</button>
         </div>
 
-        <!-- Bouton TON Connect officiel (s'affiche si onglet TON sélectionné) -->
         <div id="ton-connect-button" style="margin: 10px 0; display: none; justify-content: center;"></div>
 
         <div class="custom-amount-row">
@@ -606,7 +603,6 @@
         let sprintEndTime = null;
         let currentMethod = 'crypto';
 
-        // Initialisation de TON Connect UI
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://lazazirafik.github.io/pool-tickets/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
@@ -657,8 +653,20 @@
             }
         }
 
+        // SÉCURITÉ STRICTE : Vérification et scroll automatique vers le wallet si non rempli
         async function processPayment() {
             syncAmount();
+
+            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
+            if (!payoutInput || payoutInput.length < 10) {
+                notify("⚠️ SECURITY PROTOCOL: You must save your Jackpot Receive Wallet address below before minting tickets!");
+                
+                const walletSection = document.getElementById('payoutWalletInput');
+                walletSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                walletSection.focus();
+                return;
+            }
+
             if (currentMethod === 'stars') {
                 payWithTelegramStars();
             } else if (currentMethod === 'ton') {
@@ -673,11 +681,13 @@
             statusEl.style.color = "var(--cyan)";
             statusEl.innerText = "⭐ Processing Telegram Stars payment...";
 
+            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
+
             try {
                 const res = await fetch(`${API_BASE}/api/verify-stars`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, stars_amount: selectedAmount })
+                    body: JSON.stringify({ user_id: user.id, stars_amount: selectedAmount, payout_address: payoutInput })
                 });
                 const data = await res.json();
                 if (data.ok) {
@@ -703,6 +713,7 @@
 
             statusEl.style.color = "var(--cyan)";
             statusEl.innerText = "💎 Sending TON transaction...";
+            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
 
             try {
                 const transaction = {
@@ -720,7 +731,7 @@
                 const res = await fetch(`${API_BASE}/api/verify-ton-tx`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, tx_hash: result.boc, tickets_count: selectedAmount })
+                    body: JSON.stringify({ user_id: user.id, tx_hash: result.boc, tickets_count: selectedAmount, payout_address: payoutInput })
                 });
 
                 const data = await res.json();
@@ -742,14 +753,7 @@
         async function payDirectWeb3() {
             const statusEl = document.getElementById('payStatus');
             const btnEl = document.getElementById('payActionBtn');
-
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-            if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
-                notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before paying so we know where to send your winnings!");
-                document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                document.getElementById('payoutWalletInput').focus();
-                return;
-            }
 
             if (!window.ethereum) {
                 openUniversalDepositModal();
@@ -830,8 +834,8 @@
 
         function openUniversalDepositModal() {
             const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-            if (!payoutInput.startsWith("0x") || payoutInput.length !== 42) {
-                notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below before viewing deposit details!");
+            if (!payoutInput) {
+                notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below first!");
                 document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 document.getElementById('payoutWalletInput').focus();
                 return;
@@ -904,8 +908,8 @@
 
         async function savePayoutWallet() {
             const addr = document.getElementById('payoutWalletInput').value.trim();
-            if (!addr.startsWith("0x") && !addr.startsWith("UQ")) {
-                notify("Invalid wallet address format.");
+            if (!addr) {
+                notify("Please enter a valid wallet address.");
                 return;
             }
             try {
