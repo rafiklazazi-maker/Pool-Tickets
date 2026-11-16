@@ -672,6 +672,7 @@
     </div>
 
     <script>
+        const BACKEND_URL = "https://pool-tickets-backend.onrender.com";
         const BSC_RECEIVE_WALLET = "0x452B81baA0e9Ace0cE85BC5317bAef193E28d099";
         const TON_RECEIVE_WALLET = "UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_";
         const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
@@ -684,6 +685,9 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Réveil automatique du backend Render au chargement
+            fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
+
             const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
             if (savedWallet) {
                 document.getElementById('userPayoutWalletInput').value = savedWallet;
@@ -703,13 +707,11 @@
                 return;
             }
 
-            // Sauvegarde locale
             localStorage.setItem('pool_tickets_payout_wallet', address);
 
-            // Envoi au Backend pour persistance
             try {
                 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-                await fetch('/api/save-wallet', {
+                await fetch(`${BACKEND_URL}/api/save-wallet`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, address: address })
@@ -841,7 +843,7 @@
                 
                 try {
                     const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-                    const response = await fetch('/api/create-stars-invoice', {
+                    const response = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
@@ -890,7 +892,7 @@
                 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
                 const username = window.Telegram?.WebApp?.initDataUnsafe?.user?.username || "player";
 
-                const response = await fetch('/api/verify-tx', {
+                const response = await fetch(`${BACKEND_URL}/api/verify-tx`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
