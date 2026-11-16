@@ -31,6 +31,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
@@ -174,6 +178,33 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        /* Bloc Texte Marketing & Sécurité Blockchain Autonome */
+        .autonomous-trust-banner {
+            background: linear-gradient(135deg, rgba(0, 255, 102, 0.08) 0%, rgba(0, 243, 255, 0.06) 100%);
+            border: 1px solid var(--border-green);
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 10px;
+            line-height: 1.45;
+            color: #cbd5e1;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.08);
+        }
+
+        .autonomous-trust-banner .trust-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 10px;
+            color: var(--green);
+            letter-spacing: 0.6px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .autonomous-trust-banner b {
+            color: #fff;
+        }
+
         .milestone-card {
             background: var(--card);
             border-radius: 12px;
@@ -208,6 +239,46 @@
             transition: width 0.4s ease;
         }
 
+        /* Carte Configuration Adresse de Réception Jackpot */
+        .payout-wallet-card {
+            background: linear-gradient(145deg, #0b101b 0%, #070a11 100%);
+            border: 1.5px solid var(--gold);
+            border-radius: 12px;
+            padding: 13px;
+            box-shadow: 0 0 18px rgba(255, 204, 0, 0.12);
+        }
+
+        .payout-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10.5px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payout-desc {
+            font-size: 9.5px;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .payout-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%);
+            color: #030407;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.25);
+        }
+
         .blockchain-info-card {
             background: rgba(0, 243, 255, 0.04);
             border: 1px dashed var(--border-cyan);
@@ -230,6 +301,7 @@
             padding: 14px;
             text-align: center;
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            scroll-margin-top: 16px;
         }
 
         .payment-tabs {
@@ -282,7 +354,7 @@
             padding: 13px;
             border: none;
             border-radius: 10px;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 800;
             cursor: pointer;
             text-transform: uppercase;
@@ -373,7 +445,6 @@
             transform: scale(0.95);
         }
 
-        /* Couleurs officielles & lueurs par réseau */
         .btn-site {
             border-color: rgba(0, 255, 102, 0.4);
             color: var(--green);
@@ -409,7 +480,6 @@
         }
         .btn-ig svg { fill: #E1306C; }
 
-        /* Footer Protocol */
         .protocol-footer {
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
@@ -489,6 +559,12 @@
         <div class="status-box" id="drawStatus">🎯 Target Goal: 183.7 / 2,000 USDT</div>
     </div>
 
+    <!-- Texte Marketing & Réassurance Blockchain Autonome -->
+    <div class="autonomous-trust-banner">
+        <div class="trust-title">🔒 100% AUTONOMOUS BLOCKCHAIN PAYOUTS</div>
+        Zero human intervention. Winners are selected and paid <b>automatically without admin approval</b> via a verified, tamper-proof blockchain protocol straight to your registered wallet.
+    </div>
+
     <!-- Barre de Progression Target -->
     <div class="milestone-card">
         <div class="milestone-header">
@@ -500,6 +576,24 @@
         </div>
     </div>
 
+    <!-- Configuration de l'Adresse de Réception du Jackpot + Auto-Scroll -->
+    <div class="payout-wallet-card" id="payoutWalletCard">
+        <div class="payout-header">
+            <span>🏆 YOUR JACKPOT RECEIVING WALLET</span>
+            <span id="walletSavedBadge" style="font-size: 8.5px; color: var(--green); display: none;">✅ SAVED</span>
+        </div>
+        <div class="payout-desc">
+            Enter your personal <b>USDT (BEP20)</b> or <b>TON</b> address below to receive your automatic prize payout if you win:
+        </div>
+        <div class="payout-input-group">
+            <input type="text" id="userPayoutWalletInput" class="input-field" placeholder="0x... (BSC) or UQ... (TON)" style="border-color: rgba(255, 204, 0, 0.4);">
+            <button class="btn btn-gold" type="button" onclick="savePayoutWalletAndScroll()">
+                💾 SAVE WALLET & GO TO PAYMENT ↓
+            </button>
+        </div>
+        <div id="payoutSaveStatus" style="font-size: 9px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
+    </div>
+
     <!-- Infos Portefeuilles Telegram Officiels -->
     <div class="blockchain-info-card">
         🛡️ <b>TELEGRAM WALLET BSC (USDT BEP20):</b><br>
@@ -508,8 +602,8 @@
         <span style="color: var(--cyan); word-break: break-all;">UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_</span>
     </div>
 
-    <!-- Gateway de Paiement Unifié -->
-    <div class="gateway-box">
+    <!-- Gateway de Paiement Unifié (Cible du Scroll Automatique) -->
+    <div class="gateway-box" id="paymentGatewaySection">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
             💎 TELEGRAM PAYMENT GATEWAY
         </div>
@@ -623,6 +717,43 @@
             buttonRootId: 'ton-connect-button'
         });
 
+        // Charger l'adresse de réception déjà enregistrée s'il y en a une
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
+            if (savedWallet) {
+                document.getElementById('userPayoutWalletInput').value = savedWallet;
+                document.getElementById('walletSavedBadge').style.display = 'inline';
+            }
+        });
+
+        // Sauvegarde de l'adresse de réception du Jackpot + Scroll automatique vers le paiement
+        function savePayoutWalletAndScroll() {
+            const walletInput = document.getElementById('userPayoutWalletInput');
+            const statusText = document.getElementById('payoutSaveStatus');
+            const badge = document.getElementById('walletSavedBadge');
+            const address = walletInput.value.trim();
+
+            if (!address || address.length < 25) {
+                statusText.style.color = "var(--red)";
+                statusText.innerText = "⚠️ Please enter a valid BSC (0x...) or TON (UQ...) wallet address.";
+                return;
+            }
+
+            // Sauvegarde locale
+            localStorage.setItem('pool_tickets_payout_wallet', address);
+            badge.style.display = 'inline';
+            statusText.style.color = "var(--green)";
+            statusText.innerText = "✅ Payout wallet locked! Scrolling to payment...";
+
+            // Scroll fluide automatique vers la passerelle de paiement
+            setTimeout(() => {
+                const gateway = document.getElementById('paymentGatewaySection');
+                if (gateway) {
+                    gateway.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 350);
+        }
+
         function switchTab(tab, btnElement) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -674,6 +805,12 @@
         async function processPayment() {
             const amount = parseFloat(document.getElementById('usdtAmountInput').value) || 1;
             const statusBox = document.getElementById('payStatus');
+            const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
+
+            if (!payoutWallet) {
+                statusBox.style.color = "var(--gold)";
+                statusBox.innerText = "⚠️ Tip: Save your Jackpot receiving wallet above first!";
+            }
 
             if (currentTab === 'bsc') {
                 // Lien profond EIP-681 pour transfert 1-Click USDT (BEP20) sur BSC (Chain ID 56)
@@ -695,7 +832,11 @@
                     const response = await fetch('/api/create-stars-invoice', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ user_id: userId, stars_amount: parseInt(amount) })
+                        body: JSON.stringify({ 
+                            user_id: userId, 
+                            stars_amount: parseInt(amount),
+                            payout_wallet: payoutWallet 
+                        })
                     });
                     const data = await response.json();
                     if (data.ok && data.invoice_link) {
@@ -721,6 +862,7 @@
 
         async function claimBscTx() {
             const txHash = document.getElementById('txHashInput').value.trim();
+            const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
             const statusBox = document.getElementById('payStatus');
 
             if (!txHash.startsWith('0x') || txHash.length < 60) {
@@ -742,7 +884,8 @@
                     body: JSON.stringify({
                         tx_hash: txHash,
                         user_id: userId,
-                        username: username
+                        username: username,
+                        payout_wallet: payoutWallet
                     })
                 });
 
