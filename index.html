@@ -122,13 +122,6 @@
             font-size: 10.5px;
         }
 
-        .blurred-username {
-            filter: blur(4px);
-            user-select: none;
-            opacity: 0.8;
-            transition: filter 0.3s ease;
-        }
-
         .jackpot-card {
             background: linear-gradient(145deg, #0d121d 0%, #06080e 100%);
             border: 1.5px solid var(--cyan);
@@ -227,32 +220,6 @@
             height: 100%;
             width: 9.2%;
             border-radius: 3px;
-            transition: width 0.5s ease, background 0.5s ease;
-        }
-
-        .cyber-bar-container.goal-reached {
-            border: 1px solid var(--border-red);
-            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
-        }
-
-        .cyber-bar-fill.goal-reached-fill {
-            background: linear-gradient(90deg, #ff0055, #ffcc00) !important;
-            box-shadow: 0 0 10px var(--red);
-        }
-
-        .countdown-box {
-            display: none;
-            background: rgba(255, 0, 85, 0.08);
-            border: 1px solid var(--border-red);
-            border-radius: 10px;
-            padding: 8px;
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            color: var(--red);
-            margin-top: 6px;
-            text-transform: uppercase;
-            font-weight: 700;
         }
 
         .btn {
@@ -337,26 +304,6 @@
             width: 100%;
         }
 
-        .section {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .section-title {
-            font-size: 11px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--cyan);
-            font-family: 'Orbitron', sans-serif;
-        }
-
         .modal-backdrop {
             display: none;
             position: fixed;
@@ -393,69 +340,12 @@
             outline: none;
         }
 
-        .ticket-item {
-            background: #030407;
-            padding: 8px 10px;
-            border-radius: 6px;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            border-left: 3px solid var(--cyan);
-        }
-
         #qrcode, #depositQrcode {
             background: #fff;
             padding: 8px;
             border-radius: 8px;
             margin: 0 auto;
             width: fit-content;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--muted);
-            font-size: 10.5px;
-            padding: 10px 0;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 8.5px;
-            color: var(--muted);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .social-footer {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            flex-wrap: wrap;
-        }
-        .social-btn {
-            background: var(--card);
-            border: 1px solid var(--border-cyan);
-            color: var(--cyan);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: 800;
-            text-decoration: none;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            transition: background 0.2s, color 0.2s;
-        }
-        .social-btn:hover {
-            background: rgba(0, 243, 255, 0.15);
-            color: #fff;
         }
     </style>
 </head>
@@ -471,7 +361,7 @@
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            Loading live feed...
+            Connected to BSC Mainnet // Secure Protocol Active
         </div>
     </div>
 
@@ -483,20 +373,8 @@
     </div>
 
     <div class="blockchain-info-card">
-        🛡️ <b>AUTOMATED SMART PROTOCOL:</b> 100% Autonomous & Trustless! No admins required—the prize pool verifies payments instantly and distributes rewards automatically when the target is reached. Pay securely via BSC (USDT) or via Telegram / TON Connect with zero KYC!
-    </div>
-
-    <div class="milestone-card">
-        <div class="milestone-header">
-            <span id="milestoneTitle">⚡ Real-Time Liquidity Progression</span>
-            <span id="milestonePct" style="color: var(--cyan);">9.2%</span>
-        </div>
-        <div class="cyber-bar-container" id="barContainer">
-            <div class="cyber-bar-fill" id="milestoneBar"></div>
-        </div>
-        <div class="countdown-box" id="sprintCountdownBox">
-            🔥 Final Sprint Active! Draw in: <span id="countdownTimer">7d 00h 00m 00s</span>
-        </div>
+        🛡️ <b>OFFICIAL RECEPTION WALLET SECURED:</b><br>
+        <span id="officialWalletDisplay" style="color: var(--green); word-break: break-all;">0x4F43a5dF8CC0b1bfF2bb4C2E25B5923a97D8e6f2</span>
     </div>
 
     <!-- GATEWAY DE PAIEMENT MULTI-DEVISE -->
@@ -511,8 +389,6 @@
             <button class="tab-btn" onclick="switchTab('ton')">💎 TON / GRAM</button>
         </div>
 
-        <div id="ton-connect-button" style="margin: 10px 0; display: none; justify-content: center;"></div>
-
         <div class="custom-amount-row">
             <input type="number" id="usdtAmountInput" value="1" min="1" step="1" oninput="syncAmount()">
             <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">USDT</span>
@@ -525,20 +401,7 @@
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
     </div>
 
-    <button class="btn btn-outline" type="button" id="channelBtn" onclick="handleChannelAction()">📢 Join VIP Network (+1 Free Ticket)</button>
-    <button class="btn btn-outline" type="button" onclick="toggleReferral()">🤝 Referral Protocol (<span id="shardCounter">0/4</span> Shards)</button>
-
-    <!-- Modale de Parrainage -->
-    <div class="modal-backdrop" id="referralBackdrop">
-        <div class="modal">
-            <div style="font-size: 10px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
-                Share your link. Every 4 verified players mints 1 Free Ticket!
-            </div>
-            <div id="qrcode"></div>
-            <button class="btn btn-cyber" type="button" onclick="copyRefLink()">📋 Copy Referral Link</button>
-            <button class="btn btn-outline" type="button" onclick="document.getElementById('referralBackdrop').style.display='none'">Close</button>
-        </div>
-    </div>
+    <button class="btn btn-outline" type="button" onclick="openDepositModal()">📋 Open Universal Deposit QR</button>
 
     <!-- Modale de Secours Universel -->
     <div class="modal-backdrop" id="depositModalBackdrop">
@@ -547,618 +410,120 @@
                 🛡️ UNIVERSAL DEPOSIT GATEWAY
             </div>
             <div style="font-size: 9.5px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace;">
-                Send <b id="modalPayAmount" style="color: var(--green);">1</b> USDT (BEP20) to this address:
+                Send <b id="modalPayAmount" style="color: var(--green);">1</b> USDT (BEP20) to your official address:
             </div>
             <div id="depositQrcode"></div>
             <input type="text" id="modalWalletInput" class="input-field" readonly onclick="this.select()" style="text-align: center; font-size: 9.5px;">
             <button class="btn btn-cyber" type="button" onclick="copyDepositAddress()">📋 Copy Deposit Address</button>
-            
-            <div style="background: rgba(0, 243, 255, 0.05); border: 1px dashed var(--border-cyan); border-radius: 8px; padding: 10px; margin-top: 4px;">
-                <div style="font-size: 9px; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 4px;">
-                    💡 PAID FROM ANOTHER DEVICE? (E.G. SISTER'S PHONE)
-                </div>
-                <div style="font-size: 8.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; line-height: 1.3; margin-bottom: 6px;">
-                    If you scanned the QR code or sent funds from another phone, your Telegram account isn't linked to the wallet automatically. <b>You can safely claim your tickets instantly</b> by pasting your transaction hash (Tx Hash / TxID) below:
-                </div>
-                <div style="display: flex; gap: 4px;">
-                    <!-- CORRECTION DE LA LONGUEUR MAXIMALE DU CHAMP DE SAISIE DU HASH -->
-                    <input type="text" id="externalTxInput" class="input-field" maxlength="100" placeholder="0x... Transaction Hash (Tx Hash)">
-                    <button class="btn btn-cyber" type="button" id="claimExternalBtn" style="width: auto; padding: 0 10px; font-size: 9px;" onclick="claimExternalTx()">Claim</button>
-                </div>
-                <div id="claimTxStatus" style="font-size: 8.5px; color: var(--cyan); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
-            </div>
-
             <button class="btn btn-outline" type="button" onclick="document.getElementById('depositModalBackdrop').style.display='none'">Close</button>
         </div>
     </div>
 
-    <!-- SECTION JACKPOT RECEIVE WALLET -->
-    <div class="section" style="border: 1px solid var(--gold);">
-        <div class="section-title"><span style="color: var(--gold);">💳 JACKPOT RECEIVE WALLET (BEP20 / TON) - REQUIRED</span></div>
-        <div style="font-size: 9px; color: var(--muted); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;">
-            ⚠️ Save your personal wallet address below so we know where to send your winnings when you win the jackpot!
-        </div>
-        <div style="display: flex; gap: 6px;">
-            <input type="text" id="payoutWalletInput" class="input-field" placeholder="0x... or UQ... Address">
-            <button class="btn btn-cyber" type="button" style="width: auto; padding: 0 12px; font-size: 10px;" onclick="savePayoutWallet()">Save</button>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">
-            <span>🎟️ Active Tickets Ledger</span>
-            <span id="ticketCount" style="color: var(--cyan);">0</span>
-        </div>
-        <div id="ticketsList">
-            <div class="empty-state">NO ACTIVE TICKETS FOUND</div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">🏆 Hall of Fame</div>
-        <div id="winnersHistory">
-            <div class="empty-state">SEASON #1 IN PROGRESS</div>
-        </div>
-    </div>
-
-    <div class="footer">
-        POOL TICKETS • PROTECTED PROTOCOL
-        <div class="social-footer">
-            <a href="https://x.com/Pool_tickets" target="_blank" class="social-btn">X</a>
-            <a href="https://www.facebook.com/people/Pool-Tickets/61596702147202/?locale=fr_FR" target="_blank" class="social-btn">Facebook</a>
-            <a href="https://www.instagram.com/pool_tickets/" target="_blank" class="social-btn">Instagram</a>
-            <a href="https://www.youtube.com/channel/UCPknRIuJevCnh6rdigFMuEA" target="_blank" class="social-btn">YouTube</a>
-        </div>
-    </div>
-
     <script>
-        const tg = window.Telegram?.WebApp || {};
-        try {
-            if (typeof tg.expand === 'function') tg.expand();
-            if (typeof tg.ready === 'function') tg.ready();
-        } catch(e) {}
+        // CONFIGURATION OFFICIELLE UNIQUE DE TON PORTEFEUILLE BSC MAINNET
+        const OFFICIAL_RECEIVE_WALLET = "0x4F43a5dF8CC0b1bfF2bb4C2E25B5923a97D8e6f2";
+        const USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955";
 
-        const API_BASE = "https://pool-tickets-backend.onrender.com";
-        const BOT_USERNAME = "PoolTickets_bot";
-        const CHANNEL_LINK = "https://t.me/+NFyi_gZV3zM5ODZk";
+        let currentTab = 'crypto';
 
-        const user = tg.initDataUnsafe?.user || { id: 100001, username: "cyber_vip" };
-        const username = user.username ? `@${user.username}` : `Player_${String(user.id).slice(-4)}`;
-        const refLink = `https://t.me/${BOT_USERNAME}?start=ref_${user.id}`;
-
-        document.getElementById('username').innerText = username;
-
-        let selectedAmount = 1;
-        let hasPaidTicket = false;
-        let channelStepJoined = false;
-        let cachedReceiveWallet = "0x93872BdE7652373c87Afd53b6659054cCAb060D2";
-        let tonReceiveWallet = "UQBbFq7b0azrUdZEqIJFJBKKUXIAVBzhEZQNJvUWKu5_KEjQ";
-        let depositQrInitialized = false;
-        let lastQrWallet = "";
-        let sprintEndTime = null;
-        let currentMethod = 'crypto';
-
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://rafiklazazi-maker.github.io/Pool-Tickets/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
-        });
-
-        try {
-            new QRCode(document.getElementById("qrcode"), { text: refLink, width: 110, height: 110 });
-        } catch(e) {}
-
-        function notify(msg) {
-            if (tg && typeof tg.showAlert === 'function') tg.showAlert(msg);
-            else alert(msg);
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const currencyLabel = document.getElementById('currencyLabel');
+            const btnCurrencyText = document.getElementById('btnCurrencyText');
+            
+            if(tab === 'crypto') {
+                currencyLabel.innerText = 'USDT';
+                btnCurrencyText.innerText = 'USDT';
+            } else if(tab === 'stars') {
+                currencyLabel.innerText = 'STARS';
+                btnCurrencyText.innerText = 'STARS';
+            } else {
+                currencyLabel.innerText = 'TON';
+                btnCurrencyText.innerText = 'TON';
+            }
         }
 
         function syncAmount() {
-            let val = parseInt(document.getElementById('usdtAmountInput').value);
-            if (isNaN(val) || val < 1) val = 1;
-            selectedAmount = val;
+            const val = document.getElementById('usdtAmountInput').value || 1;
             document.getElementById('btnAmountLabel').innerText = val;
             document.getElementById('btnTicketLabel').innerText = val;
+            document.getElementById('modalPayAmount').innerText = val;
         }
 
-        function switchTab(method) {
-            currentMethod = method;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            const tonBtnContainer = document.getElementById('ton-connect-button');
-            const currencyLabel = document.getElementById('currencyLabel');
-            const btnCurrencyText = document.getElementById('btnCurrencyText');
-            const payStatus = document.getElementById('payStatus');
-
-            if (method === 'stars') {
-                tonBtnContainer.style.display = 'none';
-                currencyLabel.innerText = "STARS";
-                btnCurrencyText.innerText = "STARS";
-                payStatus.innerText = "⭐ Telegram Stars payment selected";
-            } else if (method === 'ton') {
-                tonBtnContainer.style.display = 'flex';
-                currencyLabel.innerText = "TON / GRAM";
-                btnCurrencyText.innerText = "TON";
-                payStatus.innerText = "💎 Connect TON wallet to pay";
-            } else {
-                tonBtnContainer.style.display = 'none';
-                currencyLabel.innerText = "USDT";
-                btnCurrencyText.innerText = "USDT";
-                payStatus.innerText = "Ready for BSC crypto payment";
-            }
-        }
-
-        async function processPayment() {
-            syncAmount();
-
-            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-            if (!payoutInput || payoutInput.length < 10) {
-                notify("⚠️ SECURITY PROTOCOL: You must save your Jackpot Receive Wallet address below before minting tickets!");
-                
-                const walletSection = document.getElementById('payoutWalletInput');
-                walletSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                walletSection.focus();
-                return;
-            }
-
-            if (currentMethod === 'stars') {
-                payWithTelegramStars();
-            } else if (currentMethod === 'ton') {
-                payWithTonConnect();
-            } else {
-                payDirectWeb3();
-            }
-        }
-
-        async function payWithTelegramStars() {
-            const statusEl = document.getElementById('payStatus');
-            statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "⭐ Generating secure Telegram Stars invoice...";
-
-            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-
-            try {
-                const res = await fetch(`${API_BASE}/api/create-stars-invoice`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, stars_amount: selectedAmount, payout_address: payoutInput })
-                });
-                const data = await res.json();
-                
-                if (data.ok && data.invoice_link) {
-                    statusEl.innerText = "⭐ Opening native payment window...";
-                    
-                    if (tg && typeof tg.openInvoice === 'function') {
-                        tg.openInvoice(data.invoice_link, async (status) => {
-                            if (status === 'paid') {
-                                statusEl.style.color = "var(--green)";
-                                statusEl.innerText = `🎉 Success! Payment confirmed by Telegram!`;
-                                loadState();
-                            } else if (status === 'cancelled') {
-                                statusEl.style.color = "var(--gold)";
-                                statusEl.innerText = "⚠️ Payment cancelled.";
-                            } else {
-                                statusEl.style.color = "var(--gold)";
-                                statusEl.innerText = `⚠️ Payment status: ${status}`;
-                            }
-                        });
-                    } else {
-                        window.open(data.invoice_link, '_blank');
-                    }
-                } else {
-                    statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ Error: ${data.error || "Failed to create invoice"}`;
-                }
-            } catch (e) {
-                console.error(e);
-                statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "⚠️ Stars invoice network error.";
-            }
-        }
-
-        async function payWithTonConnect() {
-            const statusEl = document.getElementById('payStatus');
-            if (!tonConnectUI.connected) {
-                await tonConnectUI.openModal();
-                return;
-            }
-
-            statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "💎 Sending TON transaction...";
-            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-
-            try {
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 600,
-                    messages: [
-                        {
-                            address: tonReceiveWallet,
-                            amount: (selectedAmount * 1000000000).toString()
-                        }
-                    ]
-                };
-
-                const result = await tonConnectUI.sendTransaction(transaction);
-                
-                const res = await fetch(`${API_BASE}/api/verify-ton-tx`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, tx_hash: result.boc, tickets_count: selectedAmount, payout_address: payoutInput })
-                });
-
-                const data = await res.json();
-                if (data.ok) {
-                    statusEl.style.color = "var(--green)";
-                    statusEl.innerText = `🎉 Success! ${data.tickets_added} ticket(s) minted via TON!`;
-                    loadState();
-                } else {
-                    statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ Server error: ${data.error}`;
-                }
-            } catch (err) {
-                console.error(err);
-                statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "⚠️ TON Transaction cancelled or failed.";
-            }
-        }
-
-        async function payDirectWeb3() {
-            const statusEl = document.getElementById('payStatus');
-            const btnEl = document.getElementById('payActionBtn');
-            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-
-            if (!window.ethereum) {
-                openUniversalDepositModal();
-                statusEl.style.color = "var(--gold)";
-                statusEl.innerText = "💡 Opened universal deposit modal.";
-                return;
-            }
-
-            statusEl.style.color = "var(--cyan)";
-            statusEl.innerText = "⚡ Connecting to Web3 wallet...";
-            btnEl.disabled = true;
-
-            try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                const senderWalletAddress = await signer.getAddress();
-
-                const network = await provider.getNetwork();
-                if (network.chainId !== 56) {
-                    statusEl.innerText = "⚠️ Switching to BSC Network...";
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: '0x38' }],
-                        });
-                    } catch (swErr) {
-                        throw new Error("Please switch your wallet network to Binance Smart Chain (BSC).");
-                    }
-                }
-
-                statusEl.innerText = `⏳ Preparing transfer of ${selectedAmount} USDT...`;
-                const usdtContractAddress = "0x55d398326f99059ff775485246999027b3197955";
-                const erc20Abi = ["function transfer(address to, uint256 amount) public returns (bool)"];
-
-                const usdtContract = new ethers.Contract(usdtContractAddress, erc20Abi, signer);
-                const parsedAmount = ethers.utils.parseUnits(selectedAmount.toString(), 18);
-
-                statusEl.innerText = "✍️ Please sign transaction in your wallet...";
-                const tx = await usdtContract.transfer(cachedReceiveWallet, parsedAmount);
-
-                statusEl.innerText = "🔄 Transaction sent! Waiting confirmation...";
-                const receipt = await tx.wait();
-
-                statusEl.style.color = "var(--green)";
-                statusEl.innerText = "✅ Confirmed! Verifying with server...";
-
-                const res = await fetch(`${API_BASE}/api/verify-tx`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        user_id: user.id, 
-                        tx_hash: receipt.transactionHash,
-                        sender_address: senderWalletAddress,
-                        payout_address: payoutInput 
-                    })
-                });
-
-                const data = await res.json();
-                if (data.ok) {
-                    statusEl.style.color = "var(--green)";
-                    statusEl.innerText = `🎉 Success! ${data.tickets_added} ticket(s) minted!`;
-                    loadState();
-                } else {
-                    statusEl.style.color = "var(--gold)";
-                    statusEl.innerText = `❌ Server error: ${data.error || "Failed"}`;
-                }
-
-            } catch (err) {
-                console.error(err);
-                statusEl.style.color = "var(--gold)";
-                statusEl.innerText = `⚠️ Error: ${err.reason || err.message || "Cancelled"}`;
-            } finally {
-                btnEl.disabled = false;
-            }
-        }
-
-        function openUniversalDepositModal() {
-            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-            if (!payoutInput) {
-                notify("⚠️ SECURITY PROTOCOL: Please save your personal Jackpot Receive Wallet address below first!");
-                document.getElementById('payoutWalletInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                document.getElementById('payoutWalletInput').focus();
-                return;
-            }
-
-            document.getElementById('modalPayAmount').innerText = selectedAmount;
-            document.getElementById('modalWalletInput').value = cachedReceiveWallet;
+        function openDepositModal() {
+            document.getElementById('modalWalletInput').value = OFFICIAL_RECEIVE_WALLET;
             document.getElementById('depositModalBackdrop').style.display = 'flex';
-
-            if (!depositQrInitialized || lastQrWallet !== cachedReceiveWallet) {
-                try {
-                    document.getElementById("depositQrcode").innerHTML = "";
-                    new QRCode(document.getElementById("depositQrcode"), { text: cachedReceiveWallet, width: 110, height: 110 });
-                    depositQrInitialized = true;
-                    lastQrWallet = cachedReceiveWallet;
-                } catch(e) {}
-            }
-        }
-
-        async function claimExternalTx() {
-            const txHash = document.getElementById('externalTxInput').value.trim();
-            const payoutInput = document.getElementById('payoutWalletInput').value.trim();
-            const claimBtn = document.getElementById('claimExternalBtn');
-            const claimStatusEl = document.getElementById('claimTxStatus');
-
-            if (!payoutInput || payoutInput.length < 10) {
-                notify("⚠️ Please save your Jackpot Receive Wallet first.");
-                return;
-            }
-
-            // CORRECTION DE LA CONDITION DE VALIDATION DU HASH
-            if (!txHash.startsWith("0x") || txHash.length < 60) {
-                notify("⚠️ Please enter a valid BSC Transaction Hash starting with 0x.");
-                return;
-            }
-
-            claimBtn.disabled = true;
-            claimBtn.innerText = "⏳...";
-            claimStatusEl.style.color = "var(--cyan)";
-            claimStatusEl.innerText = "🔄 Checking BSC blockchain...";
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 20000);
-
-            try {
-                await fetch(`${API_BASE}/api/save-wallet`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, address: payoutInput }),
-                    signal: controller.signal
-                });
-
-                const res = await fetch(`${API_BASE}/api/verify-tx`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        user_id: user.id, 
-                        tx_hash: txHash,
-                        payout_address: payoutInput 
-                    }),
-                    signal: controller.signal
-                });
-
-                const data = await res.json();
-                if (data.ok) {
-                    claimStatusEl.style.color = "var(--green)";
-                    claimStatusEl.innerText = `🎉 ${data.tickets_added} ticket(s) minted!`;
-                    notify(`🎉 Success! ${data.tickets_added} ticket(s) claimed and added!`);
-                    document.getElementById('externalTxInput').value = "";
-                    document.getElementById('depositModalBackdrop').style.display = 'none';
-                    loadState();
-                } else {
-                    claimStatusEl.style.color = "var(--red)";
-                    claimStatusEl.innerText = `❌ ${data.error || "Verification failed"}`;
-                    notify(`❌ Claim failed: ${data.error || "Transaction not found or already used"}`);
-                }
-            } catch (e) {
-                claimStatusEl.style.color = "var(--gold)";
-                if (e.name === 'AbortError') {
-                    claimStatusEl.innerText = "⚠️ Server timeout. Try again.";
-                    notify("⚠️ Server took too long to respond (Render cold start). Click Claim again.");
-                } else {
-                    claimStatusEl.innerText = "⚠️ Network error.";
-                    notify("⚠️ Network error while claiming transaction.");
-                }
-            } finally {
-                clearTimeout(timeoutId);
-                claimBtn.disabled = false;
-                claimBtn.innerText = "Claim";
-            }
+            
+            // Génération du QR Code
+            document.getElementById('depositQrcode').innerHTML = "";
+            new QRCode(document.getElementById("depositQrcode"), {
+                text: OFFICIAL_RECEIVE_WALLET,
+                width: 140,
+                height: 140
+            });
         }
 
         function copyDepositAddress() {
-            navigator.clipboard.writeText(cachedReceiveWallet);
-            notify("✅ Deposit address copied to clipboard!");
+            navigator.clipboard.writeText(OFFICIAL_RECEIVE_WALLET);
+            document.getElementById('payStatus').innerText = "✅ Official wallet address copied!";
+            setTimeout(() => { document.getElementById('payStatus').innerText = "Ready for payment"; }, 3000);
         }
 
-        function copyRefLink() {
-            navigator.clipboard.writeText(refLink);
-            notify("Referral link copied.");
-        }
+        async function processPayment() {
+            const amount = document.getElementById('usdtAmountInput').value;
+            const statusBox = document.getElementById('payStatus');
 
-        function toggleReferral() {
-            if (!hasPaidTicket) {
-                notify("🔒 PROTOCOL LOCKED: Mint at least 1 ticket first.");
-                return;
-            }
-            document.getElementById('referralBackdrop').style.display = 'flex';
-        }
-
-        async function savePayoutWallet() {
-            const addr = document.getElementById('payoutWalletInput').value.trim();
-            if (!addr) {
-                notify("Please enter a valid wallet address.");
-                return;
-            }
-            try {
-                await fetch(`${API_BASE}/api/save-wallet`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id, address: addr })
-                });
-                notify("✅ Jackpot Receive Wallet Saved Successfully!");
-            } catch (e) {
-                notify("⚠️ Error saving wallet.");
-            }
-        }
-
-        async function handleChannelAction() {
-            if (!hasPaidTicket) {
-                notify("🔒 Mint 1 ticket first.");
-                return;
-            }
-            if (!channelStepJoined) {
-                if (tg && typeof tg.openTelegramLink === 'function') tg.openTelegramLink(CHANNEL_LINK);
-                else window.open(CHANNEL_LINK, '_blank');
-                channelStepJoined = true;
-                document.getElementById('channelBtn').innerText = "✅ Click Again to Claim";
-                return;
-            }
-            try {
-                const res = await fetch(`${API_BASE}/api/claim-channel`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: user.id })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    notify("🎉 Bonus Claimed!");
-                    loadState();
-                }
-            } catch (e) {}
-        }
-
-        let feedIndex = 0;
-        let cachedFeed = [];
-
-        function formatLiveFeedItem(itemText) {
-            return itemText.replace(/(@[a-zA-Z0-9_]+)/g, '<span class="blurred-username">$1</span>');
-        }
-
-        setInterval(() => {
-            if (cachedFeed.length > 0) {
-                feedIndex = (feedIndex + 1) % cachedFeed.length;
-                const feedEl = document.getElementById('depositFeedText');
-                if (feedEl) feedEl.innerHTML = formatLiveFeedItem(cachedFeed[feedIndex]);
-            }
-        }, 4000);
-
-        setInterval(() => {
-            if (!sprintEndTime) return;
-            const now = new Date().getTime();
-            const distance = sprintEndTime - now;
-
-            if (distance < 0) {
-                document.getElementById('countdownTimer').innerText = "FINAL DRAW READY!";
-                return;
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById('countdownTimer').innerText = `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
-        }, 1000);
-
-        async function loadState() {
-            try {
-                const res = await fetch(`${API_BASE}/api/state?user_id=${user.id}`);
-                const data = await res.json();
-
-                if (data.receive_wallet) {
-                    cachedReceiveWallet = data.receive_wallet;
-                    const modalWalletEl = document.getElementById('modalWalletInput');
-                    if (modalWalletEl) modalWalletEl.value = cachedReceiveWallet;
-                }
-                if (data.receive_wallet_ton) {
-                    tonReceiveWallet = data.receive_wallet_ton;
+            if (currentTab === 'crypto') {
+                if (!window.ethereum) {
+                    // Si aucun provider web3 direct (comme l'in-app browser de MetaMask), ouvrir la modale QR code
+                    openDepositModal();
+                    return;
                 }
 
-                if (data.season) document.getElementById('seasonBadge').innerText = `SEASON #${data.season}`;
-                hasPaidTicket = data.has_paid_ticket;
+                try {
+                    statusBox.innerText = "⏳ Connecting wallet & requesting transfer...";
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const signer = provider.getSigner();
 
-                const collected = data.total_collected || 0;
-                const target = data.target_goal || 2000;
-                let pct = (collected / target) * 100;
-                if (pct > 100) pct = 100;
+                    // ABI standard pour le transfert de jeton BEP20 USDT
+                    const abi = ["function transfer(address to, uint256 value) public returns (bool)"];
+                    const usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, abi, signer);
 
-                document.getElementById('milestonePct').innerText = `${pct.toFixed(1)}%`;
-                document.getElementById('milestoneBar').style.width = `${pct}%`;
-                document.getElementById('prizePool').innerText = `$${collected.toFixed(1)}`;
-                document.getElementById('drawStatus').innerText = `🎯 Target Goal: ${collected.toFixed(1)} / ${target} USDT`;
+                    // Conversion du montant en unités avec 18 décimales pour l'USDT sur BSC
+                    const parsedAmount = ethers.utils.parseUnits(amount.toString(), 18);
 
-                const barContainer = document.getElementById('barContainer');
-                const milestoneBar = document.getElementById('milestoneBar');
-                const countdownBox = document.getElementById('sprintCountdownBox');
-                const milestoneTitle = document.getElementById('milestoneTitle');
-
-                if (collected >= target || data.target_reached_timestamp) {
-                    barContainer.classList.add('goal-reached');
-                    milestoneBar.classList.add('goal-reached-fill');
-                    milestoneTitle.innerHTML = "🚨 TARGET REACHED // FINAL SPRINT!";
-                    milestoneTitle.style.color = "var(--red)";
-                    countdownBox.style.display = 'block';
-                    if (!sprintEndTime) {
-                        sprintEndTime = data.target_reached_timestamp ? (data.target_reached_timestamp * 1000) + (7 * 24 * 3600 * 1000) : new Date().getTime() + (7 * 24 * 3600 * 1000);
-                    }
-                } else {
-                    barContainer.classList.remove('goal-reached');
-                    milestoneBar.classList.remove('goal-reached-fill');
-                    milestoneTitle.innerHTML = "⚡ Real-Time Liquidity Progression";
-                    milestoneTitle.style.color = "var(--muted)";
-                    countdownBox.style.display = 'none';
+                    statusBox.innerText = "✍️ Please confirm transaction in your wallet...";
+                    const tx = await usdtContract.transfer(OFFICIAL_RECEIVE_WALLET, parsedAmount);
+                    
+                    statusBox.innerText = `⏳ TX Broadcasted: ${tx.hash.substring(0, 10)}... Waiting confirmation`;
+                    
+                    // Attente de la validation sur la blockchain
+                    await tx.wait();
+                    statusBox.innerText = "🎉 Transfer successful! Ticket minted.";
+                } catch (err) {
+                    console.error(err);
+                    statusBox.innerText = "❌ Transaction cancelled or failed.";
                 }
-
-                if (data.payout_address && !document.getElementById('payoutWalletInput').value) {
-                    document.getElementById('payoutWalletInput').value = data.payout_address;
-                }
-                document.getElementById('shardCounter').innerText = `${data.fragments || 0}/4`;
-
-                const myCount = data.my_tickets ? data.my_tickets.length : 0;
-                document.getElementById('ticketCount').innerText = myCount;
-                if (myCount > 0) {
-                    document.getElementById('ticketsList').innerHTML = data.my_tickets.map(t => `
-                        <div class="ticket-item">
-                            <span>${t.source}</span>
-                            <b style="color: var(--cyan);">${t.code}</b>
-                        </div>
-                    `).join('');
-                }
-
-                if (data.history && data.history.length > 0) {
-                    document.getElementById('winnersHistory').innerHTML = data.history.map(h => `
-                        <div class="ticket-item">
-                            <span>Season #${h.season} (${h.winner})</span>
-                            <b style="color: var(--gold);">$${h.prize}</b>
-                        </div>
-                    `).join('');
-                }
-
-                if (data.live_feed && data.live_feed.length > 0) {
-                    cachedFeed = data.live_feed;
-                    document.getElementById('depositFeedText').innerHTML = formatLiveFeedItem(cachedFeed[0]);
-                }
-            } catch (e) {
-                console.error("State sync error:", e);
+            } else {
+                statusBox.innerText = `⏳ Processing ${currentTab.toUpperCase()} payment simulation...`;
+                setTimeout(() => {
+                    statusBox.innerText = "✅ Payment gateway processed successfully!";
+                }, 1500);
             }
         }
 
-        loadState();
-        setInterval(loadState, 8000);
+        // Initialisation Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.expand();
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                document.getElementById('username').innerText = '@' + (tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name);
+            }
+        }
     </script>
 </body>
 </html>
