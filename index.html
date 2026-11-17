@@ -561,7 +561,7 @@
                 💎 PAY <span id="sdkBtnAmount">1</span> USDT (SELECT WALLET)
             </button>
             
-            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Initializing Web3Modal SDK...</div>
+            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Ready to select wallet</div>
         </div>
     </div>
 
@@ -620,9 +620,8 @@
 
         let modal = null;
 
-        // Fonction d'initialisation sécurisée et robuste anti-plantage
-        function getOrCreateModal() {
-            if (modal) return modal;
+        // Initialisation sécurisée de la modale de sélection de portefeuilles au chargement
+        window.addEventListener('DOMContentLoaded', () => {
             try {
                 if (typeof Web3Modal !== 'undefined' && Web3Modal.createWeb3Modal) {
                     modal = Web3Modal.createWeb3Modal({
@@ -643,8 +642,25 @@
             } catch (e) {
                 console.error("Erreur init Web3Modal:", e);
             }
-            return modal;
-        }
+
+            fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
+
+            const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
+            if (savedWallet) {
+                document.getElementById('userPayoutWalletInput').value = savedWallet;
+                document.getElementById('walletSavedBadge').style.display = 'inline';
+            }
+
+            const statusEl = document.getElementById('cryptoPayStatus');
+            if (statusEl) {
+                statusEl.style.color = "var(--green)";
+                statusEl.innerText = "Ready to select wallet";
+            }
+
+            setInterval(rotateLiveFeed, 6000);
+            syncAmount();
+            syncCryptoAmount();
+        });
 
         const sampleEnglishFeeds = [
             "⚡ <span class='blur-user'>@cybervip</span> minted 5 tickets for 400 Stars!",
@@ -662,31 +678,6 @@
                 feedElement.innerHTML = randomMsg;
             }
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
-
-            const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
-            if (savedWallet) {
-                document.getElementById('userPayoutWalletInput').value = savedWallet;
-                document.getElementById('walletSavedBadge').style.display = 'inline';
-            }
-
-            // Pré-chargement discret de la modale pour qu'elle soit prête au clic
-            setTimeout(() => {
-                getOrCreateModal();
-            }, 500);
-
-            const statusEl = document.getElementById('cryptoPayStatus');
-            if (statusEl) {
-                statusEl.style.color = "var(--green)";
-                statusEl.innerText = "Ready for 1-Click USDT Payment";
-            }
-
-            setInterval(rotateLiveFeed, 6000);
-            syncAmount();
-            syncCryptoAmount();
-        });
 
         function switchPaymentTab(tab) {
             const tabStars = document.getElementById('tabStarsBtn');
@@ -826,10 +817,9 @@
                 return;
             }
 
-            const activeModal = getOrCreateModal();
-            if (!activeModal) {
+            if (!modal) {
                 statusDiv.style.color = "var(--red)";
-                statusDiv.innerText = "⚠️ Web3Modal loading... Please tap again in 2 seconds.";
+                statusDiv.innerText = "⚠️ Wallet selector is loading, please wait 2 seconds and retry.";
                 return;
             }
 
@@ -837,9 +827,9 @@
                 statusDiv.style.color = "var(--gold)";
                 statusDiv.innerText = "⏳ Opening wallet selector...";
                 
-                await activeModal.open();
+                await modal.open();
                 
-                const walletProvider = activeModal.getWalletProvider();
+                const walletProvider = modal.getWalletProvider();
                 if (!walletProvider) {
                     statusDiv.innerText = "Selection cancelled.";
                     return;
@@ -853,7 +843,7 @@
                 const erc20Abi = ["function transfer(address to, uint256 value) public returns (bool)"];
                 const usdtContract = new ethers.Contract(USDT_BSC_CONTRACT, erc20Abi, signer);
 
-                statusDiv.innerText = "⏳ Please confirm transfer in your wallet...";
+                statusDiv.innerText = "⏳ Please confirm " + amountUsdt + " USDT transfer in your wallet...";
                 const parsedAmount = ethers.parseUnits(amountUsdt.toString(), 18);
                 const tx = await usdtContract.transfer(TEAM_TELEGRAM_WALLET, parsedAmount);
 
