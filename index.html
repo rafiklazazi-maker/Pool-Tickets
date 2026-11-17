@@ -6,7 +6,9 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Importation d'Ethers.js et du SDK Web3Modal pour le menu de sélection de wallets -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
+    <script src="https://unpkg.com/@web3modal/ethers@4.1.1/dist/index.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -134,6 +136,7 @@
             color: var(--cyan);
             background: rgba(0, 243, 255, 0.1);
             border-radius: 4px;
+            transition: filter 0.3s ease;
         }
 
         .jackpot-card {
@@ -197,6 +200,7 @@
             line-height: 1.45;
             color: #cbd5e1;
             text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.08);
         }
 
         .autonomous-trust-banner .trust-title {
@@ -204,8 +208,13 @@
             font-weight: 800;
             font-size: 10px;
             color: var(--green);
+            letter-spacing: 0.6px;
             margin-bottom: 4px;
             text-transform: uppercase;
+        }
+
+        .autonomous-trust-banner b {
+            color: #fff;
         }
 
         .milestone-card {
@@ -239,6 +248,7 @@
             height: 100%;
             width: 9.2%;
             border-radius: 3px;
+            transition: width 0.4s ease;
         }
 
         .payout-wallet-card {
@@ -246,6 +256,9 @@
             border: 1.5px solid var(--gold);
             border-radius: 12px;
             padding: 13px;
+            box-shadow: 0 0 18px rgba(255, 204, 0, 0.12);
+            scroll-margin-top: 16px;
+            transition: box-shadow 0.3s ease;
         }
 
         .payout-header {
@@ -255,6 +268,7 @@
             color: var(--gold);
             margin-bottom: 4px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
         }
 
@@ -263,6 +277,19 @@
             color: #94a3b8;
             font-family: 'JetBrains Mono', monospace;
             margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .payout-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%);
+            color: #030407;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.25);
         }
 
         .gateway-box {
@@ -271,6 +298,8 @@
             border-radius: 12px;
             padding: 14px;
             text-align: center;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            scroll-margin-top: 16px;
         }
 
         .pay-tabs {
@@ -290,16 +319,23 @@
             font-size: 9.5px;
             font-weight: 800;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .pay-tab-btn.active {
             background: rgba(0, 243, 255, 0.15);
             border-color: var(--cyan);
             color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
         }
 
-        .payment-pane { display: none; }
-        .payment-pane.active { display: block; }
+        .payment-pane {
+            display: none;
+        }
+
+        .payment-pane.active {
+            display: block;
+        }
 
         .custom-amount-row {
             display: flex;
@@ -332,17 +368,40 @@
             font-weight: 800;
             cursor: pointer;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-family: 'Orbitron', sans-serif;
             margin-top: 4px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
         }
 
-        .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #ff9900 100%); color: #030407; }
-        .btn-cyber { background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%); color: #030407; }
-        .btn-green { background: linear-gradient(135deg, var(--green) 0%, #00cc52 100%); color: #030407; }
+        .btn:active { transform: scale(0.98); }
 
-        .tickets-section, .history-card {
+        .btn-cyber {
+            background: linear-gradient(135deg, var(--cyan) 0%, #0088ff 100%);
+            color: #030407;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, var(--green) 0%, #00cc52 100%);
+            color: #030407;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
+        }
+
+        .tickets-section {
             background: var(--card);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .history-card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             padding: 10px;
             font-size: 10px;
@@ -367,10 +426,21 @@
             justify-content: center;
             gap: 6px;
             text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
         .social-card-btn svg { width: 18px; height: 18px; }
-        .social-card-btn span { font-family: 'Orbitron', sans-serif; font-size: 7px; font-weight: 800; text-transform: uppercase; text-align: center; }
+
+        .social-card-btn span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 7px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.1;
+        }
 
         .btn-site { border-color: rgba(0, 255, 102, 0.4); color: var(--green); } .btn-site svg { fill: var(--green); }
         .btn-x { border-color: rgba(255, 255, 255, 0.35); color: #ffffff; } .btn-x svg { fill: #ffffff; }
@@ -383,7 +453,8 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 9px;
             color: var(--muted);
-            padding: 6px 0;
+            padding: 6px 0 2px 0;
+            letter-spacing: 0.5px;
         }
 
         .input-field {
@@ -424,7 +495,7 @@
 
     <div class="autonomous-trust-banner">
         <div class="trust-title">🔒 100% AUTONOMOUS BLOCKCHAIN PAYOUTS</div>
-        Zero human intervention. Winners are selected and paid <b>automatically without admin approval</b> via a verified, tamper-proof protocol.
+        Zero human intervention. Winners are selected and paid <b>automatically without admin approval</b> via a verified, tamper-proof blockchain protocol straight to your registered wallet.
     </div>
 
     <div class="milestone-card">
@@ -447,8 +518,8 @@
         </div>
         <div class="payout-input-group">
             <input type="text" id="userPayoutWalletInput" class="input-field" placeholder="0x... (BSC)" style="border-color: rgba(255, 204, 0, 0.4);">
-            <button class="btn btn-gold" type="button" onclick="savePayoutWallet()">
-                💾 SAVE WALLET
+            <button class="btn btn-gold" type="button" onclick="savePayoutWalletAndScroll()">
+                💾 SAVE WALLET & GO TO PAYMENT ↓
             </button>
         </div>
         <div id="payoutSaveStatus" style="font-size: 9px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
@@ -461,32 +532,36 @@
 
         <div class="pay-tabs">
             <button type="button" class="pay-tab-btn active" id="tabStarsBtn" onclick="switchPaymentTab('stars')">⭐ Telegram Stars</button>
-            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Crypto Wallet</button>
+            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Crypto Wallet (SDK)</button>
         </div>
 
         <div class="payment-pane active" id="paneStars">
             <div class="custom-amount-row">
                 <input type="number" id="usdtAmountInput" value="80" min="80" step="80" oninput="syncAmount()">
-                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;">STARS (80 = 1 T)</span>
+                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">STARS (80 = 1 T)</span>
             </div>
-            <button class="btn btn-cyber" type="button" onclick="processPayment()">
-                🚀 PAY <span id="btnAmountLabel">80</span> STARS (<span id="btnTicketLabel">1</span> TICKET)
+
+            <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
+                🚀 PAY <span id="btnAmountLabel">80</span> <span id="btnCurrencyText">STARS</span> (<span id="btnTicketLabel">1</span> TICKET)
             </button>
             <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
         </div>
 
         <div class="payment-pane" id="paneWallet">
             <div style="font-size: 9.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
-                Open mobile wallet app (MetaMask, Trust Wallet) or pay directly:
+                Select your wallet (Trust Wallet, MetaMask, Binance, etc.) on BNB Smart Chain:
             </div>
+            
             <div class="custom-amount-row">
                 <input type="number" id="cryptoAmountInput" value="1" min="1" step="1" oninput="syncCryptoAmount()">
-                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;">USDT ($1 = 1 T)</span>
+                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="cryptoCurrencyLabel">USDT ($1 = 1 T)</span>
             </div>
-            <button class="btn btn-green" type="button" onclick="openWalletAppOrStore()">
-                💎 OPEN WALLET APP / PAY
+
+            <button class="btn btn-green" type="button" id="sdkPayBtn" onclick="processSdkPayment()" style="margin-bottom: 6px;">
+                💎 PAY <span id="sdkBtnAmount">1</span> USDT (SELECT WALLET)
             </button>
-            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Ready</div>
+            
+            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Ready to select wallet</div>
         </div>
     </div>
 
@@ -532,48 +607,107 @@
     <script>
         const BACKEND_URL = "https://pool-tickets-backend.onrender.com";
         const TEAM_TELEGRAM_WALLET = "0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
+        const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+
+        const projectId = '2d927cdc93b12c7b9608d37eebba7dd9';
+        const bscChain = {
+            chainId: 56,
+            name: 'Binance Smart Chain',
+            currency: 'BNB',
+            explorerUrl: 'https://bscscan.com',
+            rpcUrl: 'https://bsc-dataseed.binance.org'
+        };
+
+        let modal = null;
 
         window.addEventListener('DOMContentLoaded', () => {
+            initModal();
+            fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
+
             const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
             if (savedWallet) {
                 document.getElementById('userPayoutWalletInput').value = savedWallet;
                 document.getElementById('walletSavedBadge').style.display = 'inline';
             }
-            fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
+
             setInterval(rotateLiveFeed, 6000);
+            syncAmount();
+            syncCryptoAmount();
         });
+
+        function initModal() {
+            if (!modal && typeof Web3Modal !== 'undefined' && Web3Modal.createWeb3Modal) {
+                try {
+                    modal = Web3Modal.createWeb3Modal({
+                        ethersConfig: Web3Modal.defaultConfig({
+                            metadata: {
+                                name: 'Pool Tickets',
+                                description: 'Web3 Grand Prize Protocol',
+                                url: 'https://t.me/',
+                                icons: []
+                            }
+                        }),
+                        chains: [bscChain],
+                        projectId: projectId,
+                        themeMode: 'dark',
+                        themeVariables: { '--w3m-color-mix': '#00f3ff', '--w3m-accent': '#00f3ff' }
+                    });
+                } catch (e) {
+                    console.error("Erreur init Web3Modal:", e);
+                }
+            }
+        }
 
         const sampleEnglishFeeds = [
             "⚡ <span class='blur-user'>@cybervip</span> minted 5 tickets for 400 Stars!",
             "💎 New contribution from <span class='blur-user'>@cryptong</span> (3 tickets - 240 Stars)",
             "🚀 <span class='blur-user'>@wh07</span> minted 2 tickets for 160 Stars!",
             "⚡ <span class='blur-user'>@sat99</span> minted 4 tickets for 320 Stars!",
-            "🔥 <span class='blur-user'>@ton55</span> minted 10 tickets for 800 Stars!"
+            "🔥 <span class='blur-user'>@ton55</span> minted 10 tickets for 800 Stars!",
+            "⭐ <span class='blur-user'>@vip21</span> minted 8 tickets via Stars (640 Stars)!"
         ];
 
         function rotateLiveFeed() {
             const feedElement = document.getElementById('depositFeedText');
             if (feedElement) {
-                feedElement.innerHTML = sampleEnglishFeeds[Math.floor(Math.random() * sampleEnglishFeeds.length)];
+                const randomMsg = sampleEnglishFeeds[Math.floor(Math.random() * sampleEnglishFeeds.length)];
+                feedElement.innerHTML = randomMsg;
             }
         }
 
         function switchPaymentTab(tab) {
-            document.getElementById('tabStarsBtn').classList.toggle('active', tab === 'stars');
-            document.getElementById('tabWalletBtn').classList.toggle('active', tab === 'wallet');
-            document.getElementById('paneStars').classList.toggle('active', tab === 'stars');
-            document.getElementById('paneWallet').classList.toggle('active', tab === 'wallet');
+            const tabStars = document.getElementById('tabStarsBtn');
+            const tabWallet = document.getElementById('tabWalletBtn');
+            const paneStars = document.getElementById('paneStars');
+            const paneWallet = document.getElementById('paneWallet');
+
+            if (tab === 'stars') {
+                tabStars.classList.add('active');
+                tabWallet.classList.remove('active');
+                paneStars.classList.add('active');
+                paneWallet.classList.remove('active');
+            } else {
+                tabWallet.classList.add('active');
+                tabStars.classList.remove('active');
+                paneWallet.classList.add('active');
+                paneStars.classList.remove('active');
+            }
         }
 
-        async function savePayoutWallet() {
-            const address = document.getElementById('userPayoutWalletInput').value.trim();
+        async function savePayoutWalletAndScroll() {
+            const walletInput = document.getElementById('userPayoutWalletInput');
             const statusText = document.getElementById('payoutSaveStatus');
+            const badge = document.getElementById('walletSavedBadge');
+            const address = walletInput.value.trim();
+
             if (!address || address.length < 15) {
                 statusText.style.color = "var(--red)";
                 statusText.innerText = "⚠️ Please enter a valid wallet address.";
                 return;
             }
+
             localStorage.setItem('pool_tickets_payout_wallet', address);
+
             try {
                 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
                 await fetch(`${BACKEND_URL}/api/save-wallet`, {
@@ -584,9 +718,17 @@
             } catch (e) {
                 console.error("Erreur sauvegarde serveur:", e);
             }
-            document.getElementById('walletSavedBadge').style.display = 'inline';
+
+            badge.style.display = 'inline';
             statusText.style.color = "var(--green)";
-            statusText.innerText = "✅ Payout wallet saved successfully!";
+            statusText.innerText = "✅ Payout wallet locked! Scrolling to payment...";
+
+            setTimeout(() => {
+                const gateway = document.getElementById('paymentGatewaySection');
+                if (gateway) {
+                    gateway.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 350);
         }
 
         function syncAmount() {
@@ -599,7 +741,9 @@
 
         function syncCryptoAmount() {
             const val = parseInt(document.getElementById('cryptoAmountInput').value) || 1;
-            document.getElementById('cryptoAmountInput').value = Math.max(1, val);
+            const amount = Math.max(1, val);
+            document.getElementById('cryptoAmountInput').value = amount;
+            document.getElementById('sdkBtnAmount').innerText = amount;
         }
 
         async function processPayment() {
@@ -611,6 +755,7 @@
             if (!payoutWallet) {
                 payStatus.style.color = "var(--red)";
                 payStatus.innerText = "⚠️ Please save your payout wallet first!";
+                document.getElementById('payoutWalletCard').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
 
@@ -621,8 +766,13 @@
                 const response = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, stars_amount: starsAmount, payout_address: payoutWallet })
+                    body: JSON.stringify({
+                        user_id: userId,
+                        stars_amount: starsAmount,
+                        payout_address: payoutWallet
+                    })
                 });
+
                 const data = await response.json();
                 if (data.ok && data.invoice_link) {
                     payStatus.innerText = "✅ Invoice ready! Opening payment...";
@@ -632,6 +782,9 @@
                                 payStatus.style.color = "var(--green)";
                                 payStatus.innerText = "🎉 Payment successful! Tickets added.";
                                 setTimeout(() => location.reload(), 2000);
+                            } else {
+                                payStatus.style.color = "var(--muted)";
+                                payStatus.innerText = "Payment cancelled or pending.";
                             }
                         });
                     } else {
@@ -647,73 +800,72 @@
             }
         }
 
-        function openWalletAppOrStore() {
+        async function processSdkPayment() {
+            const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
+            const amountUsdt = parseInt(document.getElementById('cryptoAmountInput').value) || 1;
             const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
             const statusDiv = document.getElementById('cryptoPayStatus');
 
             if (!payoutWallet) {
                 statusDiv.style.color = "var(--red)";
                 statusDiv.innerText = "⚠️ Please save your payout wallet first!";
+                document.getElementById('payoutWalletCard').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
 
-            if (window.ethereum) {
-                processNativePayment();
+            initModal();
+
+            if (!modal) {
+                statusDiv.style.color = "var(--red)";
+                statusDiv.innerText = "⚠️ Wallet selector failed to load. Please refresh.";
                 return;
             }
-
-            statusDiv.style.color = "var(--gold)";
-            statusDiv.innerText = "⏳ Opening wallet app...";
-
-            const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-            const metamaskDeepLink = `https://metamask.app.link/dapp/${currentUrl}`;
-
-            setTimeout(() => {
-                window.location.href = "https://metamask.io/download/";
-            }, 2500);
-
-            window.location.href = metamaskDeepLink;
-        }
-
-        async function processNativePayment() {
-            const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-            const amountUsdt = parseInt(document.getElementById('cryptoAmountInput').value) || 1;
-            const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
-            const statusDiv = document.getElementById('cryptoPayStatus');
 
             try {
                 statusDiv.style.color = "var(--gold)";
-                statusDiv.innerText = "⏳ Connecting wallet...";
+                statusDiv.innerText = "⏳ Opening wallet selector...";
+                
+                await modal.open();
+                
+                const walletProvider = modal.getWalletProvider();
+                if (!walletProvider) {
+                    statusDiv.innerText = "Selection cancelled.";
+                    return;
+                }
 
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                const signer = await provider.getSigner();
+                const ethersProvider = new ethers.BrowserProvider(walletProvider);
+                const signer = await ethersProvider.getSigner();
 
-                const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+                statusDiv.innerText = "⏳ Preparing USDT transfer...";
+
                 const erc20Abi = ["function transfer(address to, uint256 value) public returns (bool)"];
                 const usdtContract = new ethers.Contract(USDT_BSC_CONTRACT, erc20Abi, signer);
 
-                statusDiv.innerText = "⏳ Confirm transfer in your wallet...";
+                statusDiv.innerText = "⏳ Please confirm " + amountUsdt + " USDT transfer in your wallet...";
                 const parsedAmount = ethers.parseUnits(amountUsdt.toString(), 18);
                 const tx = await usdtContract.transfer(TEAM_TELEGRAM_WALLET, parsedAmount);
 
                 statusDiv.style.color = "var(--green)";
-                statusDiv.innerText = "✅ Transaction sent! Verifying...";
+                statusDiv.innerText = "✅ Transaction sent! Verifying automatically...";
 
                 const response = await fetch(`${BACKEND_URL}/api/verify-tx`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, tx_hash: tx.hash, payout_address: payoutWallet })
+                    body: JSON.stringify({
+                        user_id: userId,
+                        tx_hash: tx.hash,
+                        payout_address: payoutWallet
+                    })
                 });
 
                 const data = await response.json();
                 if (data.ok) {
                     statusDiv.style.color = "var(--green)";
-                    statusDiv.innerText = "🎉 Success! Tickets credited.";
+                    statusDiv.innerText = "🎉 Success! Tickets credited to your account.";
                     setTimeout(() => location.reload(), 2000);
                 } else {
                     statusDiv.style.color = "var(--gold)";
-                    statusDiv.innerText = "⚠️ TX sent, backend verification pending.";
+                    statusDiv.innerText = "⚠️ TX sent, verification pending on backend.";
                 }
 
             } catch (err) {
