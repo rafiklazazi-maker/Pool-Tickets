@@ -526,7 +526,7 @@
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            ⚡ <span class="blur-user">@cybervip</span> a minté 5 tickets pour 5 USDT !
+            ⚡ <span class="blur-user">@cybervip</span> minted 5 tickets for 5 USDT !
         </div>
     </div>
 
@@ -575,20 +575,19 @@
         </div>
 
         <div class="payment-tabs">
-            <button class="tab-btn active" onclick="switchTab('bsc', this)">⚡ BSC Wallet</button>
-            <button class="tab-btn" onclick="switchTab('stars', this)">⭐ Stars</button>
+            <button class="tab-btn active" onclick="switchTab('stars', this)">⭐ Stars</button>
             <button class="tab-btn" onclick="switchTab('ton', this)">💎 TON Connect</button>
         </div>
 
         <div class="custom-amount-row">
             <input type="number" id="usdtAmountInput" value="1" min="1" step="1" oninput="syncAmount()">
-            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">USDT (BSC)</span>
+            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">STARS</span>
         </div>
 
         <div id="ton-connect-button" style="display: none;"></div>
 
         <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
-            🚀 PAY <span id="btnAmountLabel">1</span> <span id="btnCurrencyText">USDT (BSC)</span> (<span id="btnTicketLabel">1</span> TICKET)
+            🚀 PAY <span id="btnAmountLabel">1</span> <span id="btnCurrencyText">STARS</span> (<span id="btnTicketLabel">1</span> TICKET)
         </button>
 
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
@@ -643,7 +642,7 @@
                 ⚡ SEND <span id="modalPayAmount" style="color: var(--green);">1</span> USDT (BEP20)
             </div>
             <div style="font-size: 9px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace;">
-                Network: <b>BNB Smart Chain (BEP20)</b>
+                Network: <b>Telegram Unified Wallet</b>
             </div>
             
             <div id="depositQrcode"></div>
@@ -673,19 +672,58 @@
 
     <script>
         const BACKEND_URL = "https://pool-tickets-backend.onrender.com";
-        const BSC_RECEIVE_WALLET = "0x452B81baA0e9Ace0cE85BC5317bAef193E28d099";
-        const TON_RECEIVE_WALLET = "UQDl9p2yDswOltaEa0GQMeR7-kzsj-xNyx_KfhCb6omCpcU_";
-        const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+        const TEAM_TELEGRAM_WALLET = "0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
 
-        let currentTab = 'bsc';
+        let currentTab = 'stars';
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://rafiklazazi-maker.github.io/Pool-Tickets/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
+            buttonRootId: 'ton-connect-button',
+            uiPreferences: {
+                theme: 'DARK'
+            }
         });
 
+        // Injection du bouton "Other" dans l'interface TonConnect si l'utilisateur l'ouvre
+        function ensureOtherWalletOption() {
+            const observer = new MutationObserver((mutations, obs) => {
+                const modalContainer = document.querySelector('tc-modal') || document.querySelector('[class*="modal"]');
+                if (modalContainer) {
+                    const walletListContainer = modalContainer.querySelector('ul') || modalContainer.querySelector('[class*="wallet-list"]');
+                    if (walletListContainer && !document.getElementById('custom-other-wallet-btn')) {
+                        const otherItem = document.createElement('div');
+                        otherItem.id = 'custom-other-wallet-btn';
+                        otherItem.style.cssText = "margin-top: 10px; padding: 10px; background: rgba(0, 243, 255, 0.1); border: 1px solid var(--cyan); border-radius: 8px; text-align: center; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--cyan); font-weight: 800;";
+                        otherItem.innerText = "🌐 OTHER WALLETS (Manual Connect)";
+                        otherItem.onclick = () => {
+                            alert("Team Telegram Receive Wallet Address:\n" + TEAM_TELEGRAM_WALLET + "\n\nYou can transfer directly from any other custom wallet app.");
+                        };
+                        walletListContainer.parentNode.appendChild(otherItem);
+                    }
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+
+        // Live Feed Dynamique en Anglais corrélé logiquement à 183.7
+        const sampleEnglishFeeds = [
+            "⚡ @cyb***ip minted 5 tickets for 5 USDT!",
+            "💎 New contribution from @cry***ng (3 USDT - 3 tickets)",
+            "🚀 @wh***07 minted 2 tickets for 2 USDT!",
+            "⚡ @sat***99 minted 4 tickets for 4 USDT!",
+            "🔥 @ton***55 minted 10 tickets for 10 USDT!",
+            "⭐ @vip***21 minted 8 tickets via Stars (640 Stars)!"
+        ];
+
+        function rotateLiveFeed() {
+            const feedElement = document.getElementById('depositFeedText');
+            if (feedElement) {
+                const randomMsg = sampleEnglishFeeds[Math.floor(Math.random() * sampleEnglishFeeds.length)];
+                feedElement.innerHTML = randomMsg;
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
-            // Réveil automatique du backend Render au chargement
             fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
 
             const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
@@ -693,6 +731,9 @@
                 document.getElementById('userPayoutWalletInput').value = savedWallet;
                 document.getElementById('walletSavedBadge').style.display = 'inline';
             }
+
+            setInterval(rotateLiveFeed, 6000);
+            ensureOtherWalletOption();
         });
 
         async function savePayoutWalletAndScroll() {
@@ -701,9 +742,9 @@
             const badge = document.getElementById('walletSavedBadge');
             const address = walletInput.value.trim();
 
-            if (!address || address.length < 25) {
+            if (!address || address.length < 15) {
                 statusText.style.color = "var(--red)";
-                statusText.innerText = "⚠️ Please enter a valid BSC (0x...) or TON (UQ...) wallet address.";
+                statusText.innerText = "⚠️ Please enter a valid wallet address.";
                 return;
             }
 
@@ -742,60 +783,72 @@
             const tonButton = document.getElementById('ton-connect-button');
             const payBtn = document.getElementById('payActionBtn');
             
-            if(tab === 'bsc') {
-                currencyLabel.innerText = 'USDT (BSC)';
-                btnCurrencyText.innerText = 'USDT (BSC)';
-                tonButton.style.display = 'none';
-                payBtn.style.display = 'block';
-            } else if(tab === 'stars') {
-                currencyLabel.innerText = 'STARS';
+            if(tab === 'stars') {
+                currencyLabel.innerText = 'STARS (80 = 1 Ticket)';
                 btnCurrencyText.innerText = 'STARS';
                 tonButton.style.display = 'none';
                 payBtn.style.display = 'block';
             } else if(tab === 'ton') {
-                currencyLabel.innerText = 'USDT-TON';
-                btnCurrencyText.innerText = 'USDT-TON';
+                currencyLabel.innerText = 'TON Connect';
+                btnCurrencyText.innerText = 'TON';
                 tonButton.style.display = 'flex';
                 payBtn.style.display = 'none';
             }
         }
 
         function syncAmount() {
-            const val = document.getElementById('usdtAmountInput').value || 1;
+            const val = parseInt(document.getElementById('usdtAmountInput').value) || 1;
             document.getElementById('btnAmountLabel').innerText = val;
-            document.getElementById('btnTicketLabel').innerText = val;
-            document.getElementById('modalPayAmount').innerText = val;
+            // Règle: 80 stars = 1 ticket
+            document.getElementById('btnTicketLabel').innerText = currentTab === 'stars' ? Math.max(1, Math.floor(val / 80)) : val;
         }
 
-        function openDepositModal() {
-            const amount = parseFloat(document.getElementById('usdtAmountInput').value) || 1;
-            document.getElementById('modalPayAmount').innerText = amount;
-            document.getElementById('modalWalletInput').value = BSC_RECEIVE_WALLET;
-            
-            const amountInWei = BigInt(Math.round(amount * 1e6)) * BigInt(1e12);
-            const deepLink = `ethereum:${USDT_BSC_CONTRACT}@56/transfer?address=${BSC_RECEIVE_WALLET}&uint256=${amountInWei.toString()}`;
-            document.getElementById('directWalletLink').href = deepLink;
+        async function processPayment() {
+            const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
+            const amount = parseInt(document.getElementById('usdtAmountInput').value) || 80;
+            const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
 
-            document.getElementById('depositModalBackdrop').style.display = 'flex';
-            
-            document.getElementById('depositQrcode').innerHTML = "";
-            new QRCode(document.getElementById("depositQrcode"), {
-                text: BSC_RECEIVE_WALLET,
-                width: 130,
-                height: 130
-            });
+            if (!payoutWallet) {
+                alert("Please save your payout wallet first!");
+                focusPayoutWallet();
+                return;
+            }
+
+            if (currentTab === 'stars') {
+                const starsCount = amount < 80 ? 80 : amount;
+                try {
+                    const resp = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: userId, stars_amount: starsCount, payout_address: payoutWallet })
+                    });
+                    const data = await resp.json();
+                    if (data.ok && data.invoice_link) {
+                        if (window.Telegram?.WebApp?.openInvoice) {
+                            window.Telegram.WebApp.openInvoice(data.invoice_link, async (status) => {
+                                if (status === 'paid') {
+                                    alert("Payment successful! Tickets added.");
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            window.open(data.invoice_link, '_blank');
+                        }
+                    } else {
+                        alert("Error: " + (data.error || "Unable to create Stars invoice"));
+                    }
+                } catch (e) {
+                    alert("Network error: " + e.message);
+                }
+            }
         }
 
         function copyBscAddress() {
-            navigator.clipboard.writeText(BSC_RECEIVE_WALLET);
+            navigator.clipboard.writeText(TEAM_TELEGRAM_WALLET);
             const btn = document.getElementById('copyBscBtn');
             btn.innerText = "✅ COPIED!";
-            btn.style.borderColor = "var(--green)";
-            btn.style.color = "var(--green)";
             setTimeout(() => {
                 btn.innerText = "📋 COPY ADDRESS";
-                btn.style.borderColor = "var(--border-cyan)";
-                btn.style.color = "var(--text)";
             }, 2500);
         }
 
@@ -811,118 +864,6 @@
             }
             if (input) {
                 setTimeout(() => input.focus(), 400);
-            }
-        }
-
-        async function processPayment() {
-            const amount = parseFloat(document.getElementById('usdtAmountInput').value) || 1;
-            const statusBox = document.getElementById('payStatus');
-            const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
-            const inputWallet = document.getElementById('userPayoutWalletInput').value.trim();
-
-            if (!savedWallet || savedWallet.length < 25 || savedWallet !== inputWallet) {
-                const msg = "⚠️ Action required: You must enter your Jackpot Receiving Wallet address and click 'SAVE WALLET' first to unlock payment!";
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
-                    window.Telegram.WebApp.showAlert(msg, () => {
-                        focusPayoutWallet();
-                    });
-                } else {
-                    alert(msg);
-                    focusPayoutWallet();
-                }
-                return;
-            }
-
-            if (currentTab === 'bsc') {
-                openDepositModal();
-                statusBox.style.color = "var(--cyan)";
-                statusBox.innerHTML = `⚡ Ready to send <b>${amount} USDT (BEP20)</b>`;
-            } else if (currentTab === 'stars') {
-                statusBox.style.color = "var(--gold)";
-                statusBox.innerText = "⏳ Requesting Telegram Stars invoice...";
-                
-                try {
-                    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-                    const response = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            user_id: userId, 
-                            stars_amount: parseInt(amount),
-                            payout_wallet: savedWallet 
-                        })
-                    });
-                    const data = await response.json();
-                    if (data.ok && data.invoice_link) {
-                        window.Telegram.WebApp.openInvoice(data.invoice_link, async (status) => {
-                            if (status === 'paid') {
-                                statusBox.style.color = "var(--green)";
-                                statusBox.innerText = "🎉 Stars payment successful! Tickets added.";
-                            } else {
-                                statusBox.style.color = "var(--red)";
-                                statusBox.innerText = "❌ Payment cancelled or failed.";
-                            }
-                        });
-                    } else {
-                        statusBox.style.color = "var(--red)";
-                        statusBox.innerText = "❌ Error: " + (data.error || "Could not create invoice");
-                    }
-                } catch (e) {
-                    statusBox.style.color = "var(--red)";
-                    statusBox.innerText = "❌ Network error connecting to backend.";
-                }
-            }
-        }
-
-        async function claimBscTx() {
-            const txHash = document.getElementById('txHashInput').value.trim();
-            const payoutWallet = localStorage.getItem('pool_tickets_payout_wallet') || document.getElementById('userPayoutWalletInput').value.trim();
-            const statusBox = document.getElementById('payStatus');
-
-            if (!txHash.startsWith('0x') || txHash.length < 60) {
-                alert("⚠️ Please enter a valid BSC Transaction Hash (0x...)");
-                return;
-            }
-
-            statusBox.style.color = "var(--gold)";
-            statusBox.innerText = "⏳ Verifying TX Hash on BSC Mainnet...";
-            document.getElementById('depositModalBackdrop').style.display = 'none';
-
-            try {
-                const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-                const username = window.Telegram?.WebApp?.initDataUnsafe?.user?.username || "player";
-
-                const response = await fetch(`${BACKEND_URL}/api/verify-tx`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        tx_hash: txHash,
-                        user_id: userId,
-                        username: username,
-                        payout_wallet: payoutWallet
-                    })
-                });
-
-                const data = await response.json();
-                if (data.ok) {
-                    statusBox.style.color = "var(--green)";
-                    statusBox.innerText = `🎉 Verified! +${data.tickets_added} Tickets minted!`;
-                    document.getElementById('txHashInput').value = "";
-                } else {
-                    statusBox.style.color = "var(--red)";
-                    statusBox.innerText = "❌ " + (data.error || "Transaction verification failed.");
-                }
-            } catch (e) {
-                statusBox.style.color = "var(--red)";
-                statusBox.innerText = "❌ Backend connection error during verification.";
-            }
-        }
-
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.expand();
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                document.getElementById('username').innerText = '@' + (tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name);
             }
         }
     </script>
