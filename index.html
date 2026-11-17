@@ -6,8 +6,6 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- SDK TON Connect UI -->
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -299,29 +297,6 @@
             scroll-margin-top: 16px;
         }
 
-        .payment-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 10px;
-            justify-content: center;
-        }
-        .tab-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--muted);
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 9.5px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .tab-btn.active {
-            background: rgba(0, 243, 255, 0.15);
-            border-color: var(--cyan);
-            color: var(--cyan);
-        }
-
         .custom-amount-row {
             display: flex;
             align-items: center;
@@ -380,12 +355,6 @@
             color: var(--text);
             border: 1px solid var(--border-cyan);
             font-size: 9.5px;
-        }
-
-        #ton-connect-button {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0;
         }
 
         .tickets-section {
@@ -521,12 +490,12 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar">⚡ TELEGRAM WALLET // UNIFIED ECOSYSTEM</div>
+    <div class="ticker-bar">⚡ TELEGRAM STARS // UNIFIED ECOSYSTEM</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
         <div class="deposit-feed-text" id="depositFeedText">
-            ⚡ <span class="blur-user">@cybervip</span> minted 5 tickets for 5 USDT !
+            ⚡ <span class="blur-user">@cybervip</span> minted 5 tickets for 400 Stars!
         </div>
     </div>
 
@@ -558,10 +527,10 @@
             <span id="walletSavedBadge" style="font-size: 8.5px; color: var(--green); display: none;">✅ SAVED</span>
         </div>
         <div class="payout-desc">
-            Enter your personal <b>USDT (BEP20)</b> or <b>TON</b> address below to receive your automatic prize payout if you win:
+            Enter your personal <b>USDT (BEP20)</b> address below to receive your automatic prize payout if you win:
         </div>
         <div class="payout-input-group">
-            <input type="text" id="userPayoutWalletInput" class="input-field" placeholder="0x... (BSC) or UQ... (TON)" style="border-color: rgba(255, 204, 0, 0.4);">
+            <input type="text" id="userPayoutWalletInput" class="input-field" placeholder="0x... (BSC)" style="border-color: rgba(255, 204, 0, 0.4);">
             <button class="btn btn-gold" type="button" onclick="savePayoutWalletAndScroll()">
                 💾 SAVE WALLET & GO TO PAYMENT ↓
             </button>
@@ -571,23 +540,16 @@
 
     <div class="gateway-box" id="paymentGatewaySection">
         <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
-            💎 TELEGRAM PAYMENT GATEWAY
-        </div>
-
-        <div class="payment-tabs">
-            <button class="tab-btn active" onclick="switchTab('stars', this)">⭐ Stars</button>
-            <button class="tab-btn" onclick="switchTab('ton', this)">💎 TON Connect</button>
+            ⭐ TELEGRAM STARS PAYMENT GATEWAY
         </div>
 
         <div class="custom-amount-row">
-            <input type="number" id="usdtAmountInput" value="1" min="1" step="1" oninput="syncAmount()">
-            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">STARS</span>
+            <input type="number" id="usdtAmountInput" value="80" min="80" step="80" oninput="syncAmount()">
+            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">STARS (80 = 1 Ticket)</span>
         </div>
 
-        <div id="ton-connect-button" style="display: none;"></div>
-
         <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
-            🚀 PAY <span id="btnAmountLabel">1</span> <span id="btnCurrencyText">STARS</span> (<span id="btnTicketLabel">1</span> TICKET)
+            🚀 PAY <span id="btnAmountLabel">80</span> <span id="btnCurrencyText">STARS</span> (<span id="btnTicketLabel">1</span> TICKET)
         </button>
 
         <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
@@ -674,44 +636,12 @@
         const BACKEND_URL = "https://pool-tickets-backend.onrender.com";
         const TEAM_TELEGRAM_WALLET = "0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
 
-        let currentTab = 'stars';
-
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://rafiklazazi-maker.github.io/Pool-Tickets/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button',
-            uiPreferences: {
-                theme: 'DARK'
-            }
-        });
-
-        // Injection du bouton "Other" dans l'interface TonConnect si l'utilisateur l'ouvre
-        function ensureOtherWalletOption() {
-            const observer = new MutationObserver((mutations, obs) => {
-                const modalContainer = document.querySelector('tc-modal') || document.querySelector('[class*="modal"]');
-                if (modalContainer) {
-                    const walletListContainer = modalContainer.querySelector('ul') || modalContainer.querySelector('[class*="wallet-list"]');
-                    if (walletListContainer && !document.getElementById('custom-other-wallet-btn')) {
-                        const otherItem = document.createElement('div');
-                        otherItem.id = 'custom-other-wallet-btn';
-                        otherItem.style.cssText = "margin-top: 10px; padding: 10px; background: rgba(0, 243, 255, 0.1); border: 1px solid var(--cyan); border-radius: 8px; text-align: center; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--cyan); font-weight: 800;";
-                        otherItem.innerText = "🌐 OTHER WALLETS (Manual Connect)";
-                        otherItem.onclick = () => {
-                            alert("Team Telegram Receive Wallet Address:\n" + TEAM_TELEGRAM_WALLET + "\n\nYou can transfer directly from any other custom wallet app.");
-                        };
-                        walletListContainer.parentNode.appendChild(otherItem);
-                    }
-                }
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-        }
-
-        // Live Feed Dynamique en Anglais corrélé logiquement à 183.7
         const sampleEnglishFeeds = [
-            "⚡ @cyb***ip minted 5 tickets for 5 USDT!",
-            "💎 New contribution from @cry***ng (3 USDT - 3 tickets)",
-            "🚀 @wh***07 minted 2 tickets for 2 USDT!",
-            "⚡ @sat***99 minted 4 tickets for 4 USDT!",
-            "🔥 @ton***55 minted 10 tickets for 10 USDT!",
+            "⚡ @cyb***ip minted 5 tickets for 400 Stars!",
+            "💎 New contribution from @cry***ng (3 tickets - 240 Stars)",
+            "🚀 @wh***07 minted 2 tickets for 160 Stars!",
+            "⚡ @sat***99 minted 4 tickets for 320 Stars!",
+            "🔥 @ton***55 minted 10 tickets for 800 Stars!",
             "⭐ @vip***21 minted 8 tickets via Stars (640 Stars)!"
         ];
 
@@ -733,7 +663,7 @@
             }
 
             setInterval(rotateLiveFeed, 6000);
-            ensureOtherWalletOption();
+            syncAmount();
         });
 
         async function savePayoutWalletAndScroll() {
@@ -773,97 +703,66 @@
             }, 350);
         }
 
-        function switchTab(tab, btnElement) {
-            currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
-            
-            const currencyLabel = document.getElementById('currencyLabel');
-            const btnCurrencyText = document.getElementById('btnCurrencyText');
-            const tonButton = document.getElementById('ton-connect-button');
-            const payBtn = document.getElementById('payActionBtn');
-            
-            if(tab === 'stars') {
-                currencyLabel.innerText = 'STARS (80 = 1 Ticket)';
-                btnCurrencyText.innerText = 'STARS';
-                tonButton.style.display = 'none';
-                payBtn.style.display = 'block';
-            } else if(tab === 'ton') {
-                currencyLabel.innerText = 'TON Connect';
-                btnCurrencyText.innerText = 'TON';
-                tonButton.style.display = 'flex';
-                payBtn.style.display = 'none';
-            }
-        }
-
         function syncAmount() {
-            const val = parseInt(document.getElementById('usdtAmountInput').value) || 1;
-            document.getElementById('btnAmountLabel').innerText = val;
-            // Règle: 80 stars = 1 ticket
-            document.getElementById('btnTicketLabel').innerText = currentTab === 'stars' ? Math.max(1, Math.floor(val / 80)) : val;
+            const val = parseInt(document.getElementById('usdtAmountInput').value) || 80;
+            const starsAmount = Math.max(80, Math.ceil(val / 80) * 80);
+            document.getElementById('usdtAmountInput').value = starsAmount;
+            document.getElementById('btnAmountLabel').innerText = starsAmount;
+            document.getElementById('btnTicketLabel').innerText = Math.max(1, starsAmount / 80);
         }
 
         async function processPayment() {
             const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-            const amount = parseInt(document.getElementById('usdtAmountInput').value) || 80;
+            const starsAmount = parseInt(document.getElementById('usdtAmountInput').value) || 80;
             const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
+            const payStatus = document.getElementById('payStatus');
 
             if (!payoutWallet) {
-                alert("Please save your payout wallet first!");
-                focusPayoutWallet();
+                payStatus.style.color = "var(--red)";
+                payStatus.innerText = "⚠️ Please save your payout wallet first!";
+                document.getElementById('payoutWalletCard').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
 
-            if (currentTab === 'stars') {
-                const starsCount = amount < 80 ? 80 : amount;
-                try {
-                    const resp = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ user_id: userId, stars_amount: starsCount, payout_address: payoutWallet })
-                    });
-                    const data = await resp.json();
-                    if (data.ok && data.invoice_link) {
-                        if (window.Telegram?.WebApp?.openInvoice) {
-                            window.Telegram.WebApp.openInvoice(data.invoice_link, async (status) => {
-                                if (status === 'paid') {
-                                    alert("Payment successful! Tickets added.");
-                                    location.reload();
-                                }
-                            });
-                        } else {
-                            window.open(data.invoice_link, '_blank');
-                        }
+            payStatus.style.color = "var(--gold)";
+            payStatus.innerText = "⏳ Generating Telegram Stars Invoice...";
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        stars_amount: starsAmount,
+                        payout_address: payoutWallet
+                    })
+                });
+
+                const data = await response.json();
+                if (data.ok && data.invoice_link) {
+                    payStatus.innerText = "✅ Invoice ready! Opening payment...";
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        window.Telegram.WebApp.openInvoice(data.invoice_link, async (status) => {
+                            if (status === 'paid') {
+                                payStatus.style.color = "var(--green)";
+                                payStatus.innerText = "🎉 Payment successful! Tickets added.";
+                                setTimeout(() => location.reload(), 2000);
+                            } else {
+                                payStatus.style.color = "var(--muted)";
+                                payStatus.innerText = "Payment cancelled or pending.";
+                            }
+                        });
                     } else {
-                        alert("Error: " + (data.error || "Unable to create Stars invoice"));
+                        window.open(data.invoice_link, '_blank');
                     }
-                } catch (e) {
-                    alert("Network error: " + e.message);
+                } else {
+                    payStatus.style.color = "var(--red)";
+                    payStatus.innerText = "Error: " + (data.error || "Could not create invoice");
                 }
-            }
-        }
-
-        function copyBscAddress() {
-            navigator.clipboard.writeText(TEAM_TELEGRAM_WALLET);
-            const btn = document.getElementById('copyBscBtn');
-            btn.innerText = "✅ COPIED!";
-            setTimeout(() => {
-                btn.innerText = "📋 COPY ADDRESS";
-            }, 2500);
-        }
-
-        function focusPayoutWallet() {
-            const card = document.getElementById('payoutWalletCard');
-            const input = document.getElementById('userPayoutWalletInput');
-            if (card) {
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                card.style.boxShadow = "0 0 28px rgba(255, 204, 0, 0.65)";
-                setTimeout(() => {
-                    card.style.boxShadow = "0 0 18px rgba(255, 204, 0, 0.12)";
-                }, 1500);
-            }
-            if (input) {
-                setTimeout(() => input.focus(), 400);
+            } catch (e) {
+                payStatus.style.color = "var(--red)";
+                payStatus.innerText = "Network error while generating invoice.";
+                console.error(e);
             }
         }
     </script>
