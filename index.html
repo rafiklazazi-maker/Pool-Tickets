@@ -6,7 +6,8 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
+    <!-- SDK TON Connect UI officiel -->
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -382,10 +383,10 @@
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
         }
 
-        .btn-green {
-            background: linear-gradient(135deg, var(--green) 0%, #00cc52 100%);
-            color: #030407;
-            box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
+        #ton-connect-button {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
         }
 
         .tickets-section {
@@ -475,7 +476,7 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar">⚡ TELEGRAM STARS & BNB SMART CHAIN ECOSYSTEM</div>
+    <div class="ticker-bar">⚡ TELEGRAM STARS & TON ECOSYSTEM</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
@@ -512,10 +513,10 @@
             <span id="walletSavedBadge" style="font-size: 8.5px; color: var(--green); display: none;">✅ SAVED</span>
         </div>
         <div class="payout-desc">
-            Enter your personal <b>USDT (BEP20)</b> address below to receive your automatic prize payout if you win:
+            Enter your personal <b>TON / USDT (TON)</b> address below to receive your automatic prize payout if you win:
         </div>
         <div class="payout-input-group">
-            <input type="text" id="userPayoutWalletInput" class="input-field" placeholder="0x... (BSC)" style="border-color: rgba(255, 204, 0, 0.4);">
+            <input type="text" id="userPayoutWalletInput" class="input-field" placeholder="EQ... or UQ... (TON)" style="border-color: rgba(255, 204, 0, 0.4);">
             <button class="btn btn-gold" type="button" onclick="savePayoutWalletAndScroll()">
                 💾 SAVE WALLET & GO TO PAYMENT ↓
             </button>
@@ -530,7 +531,7 @@
 
         <div class="pay-tabs">
             <button type="button" class="pay-tab-btn active" id="tabStarsBtn" onclick="switchPaymentTab('stars')">⭐ Telegram Stars</button>
-            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Crypto Wallet</button>
+            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 TON Connect SDK</button>
         </div>
 
         <div class="payment-pane active" id="paneStars">
@@ -547,19 +548,17 @@
 
         <div class="payment-pane" id="paneWallet">
             <div style="font-size: 9.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
-                Direct 1-Click transfer via MetaMask, Trust Wallet, or Binance on BNB Smart Chain:
+                Connect your Telegram Wallet or Tonkeeper securely:
             </div>
             
-            <div class="custom-amount-row">
-                <input type="number" id="cryptoAmountInput" value="1" min="1" step="1" oninput="syncCryptoAmount()">
-                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="cryptoCurrencyLabel">USDT ($1 = 1 T)</span>
-            </div>
+            <!-- Conteneur officiel TON Connect -->
+            <div id="ton-connect-button"></div>
 
-            <button class="btn btn-green" type="button" id="sdkPayBtn" onclick="processSdkPayment()" style="margin-bottom: 6px;">
-                💎 PAY <span id="sdkBtnAmount">1</span> USDT (CONNECT & PAY)
+            <button class="btn btn-cyber" type="button" id="tonPayBtn" onclick="sendTonPayment()" style="margin-top: 10px; display: none;">
+                💎 PAY & MINT TICKET (TON)
             </button>
             
-            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Ready to pay</div>
+            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Connect your wallet above</div>
         </div>
     </div>
 
@@ -604,8 +603,9 @@
 
     <script>
         const BACKEND_URL = "https://pool-tickets-backend.onrender.com";
-        const TEAM_TELEGRAM_WALLET = "0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
-        const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+        const TEAM_TON_WALLET = "UQ55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
+
+        let tonConnectUI = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
@@ -616,9 +616,27 @@
                 document.getElementById('walletSavedBadge').style.display = 'inline';
             }
 
+            try {
+                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                    manifestUrl: window.location.origin + '/tonconnect-manifest.json',
+                    buttonRootId: 'ton-connect-button'
+                });
+
+                tonConnectUI.onStatusChange(walletInfo => {
+                    if (walletInfo) {
+                        document.getElementById('tonPayBtn').style.display = 'block';
+                        document.getElementById('cryptoPayStatus').innerText = "✅ Connected: " + walletInfo.account.address.slice(0, 6) + "...";
+                    } else {
+                        document.getElementById('tonPayBtn').style.display = 'none';
+                        document.getElementById('cryptoPayStatus').innerText = "Connect your wallet above";
+                    }
+                });
+            } catch (e) {
+                console.error("Erreur init TON Connect:", e);
+            }
+
             setInterval(rotateLiveFeed, 6000);
             syncAmount();
-            syncCryptoAmount();
         });
 
         const sampleEnglishFeeds = [
@@ -665,7 +683,7 @@
 
             if (!address || address.length < 15) {
                 statusText.style.color = "var(--red)";
-                statusText.innerText = "⚠️ Please enter a valid wallet address.";
+                statusText.innerText = "⚠️ Please enter a valid TON address.";
                 return;
             }
 
@@ -700,13 +718,6 @@
             document.getElementById('usdtAmountInput').value = starsAmount;
             document.getElementById('btnAmountLabel').innerText = starsAmount;
             document.getElementById('btnTicketLabel').innerText = Math.max(1, starsAmount / 80);
-        }
-
-        function syncCryptoAmount() {
-            const val = parseInt(document.getElementById('cryptoAmountInput').value) || 1;
-            const amount = Math.max(1, val);
-            document.getElementById('cryptoAmountInput').value = amount;
-            document.getElementById('sdkBtnAmount').innerText = amount;
         }
 
         async function processPayment() {
@@ -763,9 +774,8 @@
             }
         }
 
-        async function processSdkPayment() {
+        async function sendTonPayment() {
             const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-            const amountUsdt = parseInt(document.getElementById('cryptoAmountInput').value) || 1;
             const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
             const statusDiv = document.getElementById('cryptoPayStatus');
 
@@ -776,38 +786,37 @@
                 return;
             }
 
-            if (!window.ethereum) {
+            if (!tonConnectUI || !tonConnectUI.connected) {
                 statusDiv.style.color = "var(--red)";
-                statusDiv.innerText = "⚠️ Open this app inside Trust Wallet or MetaMask browser.";
+                statusDiv.innerText = "⚠️ Please connect your wallet first.";
                 return;
             }
 
             try {
                 statusDiv.style.color = "var(--gold)";
-                statusDiv.innerText = "⏳ Connecting wallet...";
+                statusDiv.innerText = "⏳ Preparing TON transaction...";
+
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 60,
+                    messages: [
+                        {
+                            address: TEAM_TON_WALLET,
+                            amount: "100000000" // 0.1 TON (ajuste selon tes besoins)
+                        }
+                    ]
+                };
+
+                const result = await tonConnectUI.sendTransaction(transaction);
                 
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                const signer = await provider.getSigner();
-
-                statusDiv.innerText = "⏳ Preparing USDT transfer...";
-
-                const erc20Abi = ["function transfer(address to, uint256 value) public returns (bool)"];
-                const usdtContract = new ethers.Contract(USDT_BSC_CONTRACT, erc20Abi, signer);
-
-                statusDiv.innerText = "⏳ Please confirm " + amountUsdt + " USDT transfer in your wallet...";
-                const parsedAmount = ethers.parseUnits(amountUsdt.toString(), 18);
-                const tx = await usdtContract.transfer(TEAM_TELEGRAM_WALLET, parsedAmount);
-
                 statusDiv.style.color = "var(--green)";
-                statusDiv.innerText = "✅ Transaction sent! Verifying automatically...";
+                statusDiv.innerText = "✅ Transaction sent! Verifying...";
 
-                const response = await fetch(`${BACKEND_URL}/api/verify-tx`, {
+                const response = await fetch(`${BACKEND_URL}/api/verify-ton-tx`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         user_id: userId,
-                        tx_hash: tx.hash,
+                        boc: result.boc,
                         payout_address: payoutWallet
                     })
                 });
@@ -815,17 +824,17 @@
                 const data = await response.json();
                 if (data.ok) {
                     statusDiv.style.color = "var(--green)";
-                    statusDiv.innerText = "🎉 Success! Tickets credited to your account.";
+                    statusDiv.innerText = "🎉 Success! Tickets credited.";
                     setTimeout(() => location.reload(), 2000);
                 } else {
                     statusDiv.style.color = "var(--gold)";
-                    statusDiv.innerText = "⚠️ TX sent, verification pending on backend.";
+                    statusDiv.innerText = "⚠️ Transaction sent, backend validation pending.";
                 }
 
             } catch (err) {
                 console.error(err);
                 statusDiv.style.color = "var(--red)";
-                statusDiv.innerText = "⚠️ Payment cancelled or failed.";
+                statusDiv.innerText = "⚠️ Transaction cancelled or failed.";
             }
         }
     </script>
