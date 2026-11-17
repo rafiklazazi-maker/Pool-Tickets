@@ -297,6 +297,42 @@
             scroll-margin-top: 16px;
         }
 
+        /* Payment Method Tabs Selector */
+        .pay-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .pay-tab-btn {
+            background: #030407;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--muted);
+            padding: 8px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pay-tab-btn.active {
+            background: rgba(0, 243, 255, 0.15);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .payment-pane {
+            display: none;
+        }
+
+        .payment-pane.active {
+            display: block;
+        }
+
         .custom-amount-row {
             display: flex;
             align-items: center;
@@ -432,30 +468,6 @@
             letter-spacing: 0.5px;
         }
 
-        .modal-backdrop {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.88);
-            z-index: 9998;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .modal {
-            width: 100%;
-            max-width: 340px;
-            background: #080b12;
-            border: 1.5px solid var(--cyan);
-            border-radius: 14px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            box-shadow: 0 10px 40px rgba(0, 243, 255, 0.25);
-        }
-
         .input-field {
             width: 100%;
             background: #030407;
@@ -472,14 +484,8 @@
             background: #fff;
             padding: 8px;
             border-radius: 8px;
-            margin: 0 auto;
+            margin: 6px auto;
             width: fit-content;
-        }
-
-        .modal-action-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
         }
     </style>
 </head>
@@ -490,7 +496,7 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar">⚡ TELEGRAM STARS // UNIFIED ECOSYSTEM</div>
+    <div class="ticker-bar">⚡ TELEGRAM STARS & WALLET ECOSYSTEM</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
@@ -538,21 +544,55 @@
         <div id="payoutSaveStatus" style="font-size: 9px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
     </div>
 
+    <!-- GATEWAY DE PAIEMENT HYBRIDE (STARS + WALLET CRYPTO) -->
     <div class="gateway-box" id="paymentGatewaySection">
-        <div style="font-size: 10.5px; color: var(--green); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 6px;">
-            ⭐ TELEGRAM STARS PAYMENT GATEWAY
+        <div style="font-size: 10.5px; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 8px;">
+            ⚡ SELECT PAYMENT METHOD
         </div>
 
-        <div class="custom-amount-row">
-            <input type="number" id="usdtAmountInput" value="80" min="80" step="80" oninput="syncAmount()">
-            <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">STARS (80 = 1 Ticket)</span>
+        <!-- Onglets de sélection -->
+        <div class="pay-tabs">
+            <button type="button" class="pay-tab-btn active" id="tabStarsBtn" onclick="switchPaymentTab('stars')">⭐ Telegram Stars</button>
+            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Telegram Wallet</button>
         </div>
 
-        <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
-            🚀 PAY <span id="btnAmountLabel">80</span> <span id="btnCurrencyText">STARS</span> (<span id="btnTicketLabel">1</span> TICKET)
-        </button>
+        <!-- PANE 1 : TELEGRAM STARS -->
+        <div class="payment-pane active" id="paneStars">
+            <div class="custom-amount-row">
+                <input type="number" id="usdtAmountInput" value="80" min="80" step="80" oninput="syncAmount()">
+                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="currencyLabel">STARS (80 = 1 T)</span>
+            </div>
 
-        <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
+            <button class="btn btn-cyber" type="button" id="payActionBtn" onclick="processPayment()">
+                🚀 PAY <span id="btnAmountLabel">80</span> <span id="btnCurrencyText">STARS</span> (<span id="btnTicketLabel">1</span> TICKET)
+            </button>
+            <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
+        </div>
+
+        <!-- PANE 2 : TELEGRAM WALLET / DIRECT CRYPTO DEPOSIT -->
+        <div class="payment-pane" id="paneWallet">
+            <div style="font-size: 9.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">
+                Send USDT (BEP20) to centralized receiver:
+            </div>
+            <div id="depositQrcode"></div>
+            <input type="text" id="modalWalletInput" class="input-field" readonly value="0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd" style="text-align: center; font-size: 9px; color: var(--cyan); margin-bottom: 6px;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                <button class="btn btn-outline" type="button" onclick="copyBscAddress()" style="margin-top: 0; font-size: 9px;">
+                    📋 COPY ADDRESS
+                </button>
+                <a id="directWalletLink" href="https://t.me/wallet" target="_blank" class="btn btn-green" style="margin-top: 0; font-size: 9px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                    ↗️ OPEN WALLET
+                </a>
+            </div>
+
+            <div style="font-size: 9px; color: var(--text); font-family: 'JetBrains Mono', monospace; margin-bottom: 4px;">
+                Paste your transfer <b>TX Hash</b> below:
+            </div>
+            <input type="text" id="txHashInput" class="input-field" placeholder="Paste TX Hash (0x...)" style="border-color: var(--green); text-align: center; margin-bottom: 6px;">
+            <button class="btn btn-cyber" type="button" onclick="claimBscTx()">✅ VERIFY & CLAIM TICKETS</button>
+            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px;"></div>
+        </div>
     </div>
 
     <div class="tickets-section">
@@ -598,40 +638,6 @@
         Pool Tickets // Autonomous Web3 Grand Prize Protocol
     </div>
 
-    <div class="modal-backdrop" id="depositModalBackdrop">
-        <div class="modal">
-            <div style="font-size: 11px; text-align: center; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800;">
-                ⚡ SEND <span id="modalPayAmount" style="color: var(--green);">1</span> USDT (BEP20)
-            </div>
-            <div style="font-size: 9px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace;">
-                Network: <b>Telegram Unified Wallet</b>
-            </div>
-            
-            <div id="depositQrcode"></div>
-            
-            <input type="text" id="modalWalletInput" class="input-field" readonly style="text-align: center; font-size: 9px; color: var(--cyan);">
-            
-            <div class="modal-action-row">
-                <button class="btn btn-outline" type="button" id="copyBscBtn" onclick="copyBscAddress()" style="margin-top: 0; font-size: 9px;">
-                    📋 COPY ADDRESS
-                </button>
-                <a id="directWalletLink" href="#" class="btn btn-green" style="margin-top: 0; font-size: 9px; display: flex; align-items: center; justify-content: center;">
-                    ↗️ OPEN WALLET
-                </a>
-            </div>
-
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 4px 0;"></div>
-
-            <div style="font-size: 9px; text-align: center; color: var(--text); font-family: 'JetBrains Mono', monospace;">
-                After sending, paste your <b>TX Hash</b> below:
-            </div>
-            <input type="text" id="txHashInput" class="input-field" placeholder="Paste TX Hash (0x...)" style="border-color: var(--green); text-align: center;">
-            <button class="btn btn-cyber" type="button" onclick="claimBscTx()">✅ VERIFY & CLAIM TICKETS</button>
-            
-            <button class="btn btn-outline" type="button" onclick="document.getElementById('depositModalBackdrop').style.display='none'">Close</button>
-        </div>
-    </div>
-
     <script>
         const BACKEND_URL = "https://pool-tickets-backend.onrender.com";
         const TEAM_TELEGRAM_WALLET = "0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
@@ -662,9 +668,46 @@
                 document.getElementById('walletSavedBadge').style.display = 'inline';
             }
 
+            // Génération du QR Code pour le Wallet Crypto centralisé
+            if (typeof QRCode !== 'undefined') {
+                new QRCode(document.getElementById("depositQrcode"), {
+                    text: TEAM_TELEGRAM_WALLET,
+                    width: 110,
+                    height: 110,
+                    colorDark: "#030407",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }
+
             setInterval(rotateLiveFeed, 6000);
             syncAmount();
         });
+
+        // Gestion des onglets de paiement
+        function switchPaymentTab(tab) {
+            const tabStars = document.getElementById('tabStarsBtn');
+            const tabWallet = document.getElementById('tabWalletBtn');
+            const paneStars = document.getElementById('paneStars');
+            const paneWallet = document.getElementById('paneWallet');
+
+            if (tab === 'stars') {
+                tabStars.classList.add('active');
+                tabWallet.classList.remove('active');
+                paneStars.classList.add('active');
+                paneWallet.classList.remove('active');
+            } else {
+                tabWallet.classList.add('active');
+                tabStars.classList.remove('active');
+                paneWallet.classList.add('active');
+                paneStars.classList.remove('active');
+            }
+        }
+
+        function copyBscAddress() {
+            navigator.clipboard.writeText(TEAM_TELEGRAM_WALLET);
+            alert("✅ Wallet address copied to clipboard!");
+        }
 
         async function savePayoutWalletAndScroll() {
             const walletInput = document.getElementById('userPayoutWalletInput');
@@ -762,6 +805,56 @@
             } catch (e) {
                 payStatus.style.color = "var(--red)";
                 payStatus.innerText = "Network error while generating invoice.";
+                console.error(e);
+            }
+        }
+
+        // Vérification de la transaction crypto (si l'utilisateur choisit le wallet)
+        async function claimBscTx() {
+            const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
+            const txHash = document.getElementById('txHashInput').value.trim();
+            const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
+            const statusDiv = document.getElementById('cryptoPayStatus');
+
+            if (!payoutWallet) {
+                statusDiv.style.color = "var(--red)";
+                statusDiv.innerText = "⚠️ Please save your payout wallet first!";
+                document.getElementById('payoutWalletCard').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            if (!txHash || txHash.length < 10) {
+                statusDiv.style.color = "var(--red)";
+                statusDiv.innerText = "⚠️ Please enter a valid TX Hash.";
+                return;
+            }
+
+            statusDiv.style.color = "var(--gold)";
+            statusDiv.innerText = "⏳ Verifying transaction on blockchain...";
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/verify-tx`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        tx_hash: txHash,
+                        payout_address: payoutWallet
+                    })
+                });
+
+                const data = await response.json();
+                if (data.ok) {
+                    statusDiv.style.color = "var(--green)";
+                    statusDiv.innerText = "🎉 Transaction verified! Tickets added.";
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    statusDiv.style.color = "var(--red)";
+                    statusDiv.innerText = "Error: " + (data.error || "Verification failed");
+                }
+            } catch (e) {
+                statusDiv.style.color = "var(--red)";
+                statusDiv.innerText = "Network error during verification.";
                 console.error(e);
             }
         }
