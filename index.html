@@ -6,6 +6,9 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Importation d'Ethers.js et du SDK Web3Modal pour le menu de sélection de wallets -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
+    <script src="https://unpkg.com/@web3modal/ethers@4.1.1/dist/index.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -479,14 +482,6 @@
             font-size: 10px;
             outline: none;
         }
-
-        #depositQrcode {
-            background: #fff;
-            padding: 8px;
-            border-radius: 8px;
-            margin: 6px auto;
-            width: fit-content;
-        }
     </style>
 </head>
 <body>
@@ -496,7 +491,7 @@
         <div class="user-badge" id="username">@player</div>
     </div>
 
-    <div class="ticker-bar">⚡ TELEGRAM STARS & WALLET ECOSYSTEM</div>
+    <div class="ticker-bar">⚡ TELEGRAM STARS & BNB SMART CHAIN ECOSYSTEM</div>
 
     <div class="deposits-bar">
         <span class="deposit-tag">LIVE</span>
@@ -544,7 +539,7 @@
         <div id="payoutSaveStatus" style="font-size: 9px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px; text-align: center;"></div>
     </div>
 
-    <!-- GATEWAY DE PAIEMENT HYBRIDE (STARS + WALLET CRYPTO) -->
+    <!-- GATEWAY DE PAIEMENT HYBRIDE (STARS + SDK WEB3 MENU DE SELECTION) -->
     <div class="gateway-box" id="paymentGatewaySection">
         <div style="font-size: 10.5px; color: var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 800; margin-bottom: 8px;">
             ⚡ SELECT PAYMENT METHOD
@@ -553,7 +548,7 @@
         <!-- Onglets de sélection -->
         <div class="pay-tabs">
             <button type="button" class="pay-tab-btn active" id="tabStarsBtn" onclick="switchPaymentTab('stars')">⭐ Telegram Stars</button>
-            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Telegram Wallet</button>
+            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Crypto Wallet (SDK)</button>
         </div>
 
         <!-- PANE 1 : TELEGRAM STARS -->
@@ -569,29 +564,23 @@
             <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
         </div>
 
-        <!-- PANE 2 : TELEGRAM WALLET / DIRECT CRYPTO DEPOSIT -->
+        <!-- PANE 2 : SDK WEB3 WALLET (AVEC MENU DE CHOIX DE PORTES-MONNAIE) -->
         <div class="payment-pane" id="paneWallet">
-            <div style="font-size: 9.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">
-                Send USDT (BEP20) to centralized receiver:
+            <div style="font-size: 9.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
+                Select your wallet (Trust Wallet, MetaMask, Binance, etc.) on BNB Smart Chain:
             </div>
-            <div id="depositQrcode"></div>
-            <input type="text" id="modalWalletInput" class="input-field" readonly value="0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd" style="text-align: center; font-size: 9px; color: var(--cyan); margin-bottom: 6px;">
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
-                <button class="btn btn-outline" type="button" onclick="copyBscAddress()" style="margin-top: 0; font-size: 9px;">
-                    📋 COPY ADDRESS
-                </button>
-                <a id="directWalletLink" href="https://t.me/wallet" target="_blank" class="btn btn-green" style="margin-top: 0; font-size: 9px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
-                    ↗️ OPEN WALLET
-                </a>
+            <div class="custom-amount-row">
+                <input type="number" id="cryptoAmountInput" value="1" min="1" step="1" oninput="syncCryptoAmount()">
+                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--green); font-weight: 800;" id="cryptoCurrencyLabel">USDT ($1 = 1 T)</span>
             </div>
 
-            <div style="font-size: 9px; color: var(--text); font-family: 'JetBrains Mono', monospace; margin-bottom: 4px;">
-                Paste your transfer <b>TX Hash</b> below:
-            </div>
-            <input type="text" id="txHashInput" class="input-field" placeholder="Paste TX Hash (0x...)" style="border-color: var(--green); text-align: center; margin-bottom: 6px;">
-            <button class="btn btn-cyber" type="button" onclick="claimBscTx()">✅ VERIFY & CLAIM TICKETS</button>
-            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px;"></div>
+            <!-- Bouton SDK Menu de sélection & Paiement -->
+            <button class="btn btn-green" type="button" id="sdkPayBtn" onclick="processSdkPayment()" style="margin-bottom: 6px;">
+                💎 PAY <span id="sdkBtnAmount">1</span> USDT (SELECT WALLET)
+            </button>
+            
+            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Ready for SDK payment</div>
         </div>
     </div>
 
@@ -641,6 +630,35 @@
     <script>
         const BACKEND_URL = "https://pool-tickets-backend.onrender.com";
         const TEAM_TELEGRAM_WALLET = "0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
+        const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955"; // USDT BEP20
+
+        // Configuration Web3Modal / Reown AppKit avec ton Project ID
+        const projectId = '2d927cdc93b12c7b9608d37eebba7dd9';
+        const bscChain = {
+            chainId: 56,
+            name: 'Binance Smart Chain',
+            currency: 'BNB',
+            explorerUrl: 'https://bscscan.com',
+            rpcUrl: 'https://bsc-dataseed.binance.org'
+        };
+
+        let modal = null;
+        if (typeof Web3Modal !== 'undefined') {
+            modal = Web3Modal.createWeb3Modal({
+                ethersConfig: Web3Modal.defaultConfig({
+                    metadata: {
+                        name: 'Pool Tickets',
+                        description: 'Web3 Grand Prize Protocol',
+                        url: 'https://t.me/',
+                        icons: []
+                    }
+                }),
+                chains: [bscChain],
+                projectId: projectId,
+                themeMode: 'dark',
+                themeVariables: { '--w3m-color-mix': '#00f3ff', '--w3m-accent': '#00f3ff' }
+            });
+        }
 
         const sampleEnglishFeeds = [
             "⚡ @cyb***ip minted 5 tickets for 400 Stars!",
@@ -668,23 +686,12 @@
                 document.getElementById('walletSavedBadge').style.display = 'inline';
             }
 
-            // Génération du QR Code pour le Wallet Crypto centralisé
-            if (typeof QRCode !== 'undefined') {
-                new QRCode(document.getElementById("depositQrcode"), {
-                    text: TEAM_TELEGRAM_WALLET,
-                    width: 110,
-                    height: 110,
-                    colorDark: "#030407",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            }
-
             setInterval(rotateLiveFeed, 6000);
             syncAmount();
+            syncCryptoAmount();
         });
 
-        // Gestion des onglets de paiement
+        // Gestion des onglets
         function switchPaymentTab(tab) {
             const tabStars = document.getElementById('tabStarsBtn');
             const tabWallet = document.getElementById('tabWalletBtn');
@@ -702,11 +709,6 @@
                 paneWallet.classList.add('active');
                 paneStars.classList.remove('active');
             }
-        }
-
-        function copyBscAddress() {
-            navigator.clipboard.writeText(TEAM_TELEGRAM_WALLET);
-            alert("✅ Wallet address copied to clipboard!");
         }
 
         async function savePayoutWalletAndScroll() {
@@ -754,6 +756,14 @@
             document.getElementById('btnTicketLabel').innerText = Math.max(1, starsAmount / 80);
         }
 
+        function syncCryptoAmount() {
+            const val = parseInt(document.getElementById('cryptoAmountInput').value) || 1;
+            const amount = Math.max(1, val);
+            document.getElementById('cryptoAmountInput').value = amount;
+            document.getElementById('sdkBtnAmount').innerText = amount;
+        }
+
+        // Paiement Telegram Stars
         async function processPayment() {
             const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
             const starsAmount = parseInt(document.getElementById('usdtAmountInput').value) || 80;
@@ -809,10 +819,10 @@
             }
         }
 
-        // Vérification de la transaction crypto (si l'utilisateur choisit le wallet)
-        async function claimBscTx() {
+        // Paiement Automatisé 1-Clic via Web3Modal (Menu de sélection de portefeuille)
+        async function processSdkPayment() {
             const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
-            const txHash = document.getElementById('txHashInput').value.trim();
+            const amountUsdt = parseInt(document.getElementById('cryptoAmountInput').value) || 1;
             const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
             const statusDiv = document.getElementById('cryptoPayStatus');
 
@@ -823,22 +833,48 @@
                 return;
             }
 
-            if (!txHash || txHash.length < 10) {
+            if (!modal) {
                 statusDiv.style.color = "var(--red)";
-                statusDiv.innerText = "⚠️ Please enter a valid TX Hash.";
+                statusDiv.innerText = "⚠️ Web3Modal SDK failed to load. Check internet connection.";
                 return;
             }
 
-            statusDiv.style.color = "var(--gold)";
-            statusDiv.innerText = "⏳ Verifying transaction on blockchain...";
-
             try {
+                statusDiv.style.color = "var(--gold)";
+                statusDiv.innerText = "⏳ Opening wallet selector...";
+                
+                // Ouvre la modale de choix de portefeuille (Trust, MetaMask, Binance, etc.)
+                await modal.open();
+                
+                const walletProvider = modal.getWalletProvider();
+                if (!walletProvider) {
+                    statusDiv.innerText = "Selection cancelled.";
+                    return;
+                }
+
+                const ethersProvider = new ethers.BrowserProvider(walletProvider);
+                const signer = await ethersProvider.getSigner();
+
+                statusDiv.innerText = "⏳ Preparing USDT transfer...";
+
+                // ABI standard ERC20 pour le transfert
+                const erc20Abi = ["function transfer(address to, uint256 value) public returns (bool)"];
+                const usdtContract = new ethers.Contract(USDT_BSC_CONTRACT, erc20Abi, signer);
+
+                statusDiv.innerText = "⏳ Please confirm transfer in your wallet...";
+                const parsedAmount = ethers.parseUnits(amountUsdt.toString(), 18);
+                const tx = await usdtContract.transfer(TEAM_TELEGRAM_WALLET, parsedAmount);
+
+                statusDiv.style.color = "var(--green)";
+                statusDiv.innerText = "✅ Transaction sent! Verifying automatically...";
+
+                // Envoi automatique du hash au backend pour attribution instantanée du ticket
                 const response = await fetch(`${BACKEND_URL}/api/verify-tx`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         user_id: userId,
-                        tx_hash: txHash,
+                        tx_hash: tx.hash,
                         payout_address: payoutWallet
                     })
                 });
@@ -846,16 +882,17 @@
                 const data = await response.json();
                 if (data.ok) {
                     statusDiv.style.color = "var(--green)";
-                    statusDiv.innerText = "🎉 Transaction verified! Tickets added.";
+                    statusDiv.innerText = "🎉 Success! Tickets credited to your account.";
                     setTimeout(() => location.reload(), 2000);
                 } else {
-                    statusDiv.style.color = "var(--red)";
-                    statusDiv.innerText = "Error: " + (data.error || "Verification failed");
+                    statusDiv.style.color = "var(--gold)";
+                    statusDiv.innerText = "⚠️ TX sent, verification pending on backend.";
                 }
-            } catch (e) {
+
+            } catch (err) {
+                console.error(err);
                 statusDiv.style.color = "var(--red)";
-                statusDiv.innerText = "Network error during verification.";
-                console.error(e);
+                statusDiv.innerText = "⚠️ Payment cancelled or failed.";
             }
         }
     </script>
