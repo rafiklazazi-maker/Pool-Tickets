@@ -556,14 +556,14 @@
             <!-- Conteneur officiel TON Connect -->
             <div id="ton-connect-button"></div>
 
-            <!-- Choix du nombre de tickets pour TON -->
+            <!-- Choix du nombre de tickets pour TON (1 TON = 1 Ticket) -->
             <div class="custom-amount-row" style="margin-top: 10px;">
                 <input type="number" id="tonTicketsInput" value="1" min="1" step="1" oninput="syncTonAmount()">
-                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--cyan); font-weight: 800;" id="tonCurrencyLabel">TICKET(S) = <span id="tonTotalDisplay">0.5</span> TON</span>
+                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--cyan); font-weight: 800;" id="tonCurrencyLabel">TICKET(S) = <span id="tonTotalDisplay">1.0</span> TON</span>
             </div>
 
             <button class="btn btn-cyber" type="button" id="tonPayBtn" onclick="sendTonPayment()" style="margin-top: 10px; display: none;">
-                💎 PAY <span id="tonBtnTotalLabel">0.5</span> TON (<span id="tonBtnTicketLabel">1</span> TICKET)
+                💎 PAY <span id="tonBtnTotalLabel">1.0</span> TON (<span id="tonBtnTicketLabel">1</span> TICKET)
             </button>
             
             <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Connect your wallet above</div>
@@ -648,14 +648,13 @@
             syncTonAmount();
         });
 
-        // Flux en direct mixant Stars et TON/USDT
         const sampleEnglishFeeds = [
             "⚡ <span class='blur-user'>@cybervip</span> minted 5 tickets for 400 Stars!",
             "💎 New contribution from <span class='blur-user'>@cryptong</span> (3 tickets via TON)",
             "🚀 <span class='blur-user'>@wh07</span> minted 2 tickets for 160 Stars!",
-            "💎 <span class='blur-user'>@sat99</span> contributed 1.0 TON (2 tickets)",
+            "💎 <span class='blur-user'>@sat99</span> contributed 1.0 TON (1 ticket)",
             "🔥 <span class='blur-user'>@ton55</span> minted 10 tickets for 800 Stars!",
-            "⭐ <span class='blur-user'>@vip21</span> minted 4 tickets via TON Connect!"
+            "⭐ <span class='blur-user'>@vip21</span> minted 2 tickets via TON Connect!"
         ];
 
         function rotateLiveFeed() {
@@ -735,8 +734,8 @@
             const validTickets = Math.max(1, tickets);
             document.getElementById('tonTicketsInput').value = validTickets;
             
-            // Prix par ticket en TON (ex: 0.5 TON par ticket, ajustable selon ton choix)
-            const pricePerTicketTON = 0.5;
+            // 1 TON = 1 Ticket
+            const pricePerTicketTON = 1.0;
             const totalTon = (validTickets * pricePerTicketTON).toFixed(1);
 
             document.getElementById('tonTotalDisplay').innerText = totalTon;
@@ -821,8 +820,8 @@
                 statusDiv.style.color = "var(--gold)";
                 statusDiv.innerText = "⏳ Preparing TON transaction...";
 
-                // Calcul dynamique des Nanotons (0.5 TON par ticket converti en nanotons -> 1 TON = 10^9 nanotons)
-                const pricePerTicketTON = 0.5;
+                // 1 TON = 1 Ticket (1 TON = 10^9 nanotons)
+                const pricePerTicketTON = 1.0;
                 const totalTonNum = ticketsCount * pricePerTicketTON;
                 const nanoTonAmount = Math.round(totalTonNum * 1000000000).toString();
 
