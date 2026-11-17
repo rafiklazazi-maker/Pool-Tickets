@@ -534,6 +534,7 @@
             <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 TON Connect SDK</button>
         </div>
 
+        <!-- Onglet Telegram Stars -->
         <div class="payment-pane active" id="paneStars">
             <div class="custom-amount-row">
                 <input type="number" id="usdtAmountInput" value="80" min="80" step="80" oninput="syncAmount()">
@@ -546,6 +547,7 @@
             <div id="payStatus" style="font-size: 9.5px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-top: 8px;">Ready for payment</div>
         </div>
 
+        <!-- Onglet TON Connect (TON / USDT) -->
         <div class="payment-pane" id="paneWallet">
             <div style="font-size: 9.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
                 Connect your Telegram Wallet or Tonkeeper securely:
@@ -554,8 +556,14 @@
             <!-- Conteneur officiel TON Connect -->
             <div id="ton-connect-button"></div>
 
+            <!-- Choix du nombre de tickets pour TON -->
+            <div class="custom-amount-row" style="margin-top: 10px;">
+                <input type="number" id="tonTicketsInput" value="1" min="1" step="1" oninput="syncTonAmount()">
+                <span style="font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--cyan); font-weight: 800;" id="tonCurrencyLabel">TICKET(S) = <span id="tonTotalDisplay">0.5</span> TON</span>
+            </div>
+
             <button class="btn btn-cyber" type="button" id="tonPayBtn" onclick="sendTonPayment()" style="margin-top: 10px; display: none;">
-                💎 PAY & MINT TICKET (TON)
+                💎 PAY <span id="tonBtnTotalLabel">0.5</span> TON (<span id="tonBtnTicketLabel">1</span> TICKET)
             </button>
             
             <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Connect your wallet above</div>
@@ -637,15 +645,17 @@
 
             setInterval(rotateLiveFeed, 6000);
             syncAmount();
+            syncTonAmount();
         });
 
+        // Flux en direct mixant Stars et TON/USDT
         const sampleEnglishFeeds = [
             "⚡ <span class='blur-user'>@cybervip</span> minted 5 tickets for 400 Stars!",
-            "💎 New contribution from <span class='blur-user'>@cryptong</span> (3 tickets - 240 Stars)",
+            "💎 New contribution from <span class='blur-user'>@cryptong</span> (3 tickets via TON)",
             "🚀 <span class='blur-user'>@wh07</span> minted 2 tickets for 160 Stars!",
-            "⚡ <span class='blur-user'>@sat99</span> minted 4 tickets for 320 Stars!",
+            "💎 <span class='blur-user'>@sat99</span> contributed 1.0 TON (2 tickets)",
             "🔥 <span class='blur-user'>@ton55</span> minted 10 tickets for 800 Stars!",
-            "⭐ <span class='blur-user'>@vip21</span> minted 8 tickets via Stars (640 Stars)!"
+            "⭐ <span class='blur-user'>@vip21</span> minted 4 tickets via TON Connect!"
         ];
 
         function rotateLiveFeed() {
@@ -720,6 +730,20 @@
             document.getElementById('btnTicketLabel').innerText = Math.max(1, starsAmount / 80);
         }
 
+        function syncTonAmount() {
+            const tickets = parseInt(document.getElementById('tonTicketsInput').value) || 1;
+            const validTickets = Math.max(1, tickets);
+            document.getElementById('tonTicketsInput').value = validTickets;
+            
+            // Prix par ticket en TON (ex: 0.5 TON par ticket, ajustable selon ton choix)
+            const pricePerTicketTON = 0.5;
+            const totalTon = (validTickets * pricePerTicketTON).toFixed(1);
+
+            document.getElementById('tonTotalDisplay').innerText = totalTon;
+            document.getElementById('tonBtnTotalLabel').innerText = totalTon;
+            document.getElementById('tonBtnTicketLabel').innerText = validTickets;
+        }
+
         async function processPayment() {
             const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
             const starsAmount = parseInt(document.getElementById('usdtAmountInput').value) || 80;
@@ -778,6 +802,7 @@
             const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "100001";
             const payoutWallet = document.getElementById('userPayoutWalletInput').value.trim();
             const statusDiv = document.getElementById('cryptoPayStatus');
+            const ticketsCount = parseInt(document.getElementById('tonTicketsInput').value) || 1;
 
             if (!payoutWallet) {
                 statusDiv.style.color = "var(--red)";
@@ -796,12 +821,17 @@
                 statusDiv.style.color = "var(--gold)";
                 statusDiv.innerText = "⏳ Preparing TON transaction...";
 
+                // Calcul dynamique des Nanotons (0.5 TON par ticket converti en nanotons -> 1 TON = 10^9 nanotons)
+                const pricePerTicketTON = 0.5;
+                const totalTonNum = ticketsCount * pricePerTicketTON;
+                const nanoTonAmount = Math.round(totalTonNum * 1000000000).toString();
+
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 60,
                     messages: [
                         {
                             address: TEAM_TON_WALLET,
-                            amount: "100000000" // 0.1 TON (ajuste selon ton besoin)
+                            amount: nanoTonAmount
                         }
                     ]
                 };
@@ -817,7 +847,8 @@
                     body: JSON.stringify({
                         user_id: userId,
                         boc: result.boc,
-                        payout_address: payoutWallet
+                        payout_address: payoutWallet,
+                        tickets_count: ticketsCount
                     })
                 });
 
