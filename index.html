@@ -6,9 +6,7 @@
     <title>POOL TICKETS // CYBER_CORE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Importation d'Ethers.js et du SDK Web3Modal pour le menu de sélection de wallets -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
-    <script src="https://unpkg.com/@web3modal/ethers@4.1.1/dist/index.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
@@ -532,7 +530,7 @@
 
         <div class="pay-tabs">
             <button type="button" class="pay-tab-btn active" id="tabStarsBtn" onclick="switchPaymentTab('stars')">⭐ Telegram Stars</button>
-            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Crypto Wallet (SDK)</button>
+            <button type="button" class="pay-tab-btn" id="tabWalletBtn" onclick="switchPaymentTab('wallet')">💎 Crypto Wallet</button>
         </div>
 
         <div class="payment-pane active" id="paneStars">
@@ -549,7 +547,7 @@
 
         <div class="payment-pane" id="paneWallet">
             <div style="font-size: 9.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
-                Select your wallet (Trust Wallet, MetaMask, Binance, etc.) on BNB Smart Chain:
+                Direct 1-Click transfer via MetaMask, Trust Wallet, or Binance on BNB Smart Chain:
             </div>
             
             <div class="custom-amount-row">
@@ -558,10 +556,10 @@
             </div>
 
             <button class="btn btn-green" type="button" id="sdkPayBtn" onclick="processSdkPayment()" style="margin-bottom: 6px;">
-                💎 PAY <span id="sdkBtnAmount">1</span> USDT (SELECT WALLET)
+                💎 PAY <span id="sdkBtnAmount">1</span> USDT (CONNECT & PAY)
             </button>
             
-            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Ready to select wallet</div>
+            <div id="cryptoPayStatus" style="font-size: 9.5px; color: var(--green); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">Ready to pay</div>
         </div>
     </div>
 
@@ -609,19 +607,7 @@
         const TEAM_TELEGRAM_WALLET = "0x55eBD04b0dBE226b69ECf046B72fAe043e4dcaCd";
         const USDT_BSC_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
 
-        const projectId = '2d927cdc93b12c7b9608d37eebba7dd9';
-        const bscChain = {
-            chainId: 56,
-            name: 'Binance Smart Chain',
-            currency: 'BNB',
-            explorerUrl: 'https://bscscan.com',
-            rpcUrl: 'https://bsc-dataseed.binance.org'
-        };
-
-        let modal = null;
-
         window.addEventListener('DOMContentLoaded', () => {
-            initModal();
             fetch(`${BACKEND_URL}/api/state`).catch(e => console.log("Wake up ping sent"));
 
             const savedWallet = localStorage.getItem('pool_tickets_payout_wallet');
@@ -634,29 +620,6 @@
             syncAmount();
             syncCryptoAmount();
         });
-
-        function initModal() {
-            if (!modal && typeof Web3Modal !== 'undefined' && Web3Modal.createWeb3Modal) {
-                try {
-                    modal = Web3Modal.createWeb3Modal({
-                        ethersConfig: Web3Modal.defaultConfig({
-                            metadata: {
-                                name: 'Pool Tickets',
-                                description: 'Web3 Grand Prize Protocol',
-                                url: 'https://t.me/',
-                                icons: []
-                            }
-                        }),
-                        chains: [bscChain],
-                        projectId: projectId,
-                        themeMode: 'dark',
-                        themeVariables: { '--w3m-color-mix': '#00f3ff', '--w3m-accent': '#00f3ff' }
-                    });
-                } catch (e) {
-                    console.error("Erreur init Web3Modal:", e);
-                }
-            }
-        }
 
         const sampleEnglishFeeds = [
             "⚡ <span class='blur-user'>@cybervip</span> minted 5 tickets for 400 Stars!",
@@ -813,28 +776,19 @@
                 return;
             }
 
-            initModal();
-
-            if (!modal) {
+            if (!window.ethereum) {
                 statusDiv.style.color = "var(--red)";
-                statusDiv.innerText = "⚠️ Wallet selector failed to load. Please refresh.";
+                statusDiv.innerText = "⚠️ Open this app inside Trust Wallet or MetaMask browser.";
                 return;
             }
 
             try {
                 statusDiv.style.color = "var(--gold)";
-                statusDiv.innerText = "⏳ Opening wallet selector...";
+                statusDiv.innerText = "⏳ Connecting wallet...";
                 
-                await modal.open();
-                
-                const walletProvider = modal.getWalletProvider();
-                if (!walletProvider) {
-                    statusDiv.innerText = "Selection cancelled.";
-                    return;
-                }
-
-                const ethersProvider = new ethers.BrowserProvider(walletProvider);
-                const signer = await ethersProvider.getSigner();
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                const signer = await provider.getSigner();
 
                 statusDiv.innerText = "⏳ Preparing USDT transfer...";
 
