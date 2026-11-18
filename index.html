@@ -625,8 +625,9 @@
             }
 
             try {
+                // CORRECTION ICI : Utilisation de l'URL absolue incluant le sous-dossier /Pool-Tickets/
                 tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                    manifestUrl: window.location.origin + '/tonconnect-manifest.json',
+                    manifestUrl: 'https://rafiklazazi-maker.github.io/Pool-Tickets/tonconnect-manifest.json',
                     buttonRootId: 'ton-connect-button'
                 });
 
@@ -721,7 +722,6 @@
             }, 350);
         }
 
-        // Saisie libre du nombre de tickets (1 ticket = 80 étoiles)
         function syncAmount() {
             const tickets = parseInt(document.getElementById('usdtAmountInput').value) || 1;
             const validTickets = Math.max(1, tickets);
@@ -732,7 +732,6 @@
             document.getElementById('btnTicketLabel').innerText = validTickets;
         }
 
-        // Saisie libre du nombre de tickets (1 ticket = 1.0 TON)
         function syncTonAmount() {
             const tickets = parseInt(document.getElementById('tonTicketsInput').value) || 1;
             const validTickets = Math.max(1, tickets);
